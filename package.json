@@ -9,6 +9,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "marked": "^0.3.19"
+    "commonmark": "^0.28.1",
+    "markdown-it": "^8.4.1",
+    "marked": "^0.3.19",
+    "simple-markdown": "^0.4.0"
   }
 }
