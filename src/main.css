@@ -1,0 +1,22 @@
+body {
+  --monospace: Consolas, Menlo, monospace;
+  font-family: roboto,helvetica neue,Helvetica,Arial,sans-serif;
+}
+
+code {
+  font-family: var(--monospace);
+  color: #9C27B0;
+}
+
+a {
+  font-weight: normal !important;
+  color: #333;
+}
+
+blockquote {
+  background: #f7f7f7;
+  padding: 1em 1em 1em 2em;
+  margin: 2em;
+  border-left: 4px solid grey;
+  border-right: 4px solid grey;
+}

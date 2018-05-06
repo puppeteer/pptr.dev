@@ -1,0 +1,12 @@
+api-method-classname,
+api-ns-classname {
+  color: #ababab;
+  font-weight: bold;
+}
+
+api-method h3,
+api-ns h3,
+api-event h3 {
+  font-family: var(--monospace);
+}
+
