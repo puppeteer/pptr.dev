@@ -1,0 +1,9 @@
+- icons for resources in sidear
+- "external" icon to the right for resources in sidebar
+- resources that navigate to other websties should not get selected
+- version selector (a "cog" menu implementation)
+- infer for every class where it takes role (methods / events / namespaces)
+- highlight code in code blocks
+- preperly handle links inside API to the codebase `lib/`
+- add "table-of-contents" for every class
+- add "icons" for methods/events/types/namespaces
