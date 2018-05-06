@@ -23,9 +23,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   const api = APIDocumentation.create(apiText);
   sidebar.setAPIDocumentation(api);
 
-  content.showMarkDown(unpad(`
-    # Welcome to PPTR hub!
-  `, 4));
+  content.showElements(api.overview.map(section => section.element));
 });
 
 function unpad(text, spaces) {
