@@ -262,7 +262,7 @@ Puppeteer is a Node library which provides a high-level API to control Chromium 
 
 The Puppeteer API is hierarchical and mirrors the browser structure. On the following diagram, faded entities are not currently represented in Puppeteer.
 
-![puppeteer overview](https://user-images.githubusercontent.com/746130/38952006-1c3c9c16-42ff-11e8-93af-e498076f28b4.png)
+![puppeteer overview](./overview.png)
 
 - [`Puppeteer`](#class-puppeteer) communicates with the browser using [DevTools Protocol](https://chromedevtools.github.io/devtools-protocol/).
 - [`Browser`](#class-browser) instance can own multiple pages.
