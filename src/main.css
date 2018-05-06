@@ -14,9 +14,9 @@ a {
 }
 
 blockquote {
-  background: #f7f7f7;
+  background: #FFFDE7;
   padding: 1em 1em 1em 2em;
   margin: 2em;
-  border-left: 4px solid grey;
-  border-right: 4px solid grey;
+  border: solid #FFEB3B;
+  border-width: 0 0 0 7px;
 }
