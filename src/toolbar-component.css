@@ -1,0 +1,13 @@
+toolbar-component {
+  background: hsla(531, 48%, 48%, 1);
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: var(--search-height);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.14);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}

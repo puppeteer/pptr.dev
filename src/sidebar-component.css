@@ -1,0 +1,51 @@
+:root {
+}
+
+sidebar-component {
+  --divider: 1px solid rgba(0, 0, 0, 0.14);
+  background: #fff;
+  position: absolute;
+  width: var(--sidebar-width);
+  top: var(--search-height);
+  bottom: 0;
+  left: 0;
+  overflow-y: scroll;
+  border-right: var(--divider);
+  overflow-x: hidden;
+}
+
+sidebar-component
+sidebar-item {
+  text-decoration: none;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 24px;
+  min-height: 48px;
+  padding: 0 16px;
+}
+
+sidebar-component
+sidebar-item:hover {
+  background-color: var(--hover-color);
+}
+
+sidebar-component
+sidebar-item.selected {
+  background-color: #e3f2fd;
+}
+
+sidebar-component
+sidebar-divider {
+  font-size: 12px;
+  font-weight: bold;
+  padding-left: 6px;
+  display: block;
+  background-color: #fafafa;
+  padding: 4px 8px;
+  border-top: var(--divider);
+  border-bottom: var(--divider);
+  font-family: var(--monospace);
+}

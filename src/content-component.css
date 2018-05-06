@@ -1,0 +1,35 @@
+content-component {
+  background-color: #fafafa;
+  position: absolute;
+  left: var(--sidebar-width);
+  top: var(--search-height);
+  bottom: 0;
+  right: 0;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+}
+
+content-component > h3 {
+  text-align: center;
+}
+
+content-box {
+  display: block;
+  width: 98%;
+  border-radius: 2px;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+  margin: 16px auto 32px auto;
+  background-color: white;
+  padding: 0 24px 0 24px;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+content-delimeter {
+  display: block;
+  border-bottom: double #b6b6b6a6 3px;
+  width: 200%;
+  position: relative;
+  left: -25%;
+}
+

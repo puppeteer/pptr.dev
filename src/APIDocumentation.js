@@ -9,8 +9,7 @@ class APIDocumentation {
     const doc = document.importNode(domParser.parseFromString(result, 'text/html').body, true);
 
     const classes = [];
-    let overview = null;
-    let env = null;
+    let overview = [];
 
     // All class headers are rendered as H3 tags
     const headers = doc.querySelectorAll('h3');
@@ -22,24 +21,15 @@ class APIDocumentation {
       const content = extractSiblingsIntoFragment(header.nextSibling, nextHeader);
       if (title.toLowerCase().startsWith('class:'))
         classes.push(APIClass.create(title, content));
-      else if (title.toLowerCase().includes('overview'))
-        overview = APISection.create('Overview', content);
-      else if (title.toLowerCase().includes('environment variables'))
-        env = APISection.create('Environment Variables', content);
       else
-        console.error('ERROR: dunno how to treat documentation title - ' + title);
+        overview.push(APISection.create(title, content));
     }
-    if (!env)
-      console.error('ERROR: failed to find section with ENV variables');
-    if (!overview)
-      console.error('ERROR: failed to find OVERVIEW section');
-    return new APIDocumentation(classes, overview, env);
+    return new APIDocumentation(classes, overview);
   }
 
-  constructor(classes, overview, env) {
+  constructor(classes, overview) {
     this.classes = classes;
     this.overview = overview;
-    this.env = env;
   }
 }
 
