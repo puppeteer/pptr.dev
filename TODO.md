@@ -7,3 +7,4 @@
 - preperly handle links inside API to the codebase `lib/`
 - add "table-of-contents" for every class
 - add "icons" for methods/events/types/namespaces
+- dim optional method arguments
