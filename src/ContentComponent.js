@@ -32,16 +32,19 @@ class ContentComponent {
   showAPIMethod(apiMethod) {
     this.showAPIClass(apiMethod.apiClass);
     this._parentBox(apiMethod.element).scrollIntoView();
+    apiMethod.element.scrollIntoViewIfNeeded();
   }
 
   showAPIEvent(apiEvent) {
     this.showAPIClass(apiEvent.apiClass);
     this._parentBox(apiEvent.element).scrollIntoView();
+    apiEvent.element.scrollIntoViewIfNeeded();
   }
 
   showAPINamespace(apiNamespace) {
     this.showAPIClass(apiNamespace.apiClass);
     this._parentBox(apiNamespace.element).scrollIntoView();
+    apiNamespace.element.scrollIntoViewIfNeeded();
   }
 
   _parentBox(element) {
