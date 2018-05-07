@@ -17,6 +17,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   const api = APIDocumentation.create('tip-of-tree', apiText);
   sidebar.setAPIDocumentation(api);
 
+  window.api = api;
   content.showElements(api.overview.map(section => section.element));
 
   new Router(params => {

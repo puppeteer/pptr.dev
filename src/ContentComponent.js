@@ -31,26 +31,28 @@ class ContentComponent {
 
   showAPIMethod(apiMethod) {
     this.showAPIClass(apiMethod.apiClass);
-    this._parentBox(apiMethod.element).scrollIntoView();
-    apiMethod.element.scrollIntoViewIfNeeded();
+    this._scrollToAPIEntry(apiMethod);
   }
 
   showAPIEvent(apiEvent) {
     this.showAPIClass(apiEvent.apiClass);
-    this._parentBox(apiEvent.element).scrollIntoView();
-    apiEvent.element.scrollIntoViewIfNeeded();
+    this._scrollToAPIEntry(apiEvent);
   }
 
   showAPINamespace(apiNamespace) {
     this.showAPIClass(apiNamespace.apiClass);
-    this._parentBox(apiNamespace.element).scrollIntoView();
-    apiNamespace.element.scrollIntoViewIfNeeded();
+    this._scrollToAPIEntry(apiNamespace);
   }
 
-  _parentBox(element) {
-    while (element && element.tagName !== 'CONTENT-BOX')
-      element = element.parentElement;
-    return element;
+  _scrollToAPIEntry(entry) {
+    if (entry.element.previousSibling && entry.element.previousSibling.tagName === 'CONTENT-DELIMETER') {
+      entry.element.previousSibling.scrollIntoView();
+      return;
+    }
+    let parentBox = entry.element;
+    while (parentBox && parentBox.tagName !== 'CONTENT-BOX')
+      parentBox = parentBox.parentElement;
+    parentBox.scrollIntoView();
   }
 
   _insertBox() {
