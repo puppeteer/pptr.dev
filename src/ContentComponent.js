@@ -29,6 +29,27 @@ class ContentComponent {
     this._renderElements('Methods', apiClass.methods.map(method => method.element));
   }
 
+  showAPIMethod(apiMethod) {
+    this.showAPIClass(apiMethod.apiClass);
+    this._parentBox(apiMethod.element).scrollIntoView();
+  }
+
+  showAPIEvent(apiEvent) {
+    this.showAPIClass(apiEvent.apiClass);
+    this._parentBox(apiEvent.element).scrollIntoView();
+  }
+
+  showAPINamespace(apiNamespace) {
+    this.showAPIClass(apiNamespace.apiClass);
+    this._parentBox(apiNamespace.element).scrollIntoView();
+  }
+
+  _parentBox(element) {
+    while (element && element.tagName !== 'CONTENT-BOX')
+      element = element.parentElement;
+    return element;
+  }
+
   _insertBox() {
     const box = document.createElement('content-box');
     this.element.appendChild(box);

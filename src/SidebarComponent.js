@@ -42,6 +42,7 @@ class SidebarComponent extends EventEmitter {
     this.element.appendChild(createItem('ToubleShooting'));
     if (!this._apiDoc)
       return;
+    this._apiDivider.innerHTML = `API <span>${this._apiDoc.version}</span>`;
     this.element.appendChild(this._apiDivider);
     this._overviewItem = createItem('Overview');
     this.element.appendChild(this._overviewItem);

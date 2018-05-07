@@ -3,6 +3,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   //
   //   const releases = JSON.parse(await fetch('https://api.github.com/repos/GoogleChrome/puppeteer/tags').then(r => r.text()))
   //
+  //
 
   const content = new ContentComponent();
   const sidebar = new SidebarComponent();
@@ -20,10 +21,25 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   const apiText = await fetch('./api.md').then(response => response.text());
 
-  const api = APIDocumentation.create(apiText);
+  const api = APIDocumentation.create('tip-of-tree', apiText);
   sidebar.setAPIDocumentation(api);
 
   content.showElements(api.overview.map(section => section.element));
+
+  const router = new Router(params => {
+    if (params.has('show')) {
+      const viewId = params.get('show');
+      const view = api.idToView.get(viewId);
+      if (view instanceof APIClass)
+        content.showAPIClass(view);
+      else if (view instanceof APIMethod)
+        content.showAPIMethod(view);
+      else if (view instanceof APIEvent)
+        content.showAPIEvent(view);
+      else if (view instanceof APINamespace)
+        content.showAPINamespace(view);
+    }
+  });
 });
 
 function unpad(text, spaces) {

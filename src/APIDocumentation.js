@@ -1,15 +1,35 @@
 class APIDocumentation {
-  static create(apiText) {
+  /**
+   * @param {string} version
+   * @param {string} markdownText
+   */
+  static create(version, markdownText) {
     // Parse markdown into HTML
     const reader = new commonmark.Parser();
-    const ast = reader.parse(apiText);
+    const ast = reader.parse(markdownText);
     const writer = new commonmark.HtmlRenderer();
     const result = writer.render(ast);
     const domParser = new DOMParser();
     const doc = document.importNode(domParser.parseFromString(result, 'text/html').body, true);
 
+    // Translate all relative links to ppdoc links.
+    for (const anchor of doc.querySelectorAll('a')) {
+      const href = anchor.getAttribute('href') || '';
+      if (href.startsWith('#')) {
+        // Link referencing other part of documentation.
+        const githubAnchor = href.substring(1);
+        const viewId = APIDocumentation._idFromGHAnchor(githubAnchor);
+        anchor.setAttribute('href', '#' + Router.createRoute(version, viewId));
+      } else if (href.startsWith('/') || href.startsWith('../') || href.startsWith('./')) {
+        // Link pointing somewhere to PPTR repository.
+        const isRelease = /^\d+\.\d+\.\d+$/.test(version);
+        const branch = isRelease ? 'v' + version : 'master';
+        anchor.setAttribute('href', `https://github.com/GoogleChrome/puppeteer/blob/${branch}/docs/${href}`);
+      }
+    }
+
     const classes = [];
-    let overview = [];
+    const overview = [];
 
     // All class headers are rendered as H3 tags
     const headers = doc.querySelectorAll('h3');
@@ -24,12 +44,45 @@ class APIDocumentation {
       else
         overview.push(APISection.create(title, content));
     }
-    return new APIDocumentation(classes, overview);
+    return new APIDocumentation(version, classes, overview);
   }
 
-  constructor(classes, overview) {
+  static _idFromGHAnchor(githubAnchor) {
+    return 'api-' + githubAnchor;
+  }
+
+  constructor(version, classes, overview) {
+    this.version = version;
     this.classes = classes;
     this.overview = overview;
+
+    this.viewToId = new Map();
+    this.idToView = new Map();
+
+    const generateGithubAnchor = (title) => {
+      const id = title.trim().toLowerCase().replace(/\s/g, '-').replace(/[^-0-9a-zа-яё]/ig, '');
+      let dedupId = id;
+      let counter = 0;
+      while (this.idToView.has(dedupId))
+        dedupId = id + '-' + (++counter);
+      return dedupId;
+    }
+
+    const assignId = (view, title) => {
+      const id = APIDocumentation._idFromGHAnchor(generateGithubAnchor(title));
+      this.viewToId.set(view, id);
+      this.idToView.set(id, view);
+    };
+
+    for (const apiClass of classes) {
+      assignId(apiClass, `class: '${apiClass.name}'`);
+      for (const apiEvent of apiClass.events)
+        assignId(apiEvent, `event: '${apiEvent.name}'`);
+      for (const apiMethod of apiClass.methods)
+        assignId(apiMethod, `${apiClass.loweredName}.${apiMethod.name}(${apiMethod.args})`);
+      for (const ns of apiClass.namespaces)
+        assignId(ns, `${apiClass.loweredName}.${ns.name}`);
+    }
   }
 }
 
@@ -73,6 +126,7 @@ class APIClass {
 
   constructor(name, element) {
     this.name = name;
+    this.loweredName = name.substring(0, 1).toLowerCase() + name.substring(1);
     this.element = element;
     this.methods = [];
     this.events = [];
@@ -86,7 +140,7 @@ class APINamespace {
     const element = document.createElement('api-ns');
     element.innerHTML = [
       `<h3>`,
-        `<api-ns-classname>${apiClass.name.substring(0, 1).toLowerCase() + apiClass.name.substring(1)}</api-ns-classname>`,
+        `<api-ns-classname>${apiClass.loweredName}</api-ns-classname>`,
         `<api-ns-name>.${name}</api-ns-name>`,
       `</h3>`
     ].join('');
@@ -107,7 +161,7 @@ class APIMethod {
     const element = document.createElement('api-method');
     element.innerHTML = [
       `<h3>
-        <api-method-classname>${apiClass.name.substring(0, 1).toLowerCase() + apiClass.name.substring(1)}</api-method-classname>`,
+        <api-method-classname>${apiClass.loweredName}</api-method-classname>`,
         `<api-method-name>.${name}</api-method-name>`,
         `<api-method-args>(${args})</api-method-args>`,
       `</h3>`
@@ -155,3 +209,4 @@ function extractSiblingsIntoFragment(fromInclusive, toExclusive) {
   }
   return fragment;
 }
+

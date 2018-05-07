@@ -8,3 +8,4 @@
 - add "table-of-contents" for every class
 - add "icons" for methods/events/types/namespaces
 - dim optional method arguments
+- property render namespaces inside documentation
