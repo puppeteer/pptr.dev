@@ -19,7 +19,7 @@ class APIDocumentation {
         // Link referencing other part of documentation.
         const githubAnchor = href.substring(1);
         const viewId = APIDocumentation._idFromGHAnchor(githubAnchor);
-        anchor.setAttribute('href', '#' + Router.createRoute(version, viewId));
+        anchor.setAttribute('href', Router.createRoute(version, viewId));
       } else if (href.startsWith('/') || href.startsWith('../') || href.startsWith('./')) {
         // Link pointing somewhere to PPTR repository.
         const isRelease = /^\d+\.\d+\.\d+$/.test(version);

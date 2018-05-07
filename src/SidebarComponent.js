@@ -1,6 +1,5 @@
-class SidebarComponent extends EventEmitter {
+class SidebarComponent {
   constructor() {
-    super();
     this.element = document.createElement('sidebar-component');
     this.element.addEventListener('click', this._onClick.bind(this), false);
 
@@ -15,16 +14,12 @@ class SidebarComponent extends EventEmitter {
   }
 
   _onClick(event) {
-    const item = event.path.find(node => node.tagName && node.tagName.toLowerCase() === 'sidebar-item');
+    const item = event.path.find(node => node.classList && node.classList.contains('sidebar-item'));
     if (item && this._selectedItem !== item) {
       if (this._selectedItem)
         this._selectedItem.classList.remove('selected');
       this._selectedItem = item;
       this._selectedItem.classList.add('selected');
-      if (item === this._overviewItem)
-        this.emit(SidebarComponent.Events.OverviewSelected, this._apiDoc);
-      else
-        this.emit(SidebarComponent.Events.ClassSelected, item[SidebarComponent._classSymbol]);
     }
   }
 
@@ -44,25 +39,20 @@ class SidebarComponent extends EventEmitter {
       return;
     this._apiDivider.innerHTML = `API <span>${this._apiDoc.version}</span>`;
     this.element.appendChild(this._apiDivider);
-    this._overviewItem = createItem('Overview');
-    this.element.appendChild(this._overviewItem);
+    this.element.appendChild(createItem('Overview', Router.createRoute(this._apiDoc.version, 'overview')));
     for (const apiClass of this._apiDoc.classes) {
-      const item = createItem(apiClass.name);
-      item[SidebarComponent._classSymbol] = apiClass;
+      const route = Router.createRoute(this._apiDoc.version, this._apiDoc.viewToId.get(apiClass));
+      const item = createItem(apiClass.name, route);
       this.element.appendChild(item);
     }
 
-    function createItem(text) {
-      const item = document.createElement('sidebar-item');
+    function createItem(text, route) {
+      const item = document.createElement('a');
+      item.classList.add('sidebar-item');
+      item.href = route;
       item.textContent = text;
       return item;
     }
   }
 }
 
-SidebarComponent._classSymbol = Symbol('SidebarComponent._classSymbol');
-
-SidebarComponent.Events = {
-  OverviewSelected: 'OverviewSelected',
-  ClassSelected: 'ClassSelected',
-};

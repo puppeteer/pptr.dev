@@ -11,7 +11,7 @@ class Router {
   }
 
   static createRoute(apiVersion, viewId) {
-    return `?v=${apiVersion}&show=${viewId}`;
+    return `#?v=${apiVersion}&show=${viewId}`;
   }
 }
 

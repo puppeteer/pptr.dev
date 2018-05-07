@@ -14,8 +14,7 @@ sidebar-component {
   overflow-x: hidden;
 }
 
-sidebar-component
-sidebar-item {
+sidebar-component .sidebar-item {
   text-decoration: none;
   display: flex;
   flex-direction: row;
@@ -28,12 +27,12 @@ sidebar-item {
 }
 
 sidebar-component
-sidebar-item:hover {
+.sidebar-item:hover {
   background-color: var(--hover-color);
 }
 
 sidebar-component
-sidebar-item.selected {
+.sidebar-item.selected {
   background-color: #e3f2fd;
 }
 
