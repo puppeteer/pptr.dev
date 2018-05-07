@@ -19,7 +19,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   content.showElements(api.overview.map(section => section.element));
 
-  const router = new Router(params => {
+  new Router(params => {
     if (params.has('show')) {
       const viewId = params.get('show');
       if (api.idToView.has(viewId)) {

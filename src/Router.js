@@ -1,9 +1,14 @@
 class Router {
   constructor(changedCallback) {
-    window.addEventListener('popstate', () => {
-      const params = new URLSearchParams(window.location.hash.substring(1));
-      changedCallback.call(null, params);
-    });
+    this._changedCallback = changedCallback;
+    window.addEventListener('popstate', this._onPopState.bind(this), false);
+    if (window.location.hash !== '#')
+      this._onPopState();
+  }
+
+  _onPopState() {
+    const params = new URLSearchParams(window.location.hash.substring(1));
+    this._changedCallback.call(null, params);
   }
 
   setRoute(route) {
