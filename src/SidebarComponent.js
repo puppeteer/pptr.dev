@@ -31,10 +31,10 @@ class SidebarComponent {
   _render() {
     this.element.innerHTML = '';
     this.element.appendChild(this._resourcesDivider);
-    this.element.appendChild(createItem('Slack'));
-    this.element.appendChild(createItem('StackOverflow'));
-    this.element.appendChild(createItem('Github'));
-    this.element.appendChild(createItem('ToubleShooting'));
+    this.element.appendChild(createItem('Slack', 'https://join.slack.com/t/puppeteer/shared_invite/enQtMzU4MjIyMDA5NTM4LTM1OTdkNDhlM2Y4ZGUzZDdjYjM5ZWZlZGFiZjc4MTkyYTVlYzIzYjU5NDIyNzgyMmFiNDFjN2UzNWU0N2ZhZDc'));
+    this.element.appendChild(createItem('StackOverflow', 'https://stackoverflow.com/questions/tagged/puppeteer'));
+    this.element.appendChild(createItem('Github', 'https://github.com/GoogleChrome/puppeteer/issues'));
+    this.element.appendChild(createItem('ToubleShooting', 'https://github.com/GoogleChrome/puppeteer/blob/master/docs/troubleshooting.md'));
     if (!this._apiDoc)
       return;
     this._apiDivider.innerHTML = `API <span>${this._apiDoc.version}</span>`;
