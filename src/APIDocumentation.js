@@ -62,6 +62,12 @@ class APIDocumentation {
     this.version = version;
     this.classes = classes;
     this.sections = sections;
+    this.searchItems = [];
+
+    for (const apiClass of classes) {
+      for (const apiMethod of apiClass.methods)
+        this.searchItems.push(new APIMethodSearchItem(apiMethod));
+    }
 
     this._entryToId = new Map();
     this._idToEntry = new Map();
@@ -217,6 +223,57 @@ class APIEvent {
   }
 }
 
+class APIMethodSearchItem {
+  constructor(apiMethod) {
+    this._className = apiMethod.apiClass.loweredName;
+    this._name = apiMethod.name;
+    this._args = apiMethod.args;
+
+    const desc = apiMethod.element.querySelector('p');
+    this._description = desc ? desc.textContent : '';
+
+    this._subtitleElement = null;
+    this._iconElement = null;
+
+    this._text = `${this._className}.${this._name}(${this._args})`;
+  }
+
+  text() {
+    return this._text;
+  }
+
+  titleElement(matches) {
+    const result = document.createDocumentFragment();
+
+    let index = 0;
+    const render = (token, tagName) => {
+      const tag = tagName ? document.createElement(tagName) : document.createDocumentFragment();
+      tag.appendChild(renderTextWithMatches(this._text, matches, index, index + token.length));
+      index += token.length;
+      result.appendChild(tag);
+    };
+
+    render(this._className + '.', 'search-item-api-method-class');
+    render(`${this._name}(${this._args})`, 'search-item-api-method-name');
+    return result;
+  }
+
+  iconElement() {
+    if (!this._iconElement) {
+      this._iconElement = document.createElement('method-icon');
+    }
+    return this._iconElement;
+  }
+
+  subtitleElement() {
+    if (!this._subtitleElement) {
+      this._subtitleElement = document.createElement('div');
+      this._subtitleElement.textContent = this._description;
+    }
+    return this._subtitleElement;
+  }
+}
+
 /**
  * @param {!Node} fromInclusive
  * @param {!Node} toExclusive
@@ -233,3 +290,45 @@ function extractSiblingsIntoFragment(fromInclusive, toExclusive) {
   return fragment;
 }
 
+/**
+ * @param {string} text
+ * @param {!Array<number>} matches
+ * @param {number} fromIndex
+ * @param {number} fromIndex
+ * @return {!Element}
+ */
+function renderTextWithMatches(text, matches, fromIndex, toIndex) {
+  if (!matches.length)
+    return document.createTextNode(text.substring(fromIndex, toIndex));
+  let result = document.createDocumentFragment();
+  let insideMatch = false;
+  let currentIndex = fromIndex;
+  let matchIndex = new Set(matches);
+  for (let i = fromIndex; i < toIndex; ++i) {
+    if (insideMatch !== matchIndex.has(i)) {
+      add(currentIndex, i, insideMatch);
+      insideMatch = matchIndex.has(i);
+      currentIndex = i;
+    }
+  }
+  add(currentIndex, toIndex, insideMatch);
+  return result;
+
+  /**
+   * @param {number} from
+   * @param {number} to
+   * @param {boolean} isHighlight
+   */
+  function add(from, to, isHighlight) {
+    if (to === from)
+      return;
+    let node = null;
+    if (isHighlight) {
+      node = document.createElement('search-highlight');
+      node.textContent = text.substring(from, to);
+    } else {
+      node = document.createTextNode(text.substring(from, to));
+    }
+    result.appendChild(node);
+  }
+}

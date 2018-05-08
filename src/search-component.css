@@ -1,0 +1,44 @@
+search-component {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: var(--search-height);
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+}
+
+search-component search-results {
+  max-width: 1000px;
+  height: 500px;
+  background: white;
+  overflow: auto;
+}
+
+search-highlight {
+  background: #ff0;
+}
+
+search-item {
+  display: grid;
+  grid-template-columns: 50px auto;
+  grid-template-rows: auto auto;
+  grid-template-areas:
+    "icon title"
+    "icon subtitle";
+}
+
+search-item-icon {
+  grid-area: icon;
+}
+
+search-item-title {
+  grid-area: title;
+}
+
+search-item-subtitle {
+  grid-area: subtitle;
+  font-size: 90%;
+}

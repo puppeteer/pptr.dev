@@ -12,10 +12,14 @@ window.addEventListener('DOMContentLoaded', async () => {
   document.body.appendChild(sidebar.element);
   document.body.appendChild(toolbar.element);
 
+  const search = new SearchComponent();
+
   const apiText = await fetch('./api.md').then(response => response.text());
 
   const api = APIDocumentation.create('tip-of-tree', apiText);
   sidebar.setAPIDocumentation(api);
+  search.setItems(api.searchItems);
+  search.setVisible(true);
 
   window.api = api;
 
