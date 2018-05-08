@@ -18,8 +18,8 @@ class APIDocumentation {
       if (href.startsWith('#')) {
         // Link referencing other part of documentation.
         const githubAnchor = href.substring(1);
-        const viewId = APIDocumentation._idFromGHAnchor(githubAnchor);
-        anchor.setAttribute('href', Router.createRoute(version, viewId));
+        const entryId = APIDocumentation._idFromGHAnchor(githubAnchor);
+        anchor.setAttribute('href', Router.createRoute(version, entryId));
       } else if (href.startsWith('/') || href.startsWith('../') || href.startsWith('./')) {
         // Link pointing somewhere to PPTR repository.
         const isRelease = /^\d+\.\d+\.\d+$/.test(version);
@@ -32,7 +32,7 @@ class APIDocumentation {
     }
 
     const classes = [];
-    const overview = [];
+    const sections = [];
 
     // All class headers are rendered as H3 tags
     const headers = doc.querySelectorAll('h3');
@@ -45,36 +45,36 @@ class APIDocumentation {
       if (title.toLowerCase().startsWith('class:'))
         classes.push(APIClass.create(title, content));
       else
-        overview.push(APISection.create(title, content));
+        sections.push(APISection.create(title, content));
     }
-    return new APIDocumentation(version, classes, overview);
+    return new APIDocumentation(version, classes, sections);
   }
 
   static _idFromGHAnchor(githubAnchor) {
     return 'api-' + githubAnchor;
   }
 
-  constructor(version, classes, overview) {
+  constructor(version, classes, sections) {
     this.version = version;
     this.classes = classes;
-    this.overview = overview;
+    this.sections = sections;
 
-    this.viewToId = new Map();
-    this.idToView = new Map();
+    this._entryToId = new Map();
+    this._idToEntry = new Map();
 
     const generateGithubAnchor = (title) => {
       const id = title.trim().toLowerCase().replace(/\s/g, '-').replace(/[^-0-9a-zа-яё]/ig, '');
       let dedupId = id;
       let counter = 0;
-      while (this.idToView.has(dedupId))
+      while (this._idToEntry.has(dedupId))
         dedupId = id + '-' + (++counter);
       return dedupId;
     }
 
-    const assignId = (view, title) => {
+    const assignId = (entry, title) => {
       const id = APIDocumentation._idFromGHAnchor(generateGithubAnchor(title));
-      this.viewToId.set(view, id);
-      this.idToView.set(id, view);
+      this._entryToId.set(entry, id);
+      this._idToEntry.set(id, entry);
     };
 
     for (const apiClass of classes) {
@@ -86,6 +86,17 @@ class APIDocumentation {
       for (const ns of apiClass.namespaces)
         assignId(ns, `${apiClass.loweredName}.${ns.name}`);
     }
+    for (const section of sections) {
+      assignId(section, section.title);
+    }
+  }
+
+  entryToId(entry) {
+    return this._entryToId.get(entry) || null;
+  }
+
+  idToEntry(id) {
+    return this._idToEntry.get(id) || null;
   }
 }
 

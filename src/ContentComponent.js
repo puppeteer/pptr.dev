@@ -44,6 +44,11 @@ class ContentComponent {
     this._scrollToAPIEntry(apiNamespace);
   }
 
+  showAPISection(section) {
+    this.showElements([section.element]);
+    this._scrollToAPIEntry(section);
+  }
+
   _scrollToAPIEntry(entry) {
     if (entry.element.previousSibling && entry.element.previousSibling.tagName === 'CONTENT-DELIMETER') {
       entry.element.previousSibling.scrollIntoView();

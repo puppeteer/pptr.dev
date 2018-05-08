@@ -39,9 +39,12 @@ class SidebarComponent {
       return;
     this._apiDivider.innerHTML = `API <span>${this._apiDoc.version}</span>`;
     this.element.appendChild(this._apiDivider);
-    this.element.appendChild(createItem('Overview', Router.createRoute(this._apiDoc.version, 'overview')));
+    for (const section of this._apiDoc.sections) {
+      const route = Router.createRoute(this._apiDoc.version, this._apiDoc.entryToId(section));
+      this.element.appendChild(createItem(section.title, route));
+    }
     for (const apiClass of this._apiDoc.classes) {
-      const route = Router.createRoute(this._apiDoc.version, this._apiDoc.viewToId.get(apiClass));
+      const route = Router.createRoute(this._apiDoc.version, this._apiDoc.entryToId(apiClass));
       const item = createItem(apiClass.name, route);
       this.element.appendChild(item);
     }

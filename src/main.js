@@ -18,23 +18,22 @@ window.addEventListener('DOMContentLoaded', async () => {
   sidebar.setAPIDocumentation(api);
 
   window.api = api;
-  content.showElements(api.overview.map(section => section.element));
+  content.showAPISection(api.sections[0]);
 
   new Router(params => {
     if (params.has('show')) {
-      const viewId = params.get('show');
-      if (api.idToView.has(viewId)) {
-        const view = api.idToView.get(viewId);
-        if (view instanceof APIClass)
-          content.showAPIClass(view);
-        else if (view instanceof APIMethod)
-          content.showAPIMethod(view);
-        else if (view instanceof APIEvent)
-          content.showAPIEvent(view);
-        else if (view instanceof APINamespace)
-          content.showAPINamespace(view);
-      } else if (viewId === 'overview') {
-        content.showElements(api.overview.map(section => section.element));
+      const entry = api.idToEntry(params.get('show'));
+      if (entry) {
+        if (entry instanceof APIClass)
+          content.showAPIClass(entry);
+        else if (entry instanceof APIMethod)
+          content.showAPIMethod(entry);
+        else if (entry instanceof APIEvent)
+          content.showAPIEvent(entry);
+        else if (entry instanceof APINamespace)
+          content.showAPINamespace(entry);
+        else if (entry instanceof APISection)
+          content.showAPISection(entry);
       }
     }
   });
