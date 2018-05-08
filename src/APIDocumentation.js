@@ -103,6 +103,7 @@ class APIDocumentation {
 class APISection {
   static create(title, fragment) {
     const element = document.createElement('api-section');
+    element.classList.add('api-entry');
     element.innerHTML = `<h1>${title}</h1>`;
     element.appendChild(fragment);
     return new APISection(title, element);
@@ -119,6 +120,7 @@ class APIClass {
     const name = title.replace(/^class:/i, '').trim();
     const headers = fragment.querySelectorAll('h4');
     const element = document.createElement('api-class');
+    element.classList.add('api-entry');
     element.innerHTML = `<h3><api-class-name>class: ${name}</api-class-name></h3>`;
     element.appendChild(extractSiblingsIntoFragment(fragment.firstChild, headers[0]));
     const apiClass = new APIClass(name, element);
@@ -152,6 +154,7 @@ class APINamespace {
   static create(apiClass, title, fragment) {
     const name = title.split('.').pop();
     const element = document.createElement('api-ns');
+    element.classList.add('api-entry');
     element.innerHTML = [
       `<h4>`,
         `<api-ns-classname>${apiClass.loweredName}</api-ns-classname>`,
@@ -173,6 +176,7 @@ class APIMethod {
     const name = title.match(/\.([^(]*)/)[1];
     const args = title.match(/\((.*)\)/)[1];
     const element = document.createElement('api-method');
+    element.classList.add('api-entry');
     element.innerHTML = [
       `<h4>
         <api-method-classname>${apiClass.loweredName}</api-method-classname>`,
@@ -196,6 +200,7 @@ class APIEvent {
   static create(apiClass, title, descFragment) {
     const name = title.match(/'(.*)'/)[1];
     const element = document.createElement('api-event');
+    element.classList.add('api-entry');
     element.innerHTML = `<h4><api-event-name>event: '${name}'</api-event-name></h4>`;
     element.appendChild(descFragment);
     return new APIEvent(apiClass, name, element);

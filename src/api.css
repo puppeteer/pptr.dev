@@ -1,5 +1,9 @@
-api-method, api-class, api-event, api-ns {
+.api-entry {
   display: block;
+}
+
+.api-entry li+li {
+  margin-top: .25em;
 }
 
 api-method-classname,
