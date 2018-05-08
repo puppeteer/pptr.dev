@@ -10,7 +10,8 @@ content-component {
 }
 
 content-component > h3 {
-  text-align: center;
+  text-align: left;
+  margin-left: 1em;
 }
 
 content-box {

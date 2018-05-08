@@ -205,7 +205,7 @@ class APIEvent {
     const name = title.match(/'(.*)'/)[1];
     const element = document.createElement('api-event');
     element.classList.add('api-entry');
-    element.innerHTML = `<h4><api-event-name>event: '${name}'</api-event-name></h4>`;
+    element.innerHTML = `<h4>event: <api-event-name>'${name}'</api-event-name></h4>`;
     element.appendChild(descFragment);
     return new APIEvent(apiClass, name, element);
   }

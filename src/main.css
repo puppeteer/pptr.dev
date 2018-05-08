@@ -3,8 +3,10 @@
   --search-height: 50px;
   --hover-color: rgba(225, 245, 254, 0.49);
   --monospace: Consolas, Menlo, monospace;
+  --black: #24292e;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   line-height: 1.5;
+  color: var(--black);
 }
 
 code:not(.language-js) {
@@ -43,9 +45,8 @@ external-link-icon {
 
 blockquote {
   background: #FFFDE7;
-  padding: 1em 1em 1em 2em;
-  margin: 2em;
-  border: solid #FFEB3B;
-  border-width: 0 0 0 7px;
+  padding: 1px 1em 1px 2em;
+  margin: 2em 0;
+  border-left: 0.25em solid #FFEB3B;
 }
 
