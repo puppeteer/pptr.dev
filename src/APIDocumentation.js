@@ -26,6 +26,9 @@ class APIDocumentation {
         const branch = isRelease ? 'v' + version : 'master';
         anchor.setAttribute('href', `https://github.com/GoogleChrome/puppeteer/blob/${branch}/docs/${href}`);
       }
+      // Mark link as external if necessary
+      if (anchor.hostname !== location.hostname && anchor.hostname.length)
+        anchor.appendChild(document.createElement('external-link-icon'));
     }
 
     const classes = [];

@@ -50,7 +50,10 @@ class SidebarComponent {
       const item = document.createElement('a');
       item.classList.add('sidebar-item');
       item.href = route;
-      item.textContent = text;
+      if (item.hostname !== location.hostname)
+        item.innerHTML = `${text}<external-link-icon></external-link-icon>`;
+      else
+        item.textContent = text;
       return item;
     }
   }

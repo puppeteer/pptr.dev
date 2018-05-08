@@ -39,4 +39,3 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
   });
 });
-
