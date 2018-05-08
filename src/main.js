@@ -18,9 +18,9 @@ window.addEventListener('DOMContentLoaded', async () => {
   sidebar.setAPIDocumentation(api);
 
   window.api = api;
-  content.showAPISection(api.sections[0]);
 
-  new Router(params => {
+  const defaultRoute = Router.createRoute(api.version, api.entryToId(api.sections[0]));
+  new Router(defaultRoute, params => {
     if (params.has('show')) {
       const entry = api.idToEntry(params.get('show'));
       if (entry) {

@@ -119,7 +119,7 @@ class APIClass {
     const name = title.replace(/^class:/i, '').trim();
     const headers = fragment.querySelectorAll('h4');
     const element = document.createElement('api-class');
-    element.innerHTML = `<h2><api-class-name>class: ${name}</api-class-name></h2>`;
+    element.innerHTML = `<h3><api-class-name>class: ${name}</api-class-name></h3>`;
     element.appendChild(extractSiblingsIntoFragment(fragment.firstChild, headers[0]));
     const apiClass = new APIClass(name, element);
 
@@ -153,10 +153,10 @@ class APINamespace {
     const name = title.split('.').pop();
     const element = document.createElement('api-ns');
     element.innerHTML = [
-      `<h3>`,
+      `<h4>`,
         `<api-ns-classname>${apiClass.loweredName}</api-ns-classname>`,
         `<api-ns-name>.${name}</api-ns-name>`,
-      `</h3>`
+      `</h4>`
     ].join('');
     return new APINamespace(apiClass, name, element);
   }
@@ -174,11 +174,11 @@ class APIMethod {
     const args = title.match(/\((.*)\)/)[1];
     const element = document.createElement('api-method');
     element.innerHTML = [
-      `<h3>
+      `<h4>
         <api-method-classname>${apiClass.loweredName}</api-method-classname>`,
         `<api-method-name>.${name}</api-method-name>`,
         `<api-method-args>(${args})</api-method-args>`,
-      `</h3>`
+      `</h4>`
     ].join('');
     element.appendChild(descFragment);
     return new APIMethod(apiClass, name, args, element);
@@ -196,7 +196,7 @@ class APIEvent {
   static create(apiClass, title, descFragment) {
     const name = title.match(/'(.*)'/)[1];
     const element = document.createElement('api-event');
-    element.innerHTML = `<h3><api-event-name>event: '${name}'</api-event-name></h3>`;
+    element.innerHTML = `<h4><api-event-name>event: '${name}'</api-event-name></h4>`;
     element.appendChild(descFragment);
     return new APIEvent(apiClass, name, element);
   }
