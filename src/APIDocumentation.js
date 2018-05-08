@@ -31,6 +31,10 @@ class APIDocumentation {
         anchor.appendChild(document.createElement('external-link-icon'));
     }
 
+    // Highlight all code blocks.
+    for (const code of doc.querySelectorAll('code.language-js'))
+      CodeMirror.runMode(code.textContent, 'text/javascript', code);
+
     const classes = [];
     const sections = [];
 

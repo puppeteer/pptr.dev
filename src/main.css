@@ -16,9 +16,14 @@ code:not(.language-js) {
 }
 
 code.language-js {
-  display: inline-block;
   font-family: var(--monospace);
-  margin-left: 2em;
+  display: block;
+  padding: 16px;
+  overflow: auto;
+  font-size: 85%;
+  line-height: 1.45;
+  background-color: #f6f8fa;
+  border-radius: 3px;
 }
 
 a {

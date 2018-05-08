@@ -22,3 +22,35 @@ api-event h3 {
 api-section img {
   max-width: 100%;
 }
+
+.cm-negative {color: #d44;}
+.cm-positive {color: #292;}
+.cm-header, .cm-strong {font-weight: bold;}
+.cm-em {font-style: italic;}
+.cm-link {text-decoration: underline;}
+.cm-strikethrough {text-decoration: line-through;}
+
+.cm-invalidchar {color: #f00;}
+
+.cm-header {color: blue;}
+.cm-quote {color: #090;}
+
+.cm-keyword {color: #708;}
+.cm-atom {color: #219;}
+.cm-number {color: #164;}
+.cm-def {color: #00f;}
+.cm-variable-2 {color: #05a;}
+.cm-variable-3, .cm-type {color: #085;}
+.cm-comment {color: #a50;}
+.cm-string {color: #a11;}
+.cm-string-2 {color: #f50;}
+.cm-meta {color: #555;}
+.cm-qualifier {color: #555;}
+.cm-builtin {color: #30a;}
+.cm-bracket {color: #997;}
+.cm-tag {color: #170;}
+.cm-attribute {color: #00c;}
+.cm-hr {color: #999;}
+.cm-link {color: #00c;}
+
+.cm-error {color: #f00;}
