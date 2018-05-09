@@ -13,32 +13,67 @@ class App {
     container.appendChild(this._sidebar.element);
     container.appendChild(this._toolbar.element);
 
-    window.addEventListener('popstate', this._navigateApp.bind(this), false);
-    if (window.location.hash.length > 1)
-      this._navigateApp();
+    this._provider = null;
+    this._providerName = null;
+    this._contentId = null;
+    this._isNavigating = false;
+    this._pendingNavigation = null;
+
+    window.addEventListener('popstate', this._requestNavigation.bind(this), false);
   }
 
-  async _navigateApp() {
+  _requestNavigation() {
     const params = new URLSearchParams(window.location.hash.substring(1));
     const providerName = params.get('p');
-    const factory = this._providerFactories.get(providerName);
-    if (!factory) {
-      //TODO: show 404
-      return;
-    }
-    if (providerName !== this._providerName) {
-      this._providerName = providerName;
-      this._provider = await factory.call(null, providerName);
-      this._sidebar.setAPIDocumentation(this._provider.api);
-      this._search.setItems(this._provider.searchItems());
-    }
     const contentId = params.get('show');
-    const {element, scrollAnchor} = this._provider.getContent(contentId);
-    this._content.show(element, scrollAnchor);
+    this._pendingNavigation = {providerName, contentId};
+    Promise.resolve().then(() => this._doNavigation());
   }
 
-  addProviderFactory(providerName, factory) {
-    this._providerFactories.set(providerName, factory);
+  async _doNavigation() {
+    if (this._isNavigating)
+      return;
+    this._isNavigating = true;
+    // Since navigation is async, more pending navigations might
+    // be scheduled.
+    while (this._pendingNavigation) {
+      const navigationRequest = this._pendingNavigation;
+      delete this._pendingNavigation;
+      if (navigationRequest.providerName !== this._providerName) {
+        const factory = this._providerFactories.get(navigationRequest.providerName);
+        if (!factory) {
+          this._provider = null;
+          this._providerName = null;
+          this._contentId = null;
+          continue;
+        }
+        this._providerName = navigationRequest.providerName;
+        this._provider = await factory.call(null, navigationRequest.providerName);
+      }
+      this._contentId = navigationRequest.contentId;
+    }
+    // All requested navigations are finished; update UI.
+    if (this._provider) {
+      this._sidebar.setAPIDocumentation(this._provider.api);
+      this._search.setItems(this._provider.searchItems());
+      const {element, scrollAnchor} = this._provider.getContent(this._contentId);
+      this._content.show(element, scrollAnchor);
+    } else {
+      this._providerName = null;
+      this._contentId = null;
+      this._sidebar.setAPIDocumentation(null);
+      this._search.setItems([]);
+      this._show404();
+      // TODO: show 404.
+    }
+    this._isNavigating = false;
+  }
+
+  initialize(factories) {
+    for (const [name, factory] of Object.entries(factories))
+      this._providerFactories.set(name, factory);
+    if (window.location.hash.length > 1)
+      this._requestNavigation();
   }
 
   providerFactories() {
@@ -53,7 +88,11 @@ class App {
     return `#?p=${providerName}&show=${contentId}`;
   }
 
-  showElement(element) {
+  _show404() {
+    const element = document.createElement('div');
+    element.innerHTML = `
+      <h1>Not Found: 404!</h1>
+    `;
     this._content.show(element);
   }
 }
