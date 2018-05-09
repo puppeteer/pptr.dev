@@ -19,7 +19,6 @@ window.addEventListener('DOMContentLoaded', async () => {
   const api = APIDocumentation.create('tip-of-tree', apiText);
   sidebar.setAPIDocumentation(api);
   search.setItems(api.searchItems);
-  search.setVisible(true);
 
   window.api = api;
 
@@ -39,6 +38,12 @@ window.addEventListener('DOMContentLoaded', async () => {
         else if (entry instanceof APISection)
           content.showAPISection(entry);
       }
+    }
+    if (params.has('q')) {
+      const query = params.get('q');
+      search.setVisible(true);
+      toolbar.setInputText(query);
+      search.search(query);
     }
   });
 });

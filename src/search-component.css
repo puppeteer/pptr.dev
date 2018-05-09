@@ -8,13 +8,16 @@ search-component {
   display: flex;
   justify-content: center;
   overflow: hidden;
+  align-items: start;
 }
 
 search-component search-results {
   max-width: 1000px;
-  height: 500px;
+  width: 70%;
+  max-height: 70%;
   background: white;
   overflow: auto;
+  flex-grow: 0;
 }
 
 search-highlight {
@@ -28,6 +31,9 @@ search-item {
   grid-template-areas:
     "icon title"
     "icon subtitle";
+  padding: 4px 10px;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(51,51,51,.12);
 }
 
 search-item-icon {
@@ -36,6 +42,7 @@ search-item-icon {
 
 search-item-title {
   grid-area: title;
+  font-family: var(--monospace);
 }
 
 search-item-subtitle {

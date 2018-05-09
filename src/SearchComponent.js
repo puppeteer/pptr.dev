@@ -64,7 +64,6 @@ class SearchComponent {
       document.body.appendChild(this.element);
     else
       this.element.remove();
-    this.search('');
   }
 }
 

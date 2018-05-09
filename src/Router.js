@@ -5,7 +5,7 @@ class Router {
     if (window.location.hash.length > 1)
       this._onPopState();
     else
-      this.setRoute(defaultRoute);
+      Router.setRoute(defaultRoute);
   }
 
   _onPopState() {
@@ -13,12 +13,12 @@ class Router {
     this._changedCallback.call(null, params);
   }
 
-  setRoute(route) {
+  static setRoute(route) {
     window.location.hash = route;
   }
 
-  static createRoute(apiVersion, viewId) {
-    return `#?v=${apiVersion}&show=${viewId}`;
+  static createRoute(apiVersion, viewId, searchQuery = null) {
+    return `#?v=${apiVersion}&show=${viewId}${searchQuery !== null ? '&q=' + searchQuery : ''}`;
   }
 }
 
