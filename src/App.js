@@ -13,13 +13,28 @@ class App {
     container.appendChild(this._sidebar.element);
     container.appendChild(this._toolbar.element);
 
-    new Router(params => {
-      if (!this._provider)
-        return;
-      if (params.has('show')) {
-        this.show(params.get('show'));
-      }
-    });
+    window.addEventListener('popstate', this._navigateApp.bind(this), false);
+    if (window.location.hash.length > 1)
+      this._navigateApp();
+  }
+
+  async _navigateApp() {
+    const params = new URLSearchParams(window.location.hash.substring(1));
+    const providerName = params.get('p');
+    const factory = this._providerFactories.get(providerName);
+    if (!factory) {
+      //TODO: show 404
+      return;
+    }
+    if (providerName !== this._providerName) {
+      this._providerName = providerName;
+      this._provider = await factory.call(null, providerName);
+      this._sidebar.setAPIDocumentation(this._provider.api);
+      this._search.setItems(this._provider.searchItems());
+    }
+    const contentId = params.get('show');
+    const {element, scrollAnchor} = this._provider.getContent(contentId);
+    this._content.show(element, scrollAnchor);
   }
 
   addProviderFactory(providerName, factory) {
@@ -30,25 +45,16 @@ class App {
     return Array.from(this._providerFactories.keys());
   }
 
-  async selectProvider(providerName) {
-    const factory = this._providerFactories.get(providerName);
-    if (!factory)
-      return false;
-    this._provider = await factory.call(null, providerName);
-    this._sidebar.setAPIDocumentation(this._provider.api);
-    this._search.setItems(this._provider.searchItems());
+  navigate(providerName, contentId) {
+    window.location.hash = this.linkURL(providerName, contentId);
   }
 
-  show(contentId) {
-    const {element, scrollAnchor} = this._provider.getContent(contentId);
-    this._content.show(element, scrollAnchor);
+  linkURL(providerName, contentId) {
+    return `#?p=${providerName}&show=${contentId}`;
   }
 
   showElement(element) {
     this._content.show(element);
-  }
-
-  createRoute({contentId, productName}) {
   }
 }
 

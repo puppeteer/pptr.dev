@@ -19,7 +19,7 @@ class APIDocumentation {
         // Link referencing other part of documentation.
         const githubAnchor = href.substring(1);
         const entryId = APIDocumentation._idFromGHAnchor(githubAnchor);
-        anchor.setAttribute('href', Router.createRoute(version, entryId));
+        anchor.setAttribute('href', app.linkURL(version, entryId));
       } else if (href.startsWith('/') || href.startsWith('../') || href.startsWith('./')) {
         // Link pointing somewhere to PPTR repository.
         const isRelease = /^\d+\.\d+\.\d+$/.test(version);
@@ -269,13 +269,13 @@ class APIMethodSearchItem {
 }
 
 class PPTRProvider {
-  static async create() {
+  static async create(name) {
     const apiText = await fetch('./api.md').then(response => response.text());
-    return new PPTRProvider(apiText);
+    return new PPTRProvider(name, apiText);
   }
 
-  constructor(apiText) {
-    this.api = APIDocumentation.create('tip-of-tree', apiText);
+  constructor(name, apiText) {
+    this.api = APIDocumentation.create(name, apiText);
   }
 
   searchItems() {
