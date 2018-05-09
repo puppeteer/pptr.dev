@@ -1,11 +1,9 @@
 class Router {
-  constructor(defaultRoute, changedCallback) {
+  constructor(changedCallback) {
     this._changedCallback = changedCallback;
     window.addEventListener('popstate', this._onPopState.bind(this), false);
     if (window.location.hash.length > 1)
       this._onPopState();
-    else
-      Router.setRoute(defaultRoute);
   }
 
   _onPopState() {

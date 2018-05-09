@@ -62,12 +62,6 @@ class APIDocumentation {
     this.version = version;
     this.classes = classes;
     this.sections = sections;
-    this.searchItems = [];
-
-    for (const apiClass of classes) {
-      for (const apiMethod of apiClass.methods)
-        this.searchItems.push(new APIMethodSearchItem(apiMethod));
-    }
 
     this._entryToId = new Map();
     this._idToEntry = new Map();
@@ -271,6 +265,87 @@ class APIMethodSearchItem {
       this._subtitleElement.textContent = this._description;
     }
     return this._subtitleElement;
+  }
+}
+
+class PPTRProvider {
+  static async create() {
+    const apiText = await fetch('./api.md').then(response => response.text());
+    return new PPTRProvider(apiText);
+  }
+
+  constructor(apiText) {
+    this.api = APIDocumentation.create('tip-of-tree', apiText);
+  }
+
+  searchItems() {
+    const searchItems = [];
+    for (const apiClass of this.api.classes) {
+      for (const apiMethod of apiClass.methods)
+        searchItems.push(new APIMethodSearchItem(apiMethod));
+    }
+    return searchItems;
+  }
+
+  getContent(contentId) {
+    const entry = this.api.idToEntry(contentId);
+    if (!entry)
+      return null;
+
+    if (entry instanceof APIClass)
+      return {element: this._showAPIClass(entry)};
+    if (entry instanceof APISection) {
+      const fragment = document.createDocumentFragment();
+      this._renderElements(fragment, null, [entry.element]);
+      return {element: fragment};
+    }
+    const element = this._showAPIClass(entry.apiClass);
+    const scrollAnchor = this._scrollAnchor(entry.element);
+    return {element, scrollAnchor};
+  }
+
+  _showAPIClass(apiClass) {
+    const fragment = document.createDocumentFragment();
+
+    this._insertBox(fragment).appendChild(apiClass.element);
+
+    this._renderElements(fragment, 'Events', apiClass.events.map(e => e.element));
+    this._renderElements(fragment, 'NameSpaces', apiClass.namespaces.map(ns => ns.element));
+    this._renderElements(fragment, 'Methods', apiClass.methods.map(method => method.element));
+    return fragment;
+  }
+
+  _scrollAnchor(entryElement) {
+    if (entryElement.previousSibling && entryElement.previousSibling.tagName === 'CONTENT-DELIMETER')
+      return entryElement.previousSibling;
+    let parentBox = entryElement;
+    while (parentBox && parentBox.tagName !== 'CONTENT-BOX')
+      parentBox = parentBox.parentElement;
+    return parentBox;
+  }
+
+  _insertBox(container) {
+    const box = document.createElement('content-box');
+    container.appendChild(box);
+    return box;
+  }
+
+  _renderElements(container, title, elements) {
+    if (!elements.length)
+      return;
+    if (title) {
+      const header = document.createElement('h3');
+      header.textContent = title;
+      container.appendChild(header);
+    }
+    const box = this._insertBox(container);
+    let lastDelimeter = null;
+    for (const element of elements) {
+      box.appendChild(element);
+      lastDelimeter = document.createElement('content-delimeter');
+      box.appendChild(lastDelimeter);
+    }
+    lastDelimeter.remove();
   }
 }
 

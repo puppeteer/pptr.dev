@@ -1,6 +1,15 @@
 class SearchComponent {
   constructor() {
     this.element = document.createElement('search-component');
+    this.input = document.createElement('input');
+    this.input.setAttribute('type', 'search');
+    this.input.setAttribute('autocomplete', 'off');
+    this.input.setAttribute('autocapitalize', 'off');
+    this.input.setAttribute('spellcheck', 'false');
+    this.input.setAttribute('placeholder', 'Start typing to search...');
+    this.input.addEventListener('input', () => {
+      Router.setRoute(Router.createRoute('', '', this.input.value));
+    }, false);
     this._contentElement = document.createElement('search-results');
     this.element.appendChild(this._contentElement);
     this._items = [];
