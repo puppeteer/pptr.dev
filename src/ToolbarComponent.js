@@ -2,17 +2,24 @@ class ToolbarComponent extends EventEmitter {
   constructor() {
     super();
     this.element = document.createElement('toolbar-component');
-    this.element.innerHTML = `<input type='search' autocomplete='off' autocorrect='off' autocapitalize='off' spellcheck='false' placeholder='Start typing to search...'>`;
-    this._input = this.element.querySelector('input');
-    this._input.addEventListener('input', () => {
-      Router.setRoute(Router.createRoute('', '', this._input.value));
-    }, false);
+    this._left = document.createElement('toolbar-section');
+    this._middle = document.createElement('toolbar-section');
+    this._right = document.createElement('toolbar-section');
+    this.element.appendChild(this._left);
+    this.element.appendChild(this._middle);
+    this.element.appendChild(this._right);
   }
 
-  setInputText(text) {
-    if (this._input.value !== text) {
-      this._input.value = text;
-      this._input.focus();
-    }
+  left() {
+    return this._left;
+  }
+
+  middle() {
+    return this._middle;
+  }
+
+  right() {
+    return this._right;
   }
 }
+
