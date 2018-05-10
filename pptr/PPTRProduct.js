@@ -52,8 +52,10 @@ class PPTRVersion extends ProductVersion {
 
     this._searchItems = [];
     for (const apiClass of this.api.classes) {
-      for (const apiMethod of apiClass.methods)
-        this._searchItems.push(new APIMethodSearchItem(apiMethod));
+      for (const apiMethod of apiClass.methods) {
+        const url = app.linkURL(this.api.version, this.api.entryToId(apiMethod));
+        this._searchItems.push(new APIMethodSearchItem(url, apiMethod));
+      }
     }
   }
 
@@ -128,6 +130,15 @@ class PPTRVersion extends ProductVersion {
     return {element, scrollAnchor};
   }
 
+  getTitle(contentId) {
+    const entry = this.api.idToEntry(contentId);
+    if (!entry)
+      return '';
+    if ((entry instanceof APISection) || (entry instanceof APIClass))
+      return entry.name;
+    return entry.apiClass.loweredName + '.' + entry.name;
+  }
+
   getSelectedSidebarElement(contentId) {
     const entry = this.api.idToEntry(contentId);
     if ((entry instanceof APISection) || (entry instanceof APIClass))
@@ -181,7 +192,7 @@ class PPTRVersion extends ProductVersion {
 }
 
 class APIMethodSearchItem {
-  constructor(apiMethod) {
+  constructor(url, apiMethod) {
     this._className = apiMethod.apiClass.loweredName;
     this._name = apiMethod.name;
     this._args = apiMethod.args;
@@ -192,7 +203,12 @@ class APIMethodSearchItem {
     this._subtitleElement = null;
     this._iconElement = null;
 
+    this._url = url;
     this._text = `${this._className}.${this._name}(${this._args})`;
+  }
+
+  url() {
+    return this._url;
   }
 
   text() {

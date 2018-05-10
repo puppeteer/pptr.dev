@@ -38,6 +38,7 @@ class App {
     const {element, scrollAnchor} = this._version.getContent(contentId);
     this._content.show(element, scrollAnchor);
     this._sidebar.setSelected(this._version.getSelectedSidebarElement(contentId));
+    this._search.input.value = this._version.getTitle(contentId);
   }
 
   setProduct(product) {
@@ -47,6 +48,10 @@ class App {
 
   navigate(versionName, contentId) {
     window.location.hash = this.linkURL(versionName, contentId);
+  }
+
+  navigateURL(url) {
+    window.location = url;
   }
 
   linkURL(versionName, contentId) {
@@ -94,6 +99,10 @@ class ProductVersion {
 
   getContent(contentId) {
     return null;
+  }
+
+  getTitle(contentId) {
+    return '';
   }
 
   getSelectedSidebarElement(contentId) {

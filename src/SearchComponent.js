@@ -17,6 +17,43 @@ class SearchComponent {
     this.element.appendChild(this._contentElement);
     this._items = [];
     this._visible = false;
+
+    // Activate search on any keypress
+    document.addEventListener('keypress', event => {
+      if (this.input === document.activeElement)
+        return;
+      if (/\S/.test(event.key)) {
+        if (event.key !== '.')
+          this.input.value = '';
+        this.input.focus();
+      }
+    }, false);
+    // Activate search on backspace
+    document.addEventListener('keydown', event => {
+      if (this.input === document.activeElement)
+        return;
+      if (event.keyCode === 8 || event.keyCode === 46)
+        this.input.focus();
+    }, false);
+    // Activate on paste
+    document.addEventListener('paste', event => {
+      if (this.input === document.activeElement)
+        return;
+      this.input.focus();
+    }, false);
+
+    document.addEventListener('click', event => {
+      if (this.input.contains(event.target))
+        return;
+      let item = event.target;
+      while (item && item.tagName !== 'SEARCH-ITEM')
+        item = item.parentElement;
+      if (!item)
+        return;
+      event.preventDefault();
+      this.setVisible(false);
+      app.navigateURL(item[SearchComponent._symbol].url());
+    }, false);
   }
 
   setItems(items) {
@@ -61,6 +98,7 @@ class SearchComponent {
       itemTitle.appendChild(result.item.titleElement(result.matches));
       const itemSubtitle = document.createElement('search-item-subtitle');
       itemSubtitle.appendChild(result.item.subtitleElement());
+      item[SearchComponent._symbol] = result.item;
       item.appendChild(itemIcon);
       item.appendChild(itemTitle);
       item.appendChild(itemSubtitle);
@@ -79,8 +117,12 @@ class SearchComponent {
   }
 }
 
+SearchComponent._symbol = Symbol('SearchComponent._symbol');
+
 class SearchItem {
   text() {}
+
+  url() {}
 
   iconElement() { }
 

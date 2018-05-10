@@ -91,7 +91,7 @@ class APIDocumentation {
         assignId(ns, `${apiClass.loweredName}.${ns.name}`);
     }
     for (const section of sections) {
-      assignId(section, section.title);
+      assignId(section, section.name);
     }
   }
 
@@ -114,7 +114,7 @@ class APISection {
   }
 
   constructor(title, element) {
-    this.title = title;
+    this.name = title;
     this.element = element;
   }
 }
