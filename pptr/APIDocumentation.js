@@ -276,15 +276,66 @@ class PPTRProvider {
 
   constructor(name, apiText) {
     this.api = APIDocumentation.create(name, apiText);
+
+    this._sidebarElements = [];
+    this._entryToSidebarElement = new Map();
+    this._initializeSidebarElements();
+
+    this._searchItems = [];
+    for (const apiClass of this.api.classes) {
+      for (const apiMethod of apiClass.methods)
+        this._searchItems.push(new APIMethodSearchItem(apiMethod));
+    }
   }
 
   searchItems() {
-    const searchItems = [];
-    for (const apiClass of this.api.classes) {
-      for (const apiMethod of apiClass.methods)
-        searchItems.push(new APIMethodSearchItem(apiMethod));
+    return this._searchItems;
+  }
+
+  sidebarElements() {
+    return this._sidebarElements;
+  }
+
+  _initializeSidebarElements() {
+    this._sidebarElements = [];
+    const resourcesDivider = document.createElement('sidebar-divider');
+    resourcesDivider.textContent = 'Resources';
+    this._sidebarElements.push(resourcesDivider);
+    this._sidebarElements.push(createItem('Slack', 'https://join.slack.com/t/puppeteer/shared_invite/enQtMzU4MjIyMDA5NTM4LTM1OTdkNDhlM2Y4ZGUzZDdjYjM5ZWZlZGFiZjc4MTkyYTVlYzIzYjU5NDIyNzgyMmFiNDFjN2UzNWU0N2ZhZDc'));
+    this._sidebarElements.push(createItem('StackOverflow', 'https://stackoverflow.com/questions/tagged/puppeteer'));
+    this._sidebarElements.push(createItem('Github', 'https://github.com/GoogleChrome/puppeteer/issues'));
+    this._sidebarElements.push(createItem('ToubleShooting', 'https://github.com/GoogleChrome/puppeteer/blob/master/docs/troubleshooting.md'));
+
+    const apiDivider = document.createElement('sidebar-divider');
+    apiDivider.innerHTML = `API <span>${this.api.version}</span>`;
+    this._sidebarElements.push(apiDivider);
+    for (const section of this.api.sections) {
+      const route = app.linkURL(this.api.version, this.api.entryToId(section));
+      const item = createItem(section.title, route);
+      this._sidebarElements.push(item);
+      this._entryToSidebarElement.set(section, item);
     }
-    return searchItems;
+    for (const apiClass of this.api.classes) {
+      const route = app.linkURL(this.api.version, this.api.entryToId(apiClass));
+      const item = createItem(apiClass.name, route);
+      this._sidebarElements.push(item);
+      this._entryToSidebarElement.set(apiClass, item);
+    }
+
+    function createItem(text, route) {
+      const item = document.createElement('a');
+      item.classList.add('sidebar-item');
+      item.href = route;
+      if (item.hostname !== location.hostname)
+        item.innerHTML = `${text}<external-link-icon></external-link-icon>`;
+      else
+        item.textContent = text;
+      return item;
+    }
+  }
+
+  defaultContentId() {
+    return 'api-overview';
   }
 
   getContent(contentId) {
@@ -302,6 +353,13 @@ class PPTRProvider {
     const element = this._showAPIClass(entry.apiClass);
     const scrollAnchor = this._scrollAnchor(entry.element);
     return {element, scrollAnchor};
+  }
+
+  getSelectedSidebarElement(contentId) {
+    const entry = this.api.idToEntry(contentId);
+    if ((entry instanceof APISection) || (entry instanceof APIClass))
+      return this._entryToSidebarElement.get(entry);
+    return this._entryToSidebarElement.get(entry.apiClass);
   }
 
   _showAPIClass(apiClass) {

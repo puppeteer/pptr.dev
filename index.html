@@ -22,11 +22,11 @@ window.addEventListener('DOMContentLoaded', () => {
   window.app = new App(document.body);
   app.initialize({
     'pptr-dev': name => PPTRProvider.create(name)
-  });
+  }, 'pptr-dev');
 
   //const releases = JSON.parse(await fetch('https://api.github.com/repos/GoogleChrome/puppeteer/tags').then(r => r.text()))
 
-  app.navigate('pptr-dev', 'api-overview');
+  //app.navigate('pptr-dev', 'api-overview');
 });
 
 </script>

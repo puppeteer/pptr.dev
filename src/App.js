@@ -13,6 +13,7 @@ class App {
     container.appendChild(this._sidebar.element);
     container.appendChild(this._toolbar.element);
 
+    this._defaultProviderName = null;
     this._provider = null;
     this._providerName = null;
     this._contentId = null;
@@ -26,6 +27,10 @@ class App {
     const params = new URLSearchParams(window.location.hash.substring(1));
     const providerName = params.get('p');
     const contentId = params.get('show');
+    if (!this._providerFactories.has(providerName)) {
+      this.navigate(this._defaultProviderName, contentId);
+      return;
+    }
     this._pendingNavigation = {providerName, contentId};
     Promise.resolve().then(() => this._doNavigation());
   }
@@ -34,6 +39,7 @@ class App {
     if (this._isNavigating)
       return;
     this._isNavigating = true;
+    const originalProviderName = this._providerName;
     // Since navigation is async, more pending navigations might
     // be scheduled.
     while (this._pendingNavigation) {
@@ -50,18 +56,21 @@ class App {
         this._providerName = navigationRequest.providerName;
         this._provider = await factory.call(null, navigationRequest.providerName);
       }
-      this._contentId = navigationRequest.contentId;
+      this._contentId = navigationRequest.contentId || this._provider.defaultContentId();
     }
     // All requested navigations are finished; update UI.
     if (this._provider) {
-      this._sidebar.setAPIDocumentation(this._provider.api);
-      this._search.setItems(this._provider.searchItems());
+      if (originalProviderName !== this._providerName) {
+        this._sidebar.setElements(this._provider.sidebarElements());
+        this._search.setItems(this._provider.searchItems());
+      }
       const {element, scrollAnchor} = this._provider.getContent(this._contentId);
       this._content.show(element, scrollAnchor);
+      this._sidebar.setSelected(this._provider.getSelectedSidebarElement(this._contentId));
     } else {
       this._providerName = null;
       this._contentId = null;
-      this._sidebar.setAPIDocumentation(null);
+      this._sidebar.setElements([]);
       this._search.setItems([]);
       this._show404();
       // TODO: show 404.
@@ -69,11 +78,11 @@ class App {
     this._isNavigating = false;
   }
 
-  initialize(factories) {
+  initialize(factories, defaultProviderName) {
+    this._defaultProviderName = defaultProviderName;
     for (const [name, factory] of Object.entries(factories))
       this._providerFactories.set(name, factory);
-    if (window.location.hash.length > 1)
-      this._requestNavigation();
+    this._requestNavigation();
   }
 
   providerFactories() {
@@ -85,7 +94,10 @@ class App {
   }
 
   linkURL(providerName, contentId) {
-    return `#?p=${providerName}&show=${contentId}`;
+    let result = `#?p=${providerName}`;
+    if (contentId)
+      result += `&show=${contentId}`;
+    return result;
   }
 
   _show404() {
@@ -99,8 +111,6 @@ class App {
 
 class AppProvider {
   constructor() {
-    this.searchItems;
-    this.getContent = (contentId) => {};
   }
 
   searchItems() {
