@@ -1,3 +1,6 @@
+// Number of search results to render immediately.
+const SEARCH_RENDER_COUNT = 50;
+
 class SearchComponent {
   constructor() {
     this.element = document.createElement('search-component');
@@ -17,6 +20,13 @@ class SearchComponent {
     this.element.appendChild(this._contentElement);
     this._items = [];
     this._visible = false;
+
+    this._cancelSearchItem = document.createElement('search-item-custom');
+    this._cancelSearchItem.textContent = 'Cancel Search';
+
+    this._showOtherItem = document.createElement('search-item-custom');
+
+    this._selectedElement = null;
 
     // Activate search on any keypress
     document.addEventListener('keypress', event => {
@@ -46,13 +56,25 @@ class SearchComponent {
       if (this.input.contains(event.target))
         return;
       let item = event.target;
-      while (item && item.tagName !== 'SEARCH-ITEM')
+      while (item && item.parentElement !== this._contentElement)
         item = item.parentElement;
       if (!item)
         return;
-      event.preventDefault();
-      this.setVisible(false);
-      app.navigateURL(item[SearchComponent._symbol].url());
+      if (item === this._cancelSearchItem) {
+        event.preventDefault();
+        this.setVisible(false);
+      } else if (item === this._showOtherItem) {
+        for (const result of this._remainingResults) {
+          const element = this._renderResult(result);
+          this._contentElement.appendChild(element);
+        }
+        this._showOtherItem.remove();
+        event.preventDefault();
+      } else {
+        event.preventDefault();
+        this.setVisible(false);
+        app.navigateURL(item[SearchComponent._symbol].url());
+      }
     }, false);
   }
 
@@ -62,6 +84,8 @@ class SearchComponent {
 
   search(query) {
     const results = []
+    this._remainingResults = [];
+
     if (query) {
       const fuzzySearch = new FuzzySearch(query);
       for (const item of this._items) {
@@ -90,20 +114,34 @@ class SearchComponent {
         results.push({item, score: 0, matches: []});
     }
     this._contentElement.innerHTML = '';
-    for (const result of results) {
-      const item = document.createElement('search-item');
-      const itemIcon = document.createElement('search-item-icon');
-      itemIcon.appendChild(result.item.iconElement());
-      const itemTitle = document.createElement('search-item-title');
-      itemTitle.appendChild(result.item.titleElement(result.matches));
-      const itemSubtitle = document.createElement('search-item-subtitle');
-      itemSubtitle.appendChild(result.item.subtitleElement());
-      item[SearchComponent._symbol] = result.item;
-      item.appendChild(itemIcon);
-      item.appendChild(itemTitle);
-      item.appendChild(itemSubtitle);
+    if (!query)
+      this._contentElement.appendChild(this._cancelSearchItem);
+
+    for (let i = 0; i < Math.min(results.length, SEARCH_RENDER_COUNT); ++i) {
+      const item = this._renderResult(results[i]);
       this._contentElement.appendChild(item);
     }
+
+    this._remainingResults = results.slice(SEARCH_RENDER_COUNT);
+    if (this._remainingResults.length > 0) {
+      this._showOtherItem.textContent = `Show Remaining ${this._remainingResults.length} Results.`;
+      this._contentElement.appendChild(this._showOtherItem);
+    }
+  }
+
+  _renderResult(result) {
+    const item = document.createElement('search-item');
+    const itemIcon = document.createElement('search-item-icon');
+    itemIcon.appendChild(result.item.iconElement());
+    const itemTitle = document.createElement('search-item-title');
+    itemTitle.appendChild(result.item.titleElement(result.matches));
+    const itemSubtitle = document.createElement('search-item-subtitle');
+    itemSubtitle.appendChild(result.item.subtitleElement());
+    item[SearchComponent._symbol] = result.item;
+    item.appendChild(itemIcon);
+    item.appendChild(itemTitle);
+    item.appendChild(itemSubtitle);
+    return item;
   }
 
   setVisible(visible) {

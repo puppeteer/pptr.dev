@@ -86,7 +86,7 @@ class PPTRVersion extends ProductVersion {
     this._sidebarElements.push(apiDivider);
     for (const section of this.api.sections) {
       const route = app.linkURL(this.api.version, this.api.entryToId(section));
-      const item = createItem(section.title, route);
+      const item = createItem(section.name, route);
       this._sidebarElements.push(item);
       this._entryToSidebarElement.set(section, item);
     }
