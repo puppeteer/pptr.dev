@@ -54,7 +54,7 @@ class PPTRVersion extends App.ProductVersion {
     for (const apiClass of this.api.classes) {
       for (const apiMethod of apiClass.methods) {
         const url = app.linkURL(this.api.version, this.api.entryToId(apiMethod));
-        this._searchItems.push(new APIMethodSearchItem(url, apiMethod));
+        this._searchItems.push(PPTRSearchItem.createForMethod(url, apiMethod));
       }
     }
   }
@@ -179,21 +179,43 @@ class PPTRVersion extends App.ProductVersion {
   }
 }
 
-class APIMethodSearchItem extends SearchComponent.Item {
-  constructor(url, apiMethod) {
-    super();
-    this._className = apiMethod.apiClass.loweredName;
-    this._name = apiMethod.name;
-    this._args = apiMethod.args;
+class PPTRSearchItem extends SearchComponent.Item {
+  static createForMethod(url, apiMethod) {
+    const className = apiMethod.apiClass.loweredName;
+    const name = apiMethod.name;
+    const args = apiMethod.args;
 
     const desc = apiMethod.element.querySelector('p');
-    this._description = desc ? desc.textContent : '';
+    const text = `${className}.${name}(${args})`;
+
+    const render = (container, matches, fromIndex, token, tagName) => {
+      const tag = tagName ? document.createElement(tagName) : document.createDocumentFragment();
+      tag.appendChild(renderTextWithMatches(text, matches, fromIndex, fromIndex + token.length));
+      fromIndex += token.length;
+      container.appendChild(tag);
+      return fromIndex;
+    };
+
+    const titleRenderer = matches => {
+      const result = document.createDocumentFragment();
+      let fromIndex = 0;
+      fromIndex = render(result, matches, fromIndex, className + '.', 'search-item-api-method-class');
+      fromIndex = render(result, matches, fromIndex, `${name}(${args})`, 'search-item-api-method-name');
+      return result;
+    };
+    return new PPTRSearchItem(url, text, 'pptr-method-icon', titleRenderer, desc ? desc.textContent : '');
+  }
+
+  constructor(url, text, iconTagName, titleRenderer, description) {
+    super();
+    this._url = url;
+    this._text = text;
+    this._iconTagName = iconTagName;
+    this._titleRenderer = titleRenderer;
+    this._description = description;
 
     this._subtitleElement = null;
     this._iconElement = null;
-
-    this._url = url;
-    this._text = `${this._className}.${this._name}(${this._args})`;
   }
 
   url() {
@@ -205,25 +227,12 @@ class APIMethodSearchItem extends SearchComponent.Item {
   }
 
   titleElement(matches) {
-    const result = document.createDocumentFragment();
-
-    let index = 0;
-    const render = (token, tagName) => {
-      const tag = tagName ? document.createElement(tagName) : document.createDocumentFragment();
-      tag.appendChild(renderTextWithMatches(this._text, matches, index, index + token.length));
-      index += token.length;
-      result.appendChild(tag);
-    };
-
-    render(this._className + '.', 'search-item-api-method-class');
-    render(`${this._name}(${this._args})`, 'search-item-api-method-name');
-    return result;
+    return this._titleRenderer.call(null, matches);
   }
 
   iconElement() {
-    if (!this._iconElement) {
-      this._iconElement = document.createElement('method-icon');
-    }
+    if (!this._iconElement)
+      this._iconElement = document.createElement(this._iconTagName);
     return this._iconElement;
   }
 
