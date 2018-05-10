@@ -1,6 +1,7 @@
 class ContentComponent {
   constructor() {
     this.element = document.createElement('content-component');
+    this.element.tabIndex = 0;
   }
 
   show(contentElement, scrollAnchor) {

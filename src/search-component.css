@@ -33,7 +33,27 @@ search-item {
     "icon subtitle";
   padding: 4px 10px;
   cursor: pointer;
+  min-height: 50px;
   border-bottom: 1px solid rgba(51,51,51,.12);
+}
+
+search-item-custom {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--monospace);
+  height: 50px;
+  border-bottom: 1px solid rgba(51,51,51,.12);
+}
+
+search-item-custom.selected,
+search-item.selected {
+  background-color: #e3f2fd;
+}
+
+search-item-custom:hover,
+search-item:hover {
+  background-color: var(--hover-color);
 }
 
 search-item-icon {

@@ -39,6 +39,7 @@ class App {
     this._content.show(element, scrollAnchor);
     this._sidebar.setSelected(this._version.getSelectedSidebarElement(contentId));
     this._search.input.value = this._version.getTitle(contentId);
+    this._content.element.focus();
   }
 
   setProduct(product) {
@@ -59,6 +60,10 @@ class App {
     if (contentId)
       result += `&show=${contentId}`;
     return result;
+  }
+
+  focusContent() {
+    this._content.element.focus();
   }
 
   _show404() {

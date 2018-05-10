@@ -12,7 +12,6 @@ class SearchComponent {
     this.input.setAttribute('spellcheck', 'false');
     this.input.setAttribute('placeholder', 'Start typing to search...');
     this.input.addEventListener('input', () => {
-      this.setVisible(true);
       this.search(this.input.value);
     }, false);
 
@@ -21,6 +20,8 @@ class SearchComponent {
     this._items = [];
     this._visible = false;
 
+    this._defaultValue = '';
+
     this._cancelSearchItem = document.createElement('search-item-custom');
     this._cancelSearchItem.textContent = 'Cancel Search';
 
@@ -28,6 +29,20 @@ class SearchComponent {
 
     this._selectedElement = null;
 
+    this.input.addEventListener('keydown', event => {
+      if (event.key === 'Escape' || event.keyCode === 27) {
+        event.preventDefault();
+        this.cancelSearch();
+      } else if (event.key === 'ArrowDown') {
+        this._selectNext(event);
+      } else if (event.key === 'ArrowUp') {
+        this._selectPrevious(event);
+      } else if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        if (this._selectedElement);
+          this._selectedElement.click();
+      }
+    }, false);
     // Activate search on any keypress
     document.addEventListener('keypress', event => {
       if (this.input === document.activeElement)
@@ -53,6 +68,8 @@ class SearchComponent {
     }, false);
 
     document.addEventListener('click', event => {
+      if (!this._visible)
+        return;
       if (this.input.contains(event.target))
         return;
       let item = event.target;
@@ -62,17 +79,20 @@ class SearchComponent {
         return;
       if (item === this._cancelSearchItem) {
         event.preventDefault();
-        this.setVisible(false);
+        this.cancelSearch();
       } else if (item === this._showOtherItem) {
+        // Render the rest.
         for (const result of this._remainingResults) {
           const element = this._renderResult(result);
           this._contentElement.appendChild(element);
         }
+        this._selectElement(this._showOtherItem.nextSibling);
         this._showOtherItem.remove();
+        this.input.focus();
         event.preventDefault();
       } else {
         event.preventDefault();
-        this.setVisible(false);
+        this.cancelSearch();
         app.navigateURL(item[SearchComponent._symbol].url());
       }
     }, false);
@@ -83,6 +103,7 @@ class SearchComponent {
   }
 
   search(query) {
+    this.setVisible(true);
     const results = []
     this._remainingResults = [];
 
@@ -96,7 +117,7 @@ class SearchComponent {
         }
       }
       if (results.length === 0) {
-        this._contentElement.innerHTML = 'No results!';
+        this._contentElement.innerHTML = `<search-item-custom>No Results</search-item-custom>`;
         return;
       }
       results.sort((a, b) => {
@@ -127,6 +148,44 @@ class SearchComponent {
       this._showOtherItem.textContent = `Show Remaining ${this._remainingResults.length} Results.`;
       this._contentElement.appendChild(this._showOtherItem);
     }
+    this._selectElement(this._contentElement.firstChild);
+  }
+
+  cancelSearch() {
+    this.input.blur();
+    this.setVisible(false);
+    this.input.value = this._defaultValue;
+    app.focusContent();
+  }
+
+  _selectNext(event) {
+    if (!this._selectedElement)
+      return;
+    event.preventDefault();
+    let next = this._selectedElement.nextSibling;
+    if (!next)
+      next = this._contentElement.firstChild;
+    this._selectElement(next);
+  }
+
+  _selectPrevious(event) {
+    if (!this._selectedElement)
+      return;
+    event.preventDefault();
+    let previous = this._selectedElement.previousSibling;
+    if (!previous)
+      previous = this._contentElement.lastChild;
+    this._selectElement(previous);
+  }
+
+  _selectElement(item) {
+    if (this._selectedElement)
+      this._selectedElement.classList.remove('selected');
+    this._selectedElement = item;
+    if (this._selectedElement) {
+      this._selectedElement.scrollIntoViewIfNeeded(false);
+      this._selectedElement.classList.add('selected');
+    }
   }
 
   _renderResult(result) {
@@ -148,10 +207,12 @@ class SearchComponent {
     if (visible === this._visible)
       return;
     this._visible = visible;
-    if (visible)
+    if (visible) {
+      this._defaultValue = this.input.value;
       document.body.appendChild(this.element);
-    else
+    } else {
       this.element.remove();
+    }
   }
 }
 
