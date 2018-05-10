@@ -123,6 +123,7 @@ class APIClass {
   static create(title, fragment) {
     const name = title.replace(/^class:/i, '').trim();
     const headers = fragment.querySelectorAll('h4');
+
     const element = document.createElement('api-class');
     element.classList.add('api-entry');
     element.innerHTML = `<h3><api-class-name>class: ${name}</api-class-name></h3>`;

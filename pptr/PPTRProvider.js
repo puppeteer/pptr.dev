@@ -1,42 +1,49 @@
-class PPTRProvider {
-  static async factories() {
-    const releases = JSON.parse(await fetch('https://api.github.com/repos/GoogleChrome/puppeteer/tags').then(r => r.text()));
-    const result = {
-      'pptr-latest': factory.bind(null, 'tip of tree', 'master')
-    };
-    /*
-    const promises = [];
+class PPTRProduct extends Product {
+  static async create() {
+    const releases = JSON.parse(await fetch('https://api.github.com/repos/GoogleChrome/puppeteer/tags').then(r => r.text())).map(release => ({
+      name: 'pptr-' + release.name,
+      version: release.name
+    }));
+    releases[0].name = 'pptr-stable';
+    releases.unshift({name: 'latest', version: 'master'});
+
+    const textPromises = [];
     for (const release of releases) {
-      const url = `https://raw.githubusercontent.com/GoogleChrome/puppeteer/${release.name}/docs/api.md`;
-      promises.push(fetch(url).then(response => response.text()));
+      const url = `https://raw.githubusercontent.com/GoogleChrome/puppeteer/${release.version}/docs/api.md`;
+      textPromises.push(fetch(url).then(response => response.text()));
     }
-
-    console.time('fetching APIs');
-    const texts = await Promise.all(promises);
-    console.timeEnd('fetching APIs');
-
-    console.time('parsing APIs');
-    for (const text of texts)
-      new PPTRProvider('ss', text);
-    console.timeEnd('parsing APIs');
-    */
-
-
-    for (let i = 0; i < releases.length; ++i) {
-      const release = releases[i];
-      const name = i === 0 ? `pptr-stable` : 'pptr-' + release.name;
-      result[name] = factory.bind(null, release.name, release.name);
-    }
-    return result;
-
-    async function factory(name, version) {
-      const url = `https://raw.githubusercontent.com/GoogleChrome/puppeteer/${version}/docs/api.md`;
-      const apiText = await fetch(url).then(response => response.text());
-      return new PPTRProvider(name, apiText);
-    }
+    const texts = await Promise.all(textPromises);
+    for (let i = 0; i < texts.length; ++i)
+      releases[i].text = texts[i];
+    return new PPTRProduct(releases);
   }
 
+  constructor(releases) {
+    super();
+    this._releases = releases;
+  }
+
+  defaultVersionName() {
+    return 'pptr-stable';
+  }
+
+  versionNames() {
+    return this._releases.map(release => release.name);
+  }
+
+  getVersion(name) {
+    const release = this._releases.find(release => release.name === name);
+    if (!release)
+      return null;
+    return new PPTRVersion(release.name, release.text);
+  }
+}
+
+class PPTRVersion extends ProductVersion {
   constructor(name, apiText) {
+    super();
+    this._name = name;
+
     this.api = APIDocumentation.create(name, apiText);
 
     this._sidebarElements = [];
@@ -48,6 +55,10 @@ class PPTRProvider {
       for (const apiMethod of apiClass.methods)
         this._searchItems.push(new APIMethodSearchItem(apiMethod));
     }
+  }
+
+  name() {
+    return this._name;
   }
 
   searchItems() {

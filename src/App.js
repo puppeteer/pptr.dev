@@ -1,7 +1,5 @@
 class App {
   constructor(container) {
-    this._providerFactories = new Map();
-
     this._content = new ContentComponent();
     this._sidebar = new SidebarComponent();
     this._toolbar = new ToolbarComponent();
@@ -13,88 +11,46 @@ class App {
     container.appendChild(this._sidebar.element);
     container.appendChild(this._toolbar.element);
 
-    this._defaultProviderName = null;
-    this._provider = null;
-    this._providerName = null;
-    this._contentId = null;
-    this._isNavigating = false;
-    this._pendingNavigation = null;
+    this._product = null;
+    this._version = null;
 
-    window.addEventListener('popstate', this._requestNavigation.bind(this), false);
+    window.addEventListener('popstate', this._doNavigation.bind(this), false);
   }
 
-  _requestNavigation() {
+  _doNavigation() {
+    if (!this._product)
+      return;
     const params = new URLSearchParams(window.location.hash.substring(1));
-    const providerName = params.get('p');
-    const contentId = params.get('show');
-    if (!this._providerFactories.has(providerName)) {
-      this.navigate(this._defaultProviderName, contentId);
-      return;
-    }
-    this._pendingNavigation = {providerName, contentId};
-    Promise.resolve().then(() => this._doNavigation());
-  }
+    const versionName = params.get('product');
+    let contentId = params.get('show');
 
-  async _doNavigation() {
-    if (this._isNavigating)
-      return;
-    this._isNavigating = true;
-    const originalProviderName = this._providerName;
-    // Since navigation is async, more pending navigations might
-    // be scheduled.
-    while (this._pendingNavigation) {
-      const navigationRequest = this._pendingNavigation;
-      delete this._pendingNavigation;
-      if (navigationRequest.providerName !== this._providerName) {
-        const factory = this._providerFactories.get(navigationRequest.providerName);
-        if (!factory) {
-          this._provider = null;
-          this._providerName = null;
-          this._contentId = null;
-          continue;
-        }
-        this._providerName = navigationRequest.providerName;
-        this._provider = await factory.call(null);
+    if (!this._version || this._version.name() !== versionName) {
+      const version = this._product.getVersion(versionName);
+      if (!version) {
+        this.navigate(this._product.defaultVersionName(), contentId);
+        return;
       }
-      this._contentId = navigationRequest.contentId || this._provider.defaultContentId();
+      this._version = version;
+      this._sidebar.setElements(this._version.sidebarElements());
+      this._search.setItems(this._version.searchItems());
     }
-    // All requested navigations are finished; update UI.
-    if (this._provider) {
-      if (originalProviderName !== this._providerName) {
-        this._sidebar.setElements(this._provider.sidebarElements());
-        this._search.setItems(this._provider.searchItems());
-      }
-      const {element, scrollAnchor} = this._provider.getContent(this._contentId);
-      this._content.show(element, scrollAnchor);
-      this._sidebar.setSelected(this._provider.getSelectedSidebarElement(this._contentId));
-    } else {
-      this._providerName = null;
-      this._contentId = null;
-      this._sidebar.setElements([]);
-      this._search.setItems([]);
-      this._show404();
-      // TODO: show 404.
-    }
-    this._isNavigating = false;
+    contentId = contentId || this._version.defaultContentId();
+    const {element, scrollAnchor} = this._version.getContent(contentId);
+    this._content.show(element, scrollAnchor);
+    this._sidebar.setSelected(this._version.getSelectedSidebarElement(contentId));
   }
 
-  initialize(factories, defaultProviderName) {
-    this._defaultProviderName = defaultProviderName;
-    for (const [name, factory] of Object.entries(factories))
-      this._providerFactories.set(name, factory);
-    this._requestNavigation();
+  setProduct(product) {
+    this._product = product;
+    this._doNavigation();
   }
 
-  providerFactories() {
-    return Array.from(this._providerFactories.keys());
+  navigate(versionName, contentId) {
+    window.location.hash = this.linkURL(versionName, contentId);
   }
 
-  navigate(providerName, contentId) {
-    window.location.hash = this.linkURL(providerName, contentId);
-  }
-
-  linkURL(providerName, contentId) {
-    let result = `#?p=${providerName}`;
+  linkURL(versionName, contentId) {
+    let result = `#?product=${versionName}`;
     if (contentId)
       result += `&show=${contentId}`;
     return result;
@@ -109,8 +65,23 @@ class App {
   }
 }
 
-class AppProvider {
-  constructor() {
+class Product {
+  defaultVersionName() {
+  }
+
+  versionNames() {
+  }
+
+  getVersion(name) {
+  }
+}
+
+class ProductVersion {
+  name() {
+  }
+
+  defaultContentId() {
+    return '';
   }
 
   searchItems() {
@@ -121,7 +92,11 @@ class AppProvider {
     return [];
   }
 
-  getContent(id) {
+  getContent(contentId) {
+    return null;
+  }
+
+  getSelectedSidebarElement(contentId) {
     return null;
   }
 }

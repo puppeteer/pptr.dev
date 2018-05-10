@@ -2,8 +2,6 @@
 <script type='text/javascript' src='/third_party/commonmark.min.js'></script>
 <script type='text/javascript' src='/third_party/runmode-standalone.js'></script>
 <script type='text/javascript' src='/third_party/javascript.js'></script>
-<script type='text/javascript' src='/pptr/APIDocumentation.js'></script>
-<script type='text/javascript' src='/pptr/PPTRProvider.js'></script>
 <script type='text/javascript' src='/src/EventEmitter.js'></script>
 <script type='text/javascript' src='/src/SidebarComponent.js'></script>
 <script type='text/javascript' src='/src/ToolbarComponent.js'></script>
@@ -11,6 +9,8 @@
 <script type='text/javascript' src='/src/FuzzySearch.js'></script>
 <script type='text/javascript' src='/src/SearchComponent.js'></script>
 <script type='text/javascript' src='/src/App.js'></script>
+<script type='text/javascript' src='/pptr/APIDocumentation.js'></script>
+<script type='text/javascript' src='/pptr/PPTRProvider.js'></script>
 <link rel='stylesheet' href='/src/main.css'>
 <link rel='stylesheet' href='/src/api.css'>
 <link rel='stylesheet' href='/src/sidebar-component.css'>
@@ -22,8 +22,8 @@
 window.addEventListener('DOMContentLoaded', async () => {
   window.app = new App(document.body);
 
-  const pptrFactories = await PPTRProvider.factories();
-  app.initialize(pptrFactories, 'pptr-stable');
+  const product = await PPTRProduct.create();
+  app.setProduct(product);
 
   //app.navigate('pptr-dev', 'api-overview');
 });
