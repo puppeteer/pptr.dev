@@ -38,7 +38,7 @@ class App {
     const {element, scrollAnchor} = this._version.getContent(contentId);
     this._content.show(element, scrollAnchor);
     this._sidebar.setSelected(this._version.getSelectedSidebarElement(contentId));
-    this._search.input.value = this._version.getTitle(contentId);
+    this._search.setInputValue(this._version.getTitle(contentId));
     this._content.element.focus();
   }
 

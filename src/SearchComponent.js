@@ -11,9 +11,6 @@ class SearchComponent {
     this.input.setAttribute('autocapitalize', 'off');
     this.input.setAttribute('spellcheck', 'false');
     this.input.setAttribute('placeholder', 'Start typing to search...');
-    this.input.addEventListener('input', () => {
-      this.search(this.input.value);
-    }, false);
 
     this._contentElement = document.createElement('search-results');
     this.element.appendChild(this._contentElement);
@@ -43,14 +40,21 @@ class SearchComponent {
           this._selectedElement.click();
       }
     }, false);
+    this.input.addEventListener('input', () => {
+      this.search(this.input.value);
+    }, false);
+    this.input.addEventListener('focus', () => {
+      this._defaultValue = this.input.value;
+    }, false);
+
     // Activate search on any keypress
     document.addEventListener('keypress', event => {
       if (this.input === document.activeElement)
         return;
       if (/\S/.test(event.key)) {
+        this.input.focus();
         if (event.key !== '.')
           this.input.value = '';
-        this.input.focus();
       }
     }, false);
     // Activate search on backspace
@@ -75,8 +79,10 @@ class SearchComponent {
       let item = event.target;
       while (item && item.parentElement !== this._contentElement)
         item = item.parentElement;
-      if (!item)
+      if (!item) {
+        this.cancelSearch();
         return;
+      }
       if (item === this._cancelSearchItem) {
         event.preventDefault();
         this.cancelSearch();
@@ -100,6 +106,16 @@ class SearchComponent {
 
   setItems(items) {
     this._items = items;
+  }
+
+  setInputValue(value) {
+    this.input.value = value;
+
+    // Focus the input so that we can control its selection.
+    this.input.focus();
+    this.input.selectionStart = value.length;
+    this.input.selectionEnd = value.length;
+    this._defaultValue = value;
   }
 
   search(query) {
@@ -208,7 +224,6 @@ class SearchComponent {
       return;
     this._visible = visible;
     if (visible) {
-      this._defaultValue = this.input.value;
       document.body.appendChild(this.element);
     } else {
       this.element.remove();
