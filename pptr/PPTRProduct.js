@@ -83,7 +83,7 @@ class PPTRVersion extends App.ProductVersion {
       return {element, title, selectedSidebarElement};
     }
     if (entry instanceof APISection) {
-      const element = document.createDocumentFragment();
+      const element = document.createElement('pptr-api');
       this._renderElements(element, null, [entry.element]);
       const title = entry.name;
       const selectedSidebarElement = this._entryToSidebarElement.get(entry);
@@ -135,14 +135,14 @@ class PPTRVersion extends App.ProductVersion {
   }
 
   _showAPIClass(apiClass) {
-    const fragment = document.createDocumentFragment();
+    const element = document.createElement('pptr-api');
 
-    this._insertBox(fragment).appendChild(apiClass.element);
+    this._insertBox(element).appendChild(apiClass.element);
 
-    this._renderElements(fragment, 'Events', apiClass.events.map(e => e.element));
-    this._renderElements(fragment, 'NameSpaces', apiClass.namespaces.map(ns => ns.element));
-    this._renderElements(fragment, 'Methods', apiClass.methods.map(method => method.element));
-    return fragment;
+    this._renderElements(element, 'Events', apiClass.events.map(e => e.element));
+    this._renderElements(element, 'NameSpaces', apiClass.namespaces.map(ns => ns.element));
+    this._renderElements(element, 'Methods', apiClass.methods.map(method => method.element));
+    return element;
   }
 
   _scrollAnchor(entryElement) {
