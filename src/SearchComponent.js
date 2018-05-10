@@ -233,7 +233,7 @@ class SearchComponent {
 
 SearchComponent._symbol = Symbol('SearchComponent._symbol');
 
-class SearchItem {
+SearchComponent.Item = class {
   text() {}
 
   url() {}

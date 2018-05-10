@@ -34,11 +34,10 @@ class App {
       this._sidebar.setElements(this._version.sidebarElements());
       this._search.setItems(this._version.searchItems());
     }
-    contentId = contentId || this._version.defaultContentId();
-    const {element, scrollAnchor} = this._version.getContent(contentId);
-    this._content.show(element, scrollAnchor);
-    this._sidebar.setSelected(this._version.getSelectedSidebarElement(contentId));
-    this._search.setInputValue(this._version.getTitle(contentId));
+    const content = this._version.content(contentId);
+    this._content.show(content.element, content.scrollAnchor);
+    this._sidebar.setSelected(content.selectedSidebarElement);
+    this._search.setInputValue(content.title);
     this._content.element.focus();
   }
 
@@ -75,7 +74,7 @@ class App {
   }
 }
 
-class Product {
+App.Product = class {
   defaultVersionName() {
   }
 
@@ -86,12 +85,8 @@ class Product {
   }
 }
 
-class ProductVersion {
+App.ProductVersion = class {
   name() {
-  }
-
-  defaultContentId() {
-    return '';
   }
 
   searchItems() {
@@ -102,15 +97,11 @@ class ProductVersion {
     return [];
   }
 
-  getContent(contentId) {
-    return null;
-  }
-
-  getTitle(contentId) {
-    return '';
-  }
-
-  getSelectedSidebarElement(contentId) {
+  /**
+   * @param {string} contentId
+   * @return {?{title: string, element: !Node, scrollAnchor: ?Node, selectedSidebarElement: ?Element}}
+   */
+  content(contentId) {
     return null;
   }
 }

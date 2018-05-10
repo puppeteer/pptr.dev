@@ -1,4 +1,4 @@
-class PPTRProduct extends Product {
+class PPTRProduct extends App.Product {
   static async create() {
     const releases = JSON.parse(await fetch('https://api.github.com/repos/GoogleChrome/puppeteer/tags').then(r => r.text())).map(release => ({
       name: 'pptr-' + release.name,
@@ -39,7 +39,7 @@ class PPTRProduct extends Product {
   }
 }
 
-class PPTRVersion extends ProductVersion {
+class PPTRVersion extends App.ProductVersion {
   constructor(name, apiText) {
     super();
     this._name = name;
@@ -69,6 +69,31 @@ class PPTRVersion extends ProductVersion {
 
   sidebarElements() {
     return this._sidebarElements;
+  }
+
+  content(contentId) {
+    contentId = contentId || 'api-overview';
+    const entry = this.api.idToEntry(contentId);
+    if (!entry)
+      return null;
+    if (entry instanceof APIClass) {
+      const element = this._showAPIClass(entry);
+      const title = entry.name;
+      const selectedSidebarElement = this._entryToSidebarElement.get(entry);
+      return {element, title, selectedSidebarElement};
+    }
+    if (entry instanceof APISection) {
+      const element = document.createDocumentFragment();
+      this._renderElements(element, null, [entry.element]);
+      const title = entry.name;
+      const selectedSidebarElement = this._entryToSidebarElement.get(entry);
+      return {element, title, selectedSidebarElement};
+    }
+    const element = this._showAPIClass(entry.apiClass);
+    const scrollAnchor = this._scrollAnchor(entry.element);
+    const title = entry.apiClass.loweredName + '.' + entry.name;
+    const selectedSidebarElement = this._entryToSidebarElement.get(entry.apiClass);
+    return {element, title, selectedSidebarElement, scrollAnchor};
   }
 
   _initializeSidebarElements() {
@@ -107,43 +132,6 @@ class PPTRVersion extends ProductVersion {
         item.textContent = text;
       return item;
     }
-  }
-
-  defaultContentId() {
-    return 'api-overview';
-  }
-
-  getContent(contentId) {
-    const entry = this.api.idToEntry(contentId);
-    if (!entry)
-      return null;
-
-    if (entry instanceof APIClass)
-      return {element: this._showAPIClass(entry)};
-    if (entry instanceof APISection) {
-      const fragment = document.createDocumentFragment();
-      this._renderElements(fragment, null, [entry.element]);
-      return {element: fragment};
-    }
-    const element = this._showAPIClass(entry.apiClass);
-    const scrollAnchor = this._scrollAnchor(entry.element);
-    return {element, scrollAnchor};
-  }
-
-  getTitle(contentId) {
-    const entry = this.api.idToEntry(contentId);
-    if (!entry)
-      return '';
-    if ((entry instanceof APISection) || (entry instanceof APIClass))
-      return entry.name;
-    return entry.apiClass.loweredName + '.' + entry.name;
-  }
-
-  getSelectedSidebarElement(contentId) {
-    const entry = this.api.idToEntry(contentId);
-    if ((entry instanceof APISection) || (entry instanceof APIClass))
-      return this._entryToSidebarElement.get(entry);
-    return this._entryToSidebarElement.get(entry.apiClass);
   }
 
   _showAPIClass(apiClass) {
@@ -191,8 +179,9 @@ class PPTRVersion extends ProductVersion {
   }
 }
 
-class APIMethodSearchItem {
+class APIMethodSearchItem extends SearchComponent.Item {
   constructor(url, apiMethod) {
+    super();
     this._className = apiMethod.apiClass.loweredName;
     this._name = apiMethod.name;
     this._args = apiMethod.args;
