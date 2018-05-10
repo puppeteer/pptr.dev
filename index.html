@@ -3,6 +3,7 @@
 <script type='text/javascript' src='/third_party/runmode-standalone.js'></script>
 <script type='text/javascript' src='/third_party/javascript.js'></script>
 <script type='text/javascript' src='/pptr/APIDocumentation.js'></script>
+<script type='text/javascript' src='/pptr/PPTRProvider.js'></script>
 <script type='text/javascript' src='/src/EventEmitter.js'></script>
 <script type='text/javascript' src='/src/SidebarComponent.js'></script>
 <script type='text/javascript' src='/src/ToolbarComponent.js'></script>
@@ -18,13 +19,11 @@
 <link rel='stylesheet' href='/src/search-component.css'>
 
 <script type="text/javascript">
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('DOMContentLoaded', async () => {
   window.app = new App(document.body);
-  app.initialize({
-    'pptr-dev': name => PPTRProvider.create(name)
-  }, 'pptr-dev');
 
-  //const releases = JSON.parse(await fetch('https://api.github.com/repos/GoogleChrome/puppeteer/tags').then(r => r.text()))
+  const pptrFactories = await PPTRProvider.factories();
+  app.initialize(pptrFactories, 'pptr-stable');
 
   //app.navigate('pptr-dev', 'api-overview');
 });

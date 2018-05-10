@@ -54,7 +54,7 @@ class App {
           continue;
         }
         this._providerName = navigationRequest.providerName;
-        this._provider = await factory.call(null, navigationRequest.providerName);
+        this._provider = await factory.call(null);
       }
       this._contentId = navigationRequest.contentId || this._provider.defaultContentId();
     }
