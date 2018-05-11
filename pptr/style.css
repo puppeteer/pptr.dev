@@ -59,6 +59,8 @@ pptr-method-icon {
   color: #fff;
   border-radius: 3px;
   user-select: none;
+  width: 50px;
+  text-align: center;
   font-family: var(--monospace);
 }
 
@@ -91,7 +93,7 @@ pptr-ns-icon {
 }
 
 pptr-ns-icon::after {
-  content: 'namespace';
+  content: 'ns';
 }
 
 search-item-api-method-class {

@@ -52,6 +52,18 @@ class PPTRVersion extends App.ProductVersion {
 
     this._searchItems = [];
     for (const apiClass of this.api.classes) {
+      {
+        const url = app.linkURL(this.api.version, this.api.entryToId(apiClass));
+        this._searchItems.push(PPTRSearchItem.createForClass(url, apiClass));
+      }
+      for (const apiEvent of apiClass.events) {
+        const url = app.linkURL(this.api.version, this.api.entryToId(apiEvent));
+        this._searchItems.push(PPTRSearchItem.createForEvent(url, apiEvent));
+      }
+      for (const apiNamespace of apiClass.namespaces) {
+        const url = app.linkURL(this.api.version, this.api.entryToId(apiNamespace));
+        this._searchItems.push(PPTRSearchItem.createForNamespace(url, apiNamespace));
+      }
       for (const apiMethod of apiClass.methods) {
         const url = app.linkURL(this.api.version, this.api.entryToId(apiMethod));
         this._searchItems.push(PPTRSearchItem.createForMethod(url, apiMethod));
@@ -187,23 +199,49 @@ class PPTRSearchItem extends SearchComponent.Item {
 
     const desc = apiMethod.element.querySelector('p');
     const text = `${className}.${name}(${args})`;
-
-    const render = (container, matches, fromIndex, token, tagName) => {
-      const tag = tagName ? document.createElement(tagName) : document.createDocumentFragment();
-      tag.appendChild(renderTextWithMatches(text, matches, fromIndex, fromIndex + token.length));
-      fromIndex += token.length;
-      container.appendChild(tag);
-      return fromIndex;
-    };
-
-    const titleRenderer = matches => {
-      const result = document.createDocumentFragment();
-      let fromIndex = 0;
-      fromIndex = render(result, matches, fromIndex, className + '.', 'search-item-api-method-class');
-      fromIndex = render(result, matches, fromIndex, `${name}(${args})`, 'search-item-api-method-name');
-      return result;
-    };
+    const titleRenderer = matches => renderTokensWithMatches(matches, [
+      {text: className + '.', tagName: 'search-item-api-method-class'},
+      {text: `${name}(${args})`, tagName: 'search-item-api-method-name'},
+    ]);
     return new PPTRSearchItem(url, text, 'pptr-method-icon', titleRenderer, desc ? desc.textContent : '');
+  }
+
+  static createForEvent(url, apiEvent) {
+    const className = apiEvent.apiClass.loweredName;
+    const name = apiEvent.name;
+
+    const desc = apiEvent.element.querySelector('p');
+    const text = `${className}.on('${name}')`;
+    const titleRenderer = matches => renderTokensWithMatches(matches, [
+      {text: className + '.on(', tagName: 'search-item-api-method-class'},
+      {text: `'${name}'`, tagName: 'search-item-api-method-name'},
+      {text: ')', tagName: 'search-item-api-method-class'},
+    ]);
+    return new PPTRSearchItem(url, text, 'pptr-event-icon', titleRenderer, desc ? desc.textContent : '');
+  }
+
+  static createForNamespace(url, apiNamespace) {
+    const className = apiNamespace.apiClass.loweredName;
+    const name = apiNamespace.name;
+
+    const desc = apiNamespace.element.querySelector('p');
+    const text = `${className}.${name}`;
+    const titleRenderer = matches => renderTokensWithMatches(matches, [
+      {text: className + '.', tagName: 'search-item-api-method-class'},
+      {text: name, tagName: 'search-item-api-method-name'},
+    ]);
+    return new PPTRSearchItem(url, text, 'pptr-ns-icon', titleRenderer, desc ? desc.textContent : '');
+  }
+
+  static createForClass(url, apiClass) {
+    const className = apiClass.name;
+
+    const desc = apiClass.element.querySelector('p');
+    const text = className;
+    const titleRenderer = matches => renderTokensWithMatches(matches, [
+      {text: className, tagName: 'search-item-api-method-name'},
+    ]);
+    return new PPTRSearchItem(url, text, 'pptr-class-icon', titleRenderer, desc ? desc.textContent : '');
   }
 
   constructor(url, text, iconTagName, titleRenderer, description) {
@@ -252,38 +290,48 @@ class PPTRSearchItem extends SearchComponent.Item {
  * @param {number} fromIndex
  * @return {!Element}
  */
-function renderTextWithMatches(text, matches, fromIndex, toIndex) {
-  if (!matches.length)
-    return document.createTextNode(text.substring(fromIndex, toIndex));
-  let result = document.createDocumentFragment();
-  let insideMatch = false;
-  let currentIndex = fromIndex;
-  let matchIndex = new Set(matches);
-  for (let i = fromIndex; i < toIndex; ++i) {
-    if (insideMatch !== matchIndex.has(i)) {
-      add(currentIndex, i, insideMatch);
-      insideMatch = matchIndex.has(i);
-      currentIndex = i;
+function renderTokensWithMatches(matches, tokens) {
+  if (!matches.length) {
+    const fragment = document.createDocumentFragment();
+    for (let token of tokens) {
+      if (token.tagName) {
+        const node = document.createElement(token.tagName);
+        node.textContent = token.text;
+        fragment.appendChild(node);
+      } else {
+        fragment.appendChild(document.createTextNode(token.text));
+      }
     }
+    return fragment;
   }
-  add(currentIndex, toIndex, insideMatch);
-  return result;
 
-  /**
-   * @param {number} from
-   * @param {number} to
-   * @param {boolean} isHighlight
-   */
-  function add(from, to, isHighlight) {
-    if (to === from)
-      return;
-    let node = null;
-    if (isHighlight) {
-      node = document.createElement('search-highlight');
-      node.textContent = text.substring(from, to);
-    } else {
-      node = document.createTextNode(text.substring(from, to));
+  const fragment = document.createDocumentFragment();
+  let offset = 0;
+  let matchesSet = new Set(matches);
+  for (let token of tokens) {
+    const result = token.tagName ? document.createElement(token.tagName) : document.createDocumentFragment();
+    let from = 0;
+    let lastInsideHighlight = false;
+    for (let to = 0; to <= token.text.length; ++to) {
+      const insideHighlight = matchesSet.has(to + offset);
+      if (insideHighlight === lastInsideHighlight && to < token.text.length)
+        continue;
+      if (from < to) {
+        if (lastInsideHighlight) {
+          const node = document.createElement('search-highlight');
+          node.textContent = token.text.substring(from, to);
+          result.appendChild(node);
+        } else {
+          const node = document.createTextNode(token.text.substring(from, to));
+          result.appendChild(node);
+        }
+        from = to;
+      }
+      lastInsideHighlight = insideHighlight;
     }
-    result.appendChild(node);
+    offset += token.text.length;
+    fragment.appendChild(result);
   }
+  return fragment;
 }
+
