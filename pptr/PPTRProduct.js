@@ -115,6 +115,10 @@ class PPTRVersion extends App.ProductVersion {
 
     for (const apiEntry of [...this.api.sections, ...this.api.classes]) {
       const item = createItem(apiEntry.name, apiEntry.linkURL());
+      if (apiEntry instanceof APIClass) {
+        const icon = document.createElement('pptr-class-icon');
+        item.insertBefore(icon, item.firstChild);
+      }
       this._sidebarElements.push(item);
       this._entryToSidebarElement.set(apiEntry, item);
     }

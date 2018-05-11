@@ -79,6 +79,14 @@ search-item pptr-class-icon {
   width: 50px;
 }
 
+/* Icons inside sidebar items */
+.sidebar-item pptr-event-icon,
+.sidebar-item pptr-method-icon,
+.sidebar-item pptr-ns-icon,
+.sidebar-item pptr-class-icon {
+  margin-right: 1ex;
+}
+
 pptr-method-icon {
   background-color: #ffa000b5;
 }
