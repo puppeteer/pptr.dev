@@ -53,6 +53,10 @@ settings-component product-version:not(.selected) img {
   display: none;
 }
 
+settings-component product-version.selected {
+  background-color: var(--selected-color);
+}
+
 settings-component product-version version-name {
   grid-area: name;
 }

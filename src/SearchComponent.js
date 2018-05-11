@@ -34,7 +34,7 @@ class SearchComponent {
         this._selectNext(event);
       } else if (event.key === 'ArrowUp') {
         this._selectPrevious(event);
-      } else if (event.key === 'Enter' || event.key === ' ') {
+      } else if (event.key === 'Enter') {
         event.preventDefault();
         if (this._selectedElement);
           this._selectedElement.click();
@@ -206,12 +206,16 @@ class SearchComponent {
 
   _renderResult(result) {
     const item = document.createElement('search-item');
-    const itemIcon = document.createElement('search-item-icon');
-    itemIcon.appendChild(result.item.iconElement());
+
+    const iconElement = result.item.iconElement();
+    if (iconElement) {
+      const itemIcon = document.createElement('search-item-icon');
+      itemIcon.appendChild(result.item.iconElement());
+      item.appendChild(itemIcon);
+    }
     const itemTitle = document.createElement('search-item-title');
     itemTitle.appendChild(result.item.titleElement(result.matches));
     item[SearchComponent._symbol] = result.item;
-    item.appendChild(itemIcon);
     item.appendChild(itemTitle);
 
     const subtitleElement = result.item.subtitleElement();

@@ -1,11 +1,11 @@
 class PPTRProduct extends App.Product {
   static async create() {
-    const releases = JSON.parse(await fetch('https://api.github.com/repos/GoogleChrome/puppeteer/tags').then(r => r.text())).map(release => ({
-      name: 'pptr-' + release.name,
-      version: release.name
+    const releases = JSON.parse(await fetch('https://api.github.com/repos/GoogleChrome/puppeteer/releases').then(r => r.text())).map(release => ({
+      name: 'pptr-' + release.tag_name,
+      releaseNotes: release.body,
+      version: release.tag_name
     }));
-    releases[0].name = 'pptr-stable';
-    releases.unshift({name: 'latest', version: 'master'});
+    releases.unshift({name: 'Tip-Of-Tree', version: 'master'});
 
     const textPromises = [];
     for (const release of releases) {
@@ -24,7 +24,7 @@ class PPTRProduct extends App.Product {
   }
 
   defaultVersionName() {
-    return 'pptr-stable';
+    return this._releases[0].name;
   }
 
   versionNames() {
@@ -51,6 +51,8 @@ class PPTRVersion extends App.ProductVersion {
     this._initializeSidebarElements();
 
     this._searchItems = [];
+    for (const apiSection of this.api.sections)
+      this._searchItems.push(PPTRSearchItem.createForSection(apiSection));
     for (const apiClass of this.api.classes) {
       this._searchItems.push(PPTRSearchItem.createForClass(apiClass));
       for (const apiEvent of apiClass.events)
@@ -233,6 +235,14 @@ class PPTRSearchItem extends SearchComponent.Item {
     return new PPTRSearchItem(apiClass, text, 'pptr-class-icon', titleRenderer, desc ? desc.textContent : '');
   }
 
+  static createForSection(apiSection) {
+    const text = apiSection.name;
+    const titleRenderer = matches => renderTokensWithMatches(matches, [
+      {text, tagName: 'search-item-api-method-name'},
+    ]);
+    return new PPTRSearchItem(apiSection, text, null /* iconTagName */, titleRenderer, null /* description */);
+  }
+
   constructor(apiEntry, text, iconTagName, titleRenderer, description) {
     super();
     this._url = apiEntry.linkURL();
@@ -258,7 +268,7 @@ class PPTRSearchItem extends SearchComponent.Item {
   }
 
   iconElement() {
-    if (!this._iconElement)
+    if (!this._iconElement && this._iconTagName)
       this._iconElement = document.createElement(this._iconTagName);
     return this._iconElement;
   }
