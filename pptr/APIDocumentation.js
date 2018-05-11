@@ -1,16 +1,20 @@
 class APIDocumentation {
-  /**
-   * @param {string} version
-   * @param {string} markdownText
-   */
-  static create(version, markdownText) {
-    // Parse markdown into HTML
+  static _markdownToDOM(markdownText) {
     const reader = new commonmark.Parser();
     const ast = reader.parse(markdownText);
     const writer = new commonmark.HtmlRenderer();
     const result = writer.render(ast);
     const domParser = new DOMParser();
-    const doc = document.importNode(domParser.parseFromString(result, 'text/html').body, true);
+    return document.importNode(domParser.parseFromString(result, 'text/html').body, true);
+  }
+  /**
+   * @param {string} version
+   * @param {string} releaseNotes
+   * @param {string} markdownText
+   */
+  static create(version, releaseNotes, markdownText) {
+    // Parse markdown into HTML
+    const doc = APIDocumentation._markdownToDOM(markdownText);
 
     // Translate all relative links to ppdoc links.
     for (const anchor of doc.querySelectorAll('a')) {
@@ -36,6 +40,11 @@ class APIDocumentation {
       CodeMirror.runMode(code.textContent, 'text/javascript', code);
 
     const api = new APIDocumentation(version);
+
+    // Add release notes if we have any.
+    if (releaseNotes) {
+      api.sections.push(APISection.create(api, 'Release Notes', APIDocumentation._markdownToDOM(releaseNotes)));
+    }
 
     // All class headers are rendered as H3 tags
     const headers = doc.querySelectorAll('h3');

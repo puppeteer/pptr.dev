@@ -6,6 +6,12 @@ class PPTRProduct extends App.Product {
       version: release.tag_name
     }));
     releases.unshift({name: 'Tip-Of-Tree', version: 'master'});
+    // The very first release had no notes.
+    releases.push({
+      name: 'pptr-v0.9.0',
+      version: 'v0.9.0',
+      releaseNotes: '',
+    });
 
     const textPromises = [];
     for (const release of releases) {
@@ -35,16 +41,16 @@ class PPTRProduct extends App.Product {
     const release = this._releases.find(release => release.name === name);
     if (!release)
       return null;
-    return new PPTRVersion(release.name, release.text);
+    return new PPTRVersion(release.name, release.releaseNotes, release.text);
   }
 }
 
 class PPTRVersion extends App.ProductVersion {
-  constructor(name, apiText) {
+  constructor(name, releaseNotes, apiText) {
     super();
     this._name = name;
 
-    this.api = APIDocumentation.create(name, apiText);
+    this.api = APIDocumentation.create(name, releaseNotes, apiText);
 
     this._sidebarElements = [];
     this._entryToSidebarElement = new Map();
