@@ -1,6 +1,6 @@
 class PPTRProduct extends App.Product {
   static async create() {
-    const releases = JSON.parse(await fetch('https://api.github.com/repos/GoogleChrome/puppeteer/releases').then(r => r.text())).map(release => ({
+    const releases = JSON.parse(await maybeFetchReleases()).map(release => ({
       name: 'pptr-' + release.tag_name,
       releaseNotes: release.body,
       version: release.tag_name
@@ -22,6 +22,17 @@ class PPTRProduct extends App.Product {
     for (let i = 0; i < texts.length; ++i)
       releases[i].text = texts[i];
     return new PPTRProduct(releases);
+
+    async function maybeFetchReleases() {
+      // Do not fetch too often to avoid GitHub API rate limiting: https://developer.github.com/v3/#rate-limiting
+      const fetchTimestamp = localStorage.getItem('pptr-releases-timestamp');
+      if (!fetchTimestamp || Date.now() - fetchTimestamp > 1000 * 60 * 5 /* 5 minutes */) {
+        const text = await fetch('https://api.github.com/repos/GoogleChrome/puppeteer/releases').then(r => r.text());
+        localStorage.setItem('pptr-releases', text);
+        localStorage.setItem('pptr-releases-timestamp', Date.now());
+      }
+      return localStorage.getItem('pptr-releases');
+    }
   }
 
   constructor(releases) {
