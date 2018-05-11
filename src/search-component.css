@@ -29,11 +29,11 @@ search-item {
   align-items: center;
   grid-template-columns: 50px auto;
   grid-template-rows: auto auto;
+  grid-column-gap: 10px;
   grid-template-areas:
     "icon title"
     "icon subtitle";
   padding: 4px 18px;
-  grid-column-gap:  10px;
   cursor: pointer;
   min-height: 50px;
   border-bottom: 1px solid rgba(51,51,51,.12);

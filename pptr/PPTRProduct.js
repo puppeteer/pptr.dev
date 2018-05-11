@@ -75,7 +75,7 @@ class PPTRVersion extends App.ProductVersion {
   }
 
   content(contentId) {
-    contentId = contentId || 'api-overview';
+    contentId = contentId || this.api.defaultContentId();
     const entry = this.api.idToEntry(contentId);
     if (!entry)
       return null;

@@ -4,8 +4,20 @@ class App {
     this._sidebar = new SidebarComponent();
     this._toolbar = new ToolbarComponent();
     this._search = new SearchComponent();
+    this._settings = new SettingsComponent();
+    this._settings.on(SettingsComponent.Events.VersionSelected, (product, versionName) => {
+      this.setProduct(product);
+      this.navigate(versionName);
+    });
+
+    this._settingsButton = document.createElement('settings-button');
+    this._settingsButton.innerHTML = '<img src="/images/cog.svg"></img>';
+    this._settingsButton.addEventListener('click', () => {
+      this._settings.show(this._product, this._version);
+    }, false);
 
     this._toolbar.middle().appendChild(this._search.input);
+    this._toolbar.left().appendChild(this._settingsButton);
 
     container.appendChild(this._content.element);
     container.appendChild(this._sidebar.element);
@@ -42,6 +54,8 @@ class App {
   }
 
   setProduct(product) {
+    if (this._product === product)
+      return;
     this._product = product;
     this._doNavigation();
   }

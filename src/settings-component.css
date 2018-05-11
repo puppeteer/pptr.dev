@@ -1,0 +1,58 @@
+settings-component {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+  align-items: center;
+  z-index: 1000;
+}
+
+settings-component settings-content {
+  max-width: 1000px;
+  width: 70%;
+  max-height: 70%;
+  height: 70%;
+  background: white;
+  overflow: auto;
+  flex-grow: 0;
+}
+
+settings-component product-versions {
+  display: block;
+  border: 0.25em solid var(--divider-color);
+  margin: 1em;
+}
+
+settings-component product-version {
+  display: grid;
+  grid-template-columns: 50px auto;
+  grid-template-rows: auto;
+  grid-template-areas: "icon name";
+  grid-column-gap: 10px;
+  padding: 1em;
+  align-items: center;
+  border-bottom: 1px solid rgba(51,51,51,.12);
+  cursor: pointer;
+}
+
+settings-component product-version:hover {
+  background-color: var(--hover-color);
+}
+
+settings-component product-version img {
+  grid-area: icon;
+  justify-self: center;
+}
+
+settings-component product-version:not(.selected) img {
+  display: none;
+}
+
+settings-component product-version version-name {
+  grid-area: name;
+}

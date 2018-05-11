@@ -1,5 +1,4 @@
 sidebar-component {
-  --divider: 1px solid rgba(0, 0, 0, 0.14);
   background: #fff;
   position: absolute;
   width: var(--sidebar-width);
@@ -7,7 +6,7 @@ sidebar-component {
   bottom: 0;
   left: 0;
   overflow-y: scroll;
-  border-right: var(--divider);
+  border-right: 1px solid var(--divider-color);
   overflow-x: hidden;
 }
 
@@ -30,7 +29,7 @@ sidebar-component
 
 sidebar-component
 .sidebar-item.selected {
-  background-color: #e3f2fd;
+  background-color: var(--selected-color);
 }
 
 sidebar-component
@@ -41,7 +40,7 @@ sidebar-divider {
   display: block;
   background-color: #fafafa;
   padding: 4px 8px;
-  border-top: var(--divider);
-  border-bottom: var(--divider);
+  border-top: 1px solid var(--divider-color);
+  border-bottom: 1px solid var(--divider-color);
   font-family: var(--monospace);
 }

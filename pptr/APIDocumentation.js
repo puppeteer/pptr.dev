@@ -60,10 +60,15 @@ class APIDocumentation {
 
   constructor(version) {
     this.version = version;
-    this.classes = [];
     this.sections = [];
+    this.classes = [];
 
+    this._defaultContentId = null;
     this._idToEntry = new Map();
+  }
+
+  defaultContentId() {
+    return this._defaultContentId;
   }
 
   _initialize() {
@@ -82,6 +87,8 @@ class APIDocumentation {
       this._idToEntry.set(contentId, entry);
     };
 
+    for (const section of this.sections)
+      assignId(section, section.name);
     for (const apiClass of this.classes) {
       assignId(apiClass, `class: '${apiClass.name}'`);
       for (const apiEvent of apiClass.events)
@@ -91,9 +98,8 @@ class APIDocumentation {
       for (const ns of apiClass.namespaces)
         assignId(ns, `${apiClass.loweredName}.${ns.name}`);
     }
-    for (const section of this.sections) {
-      assignId(section, section.name);
-    }
+
+    this._defaultContentId = this._idToEntry.keys().next().value;
   }
 
   idToEntry(id) {
