@@ -16,6 +16,12 @@ class SettingsComponent extends EventEmitter {
       }
     }, false);
     this._contentElement.addEventListener('click', event => {
+      event.stopPropagation();
+      event.preventDefault();
+      if (event.target.classList.contains('settings-close-icon')) {
+        this.hide();
+        return;
+      }
       let item = event.target;
       while (item && item.tagName !== 'PRODUCT-VERSION')
         item = item.parentElement;
@@ -24,8 +30,6 @@ class SettingsComponent extends EventEmitter {
       this._selectItem(item);
       const {product, versionName} = item[SettingsComponent._Symbol];
       this.emit(SettingsComponent.Events.VersionSelected, product, versionName);
-      event.stopPropagation();
-      event.preventDefault();
     }, false);
     this.element.addEventListener('click', () => this.hide(), false);
   }
@@ -40,7 +44,15 @@ class SettingsComponent extends EventEmitter {
 
   show(product, version) {
     this._contentElement.innerHTML = '';
+    const settingsHeader = document.createElement('settings-header');
+    settingsHeader.innerHTML = `<h3>Settings</h3>`;
+    const closeIcon = document.createElement('img');
+    closeIcon.classList.add('settings-close-icon');
+    closeIcon.src = '/images/close.svg';
+    settingsHeader.appendChild(closeIcon);
+    this._contentElement.appendChild(settingsHeader);
     if (product) {
+      //this._contentElement.innerHTML = `<h3>${product.name()}</h3>`;
       const versionsContainer = document.createElement('product-versions');
       for (const versionName of product.versionNames()) {
         const item = document.createElement('product-version');
@@ -58,6 +70,8 @@ class SettingsComponent extends EventEmitter {
       this._contentElement.appendChild(versionsContainer);
     }
     document.body.appendChild(this.element);
+    if (this._selectedItem)
+      this._selectedItem.scrollIntoView();
   }
 
   hide() {

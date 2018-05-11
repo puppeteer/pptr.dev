@@ -18,14 +18,42 @@ settings-component settings-content {
   max-height: 70%;
   height: 70%;
   background: white;
-  overflow: auto;
+  overflow: hidden;
   flex-grow: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 1em;
+  position: relative;
 }
 
 settings-component product-versions {
   display: block;
   border: 0.25em solid var(--divider-color);
   margin: 1em;
+  overflow: auto;
+}
+
+settings-component settings-header {
+  border-bottom: 1px solid var(--divider-color);
+  display: flex;
+  justify-content: space-between;
+  padding: 0 1ex;
+}
+
+settings-component settings-header h3 {
+  margin: 0;
+  font-weight: normal;
+  font-size: 24px;
+  margin-bottom: 1ex;
+}
+
+settings-component .settings-close-icon {
+  opacity: 0.5;
+  cursor: pointer;
+}
+
+settings-component .settings-close-icon:hover {
+  opacity: 1;
 }
 
 settings-component product-version {

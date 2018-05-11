@@ -29,6 +29,10 @@ class PPTRProduct extends App.Product {
     this._releases = releases;
   }
 
+  name() {
+    return 'Puppeteer';
+  }
+
   defaultVersionName() {
     return this._releases[0].name;
   }

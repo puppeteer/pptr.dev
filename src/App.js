@@ -89,6 +89,9 @@ class App {
 }
 
 App.Product = class {
+  name() {
+  }
+
   defaultVersionName() {
   }
 
