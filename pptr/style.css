@@ -48,6 +48,32 @@ pptr-api api-section img {
   max-width: 100%;
 }
 
+.pptr-sidebar-item {
+  text-decoration: none;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 24px;
+  min-height: 48px;
+  padding: 0 16px;
+  width: 100%;
+}
+
+pptr-sidebar-divider {
+  font-size: 12px;
+  font-weight: bold;
+  padding-left: 6px;
+  text-align: left;
+  display: block;
+  padding: 4px 0 4px 2ex;
+  background-color: #fafafa;
+  border-top: 1px solid var(--divider-color);
+  border-bottom: 1px solid var(--divider-color);
+  width: 100%;
+}
+
 pptr-event-icon,
 pptr-class-icon,
 pptr-ns-icon,
@@ -80,10 +106,10 @@ search-item pptr-class-icon {
 }
 
 /* Icons inside sidebar items */
-.sidebar-item pptr-event-icon,
-.sidebar-item pptr-method-icon,
-.sidebar-item pptr-ns-icon,
-.sidebar-item pptr-class-icon {
+sidebar-item pptr-event-icon,
+sidebar-item pptr-method-icon,
+sidebar-item pptr-ns-icon,
+sidebar-item pptr-class-icon {
   margin-right: 1ex;
 }
 

@@ -18,20 +18,24 @@ class SidebarComponent {
 
   setElements(elements) {
     this.element.innerHTML = '';
-    for (const element of elements)
-      this.element.appendChild(element);
+    for (const element of elements) {
+      const item = document.createElement('sidebar-item');
+      item.appendChild(element);
+      this.element.appendChild(item);
+    }
   }
 
   setSelected(element) {
-    if (this._selectedItem === element)
+    const item = element.parentElement;
+    if (!item || item.parentElement !== this.element)
+      return;
+    if (this._selectedItem === item)
       return;
     if (this._selectedItem) {
       this._selectedItem.classList.remove('selected');
       this._selectedItem = null;
     }
-    if (!element || element.parentElement !== this.element)
-      return;
-    this._selectedItem = element;
+    this._selectedItem = item;
     this._selectedItem.classList.add('selected');
   }
 }

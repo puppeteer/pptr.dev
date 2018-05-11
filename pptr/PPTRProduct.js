@@ -132,7 +132,7 @@ class PPTRVersion extends App.ProductVersion {
     this._sidebarElements.push(createItem('Github', 'https://github.com/GoogleChrome/puppeteer/issues'));
     this._sidebarElements.push(createItem('ToubleShooting', 'https://github.com/GoogleChrome/puppeteer/blob/master/docs/troubleshooting.md'));
 
-    const apiDivider = document.createElement('sidebar-divider');
+    const apiDivider = document.createElement('pptr-sidebar-divider');
     apiDivider.innerHTML = `API <span>${this.api.version}</span>`;
     this._sidebarElements.push(apiDivider);
 
@@ -148,7 +148,7 @@ class PPTRVersion extends App.ProductVersion {
 
     function createItem(text, route) {
       const item = document.createElement('a');
-      item.classList.add('sidebar-item');
+      item.classList.add('pptr-sidebar-item');
       item.href = route;
       if (item.hostname !== location.hostname)
         item.innerHTML = `${text}<external-link-icon></external-link-icon>`;

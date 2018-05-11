@@ -10,37 +10,18 @@ sidebar-component {
   overflow-x: hidden;
 }
 
-sidebar-component .sidebar-item {
-  text-decoration: none;
+sidebar-component sidebar-item {
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 24px;
-  min-height: 48px;
-  padding: 0 16px;
 }
 
-sidebar-component
-.sidebar-item:hover {
+sidebar-component sidebar-item:hover {
   background-color: var(--hover-color);
 }
 
-sidebar-component
-.sidebar-item.selected {
+sidebar-component sidebar-item.selected {
   background-color: var(--selected-color);
 }
 
 sidebar-component
 sidebar-divider {
-  font-size: 12px;
-  font-weight: bold;
-  padding-left: 6px;
-  display: block;
-  background-color: #fafafa;
-  padding: 4px 8px;
-  border-top: 1px solid var(--divider-color);
-  border-bottom: 1px solid var(--divider-color);
-  font-family: var(--monospace);
 }
