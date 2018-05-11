@@ -35,8 +35,7 @@ class APIDocumentation {
     for (const code of doc.querySelectorAll('code.language-js'))
       CodeMirror.runMode(code.textContent, 'text/javascript', code);
 
-    const classes = [];
-    const sections = [];
+    const api = new APIDocumentation(version);
 
     // All class headers are rendered as H3 tags
     const headers = doc.querySelectorAll('h3');
@@ -47,25 +46,27 @@ class APIDocumentation {
       // Import all HTML from section until we hit next top-level header.
       const content = extractSiblingsIntoFragment(header.nextSibling, nextHeader);
       if (title.toLowerCase().startsWith('class:'))
-        classes.push(APIClass.create(title, content));
+        api.classes.push(APIClass.create(api, title, content));
       else
-        sections.push(APISection.create(title, content));
+        api.sections.push(APISection.create(api, title, content));
     }
-    return new APIDocumentation(version, classes, sections);
+    api._initialize();
+    return api;
   }
 
   static _idFromGHAnchor(githubAnchor) {
     return 'api-' + githubAnchor;
   }
 
-  constructor(version, classes, sections) {
+  constructor(version) {
     this.version = version;
-    this.classes = classes;
-    this.sections = sections;
+    this.classes = [];
+    this.sections = [];
 
-    this._entryToId = new Map();
     this._idToEntry = new Map();
+  }
 
+  _initialize() {
     const generateGithubAnchor = (title) => {
       const id = title.trim().toLowerCase().replace(/\s/g, '-').replace(/[^-0-9a-zа-яё]/ig, '');
       let dedupId = id;
@@ -76,12 +77,12 @@ class APIDocumentation {
     }
 
     const assignId = (entry, title) => {
-      const id = APIDocumentation._idFromGHAnchor(generateGithubAnchor(title));
-      this._entryToId.set(entry, id);
-      this._idToEntry.set(id, entry);
+      const contentId = APIDocumentation._idFromGHAnchor(generateGithubAnchor(title));
+      entry.contentId = contentId;
+      this._idToEntry.set(contentId, entry);
     };
 
-    for (const apiClass of classes) {
+    for (const apiClass of this.classes) {
       assignId(apiClass, `class: '${apiClass.name}'`);
       for (const apiEvent of apiClass.events)
         assignId(apiEvent, `event: '${apiEvent.name}'`);
@@ -90,13 +91,9 @@ class APIDocumentation {
       for (const ns of apiClass.namespaces)
         assignId(ns, `${apiClass.loweredName}.${ns.name}`);
     }
-    for (const section of sections) {
+    for (const section of this.sections) {
       assignId(section, section.name);
     }
-  }
-
-  entryToId(entry) {
-    return this._entryToId.get(entry) || null;
   }
 
   idToEntry(id) {
@@ -104,23 +101,36 @@ class APIDocumentation {
   }
 }
 
-class APISection {
-  static create(title, fragment) {
-    const element = document.createElement('api-section');
-    element.classList.add('api-entry');
-    element.innerHTML = `<h1>${title}</h1>`;
-    element.appendChild(fragment);
-    return new APISection(title, element);
+class APIEntry {
+  constructor(api, name, element, contentId) {
+    this.api = api;
+    this.name = name;
+    this.element = element;
+    // This has to be assigned later.
+    this.contentId = null;
   }
 
-  constructor(title, element) {
-    this.name = title;
-    this.element = element;
+  linkURL() {
+    return app.linkURL(this.api.version, this.contentId);
   }
 }
 
-class APIClass {
-  static create(title, fragment) {
+class APISection extends APIEntry {
+  static create(api, title, descFragment) {
+    const element = document.createElement('api-section');
+    element.classList.add('api-entry');
+    element.innerHTML = `<h1>${title}</h1>`;
+    element.appendChild(descFragment);
+    return new APISection(api, title, element);
+  }
+
+  constructor(api, name, element) {
+    super(api, name, element);
+  }
+}
+
+class APIClass extends APIEntry {
+  static create(api, title, fragment) {
     const name = title.replace(/^class:/i, '').trim();
     const headers = fragment.querySelectorAll('h4');
 
@@ -128,7 +138,7 @@ class APIClass {
     element.classList.add('api-entry');
     element.innerHTML = `<h3><pptr-class-icon></pptr-class-icon><api-class-name>class: ${name}</api-class-name></h3>`;
     element.appendChild(extractSiblingsIntoFragment(fragment.firstChild, headers[0]));
-    const apiClass = new APIClass(name, element);
+    const apiClass = new APIClass(api, name, element);
 
     for (let i = 0; i < headers.length; ++i) {
       const header = headers[i];
@@ -145,17 +155,16 @@ class APIClass {
     return apiClass;
   }
 
-  constructor(name, element) {
-    this.name = name;
+  constructor(api, name, element) {
+    super(api, name, element);
     this.loweredName = name.substring(0, 1).toLowerCase() + name.substring(1);
-    this.element = element;
     this.methods = [];
     this.events = [];
     this.namespaces = [];
   }
 }
 
-class APINamespace {
+class APINamespace extends APIEntry {
   static create(apiClass, title, fragment) {
     const name = title.split('.').pop();
     const element = document.createElement('api-ns');
@@ -172,13 +181,12 @@ class APINamespace {
   }
 
   constructor(apiClass, name, element) {
+    super(apiClass.api, name, element);
     this.apiClass = apiClass;
-    this.name = name;
-    this.element = element;
   }
 }
 
-class APIMethod {
+class APIMethod extends APIEntry {
   static create(apiClass, title, descFragment) {
     const name = title.match(/\.([^(]*)/)[1];
     const args = title.match(/\((.*)\)/)[1];
@@ -197,14 +205,13 @@ class APIMethod {
   }
 
   constructor(apiClass, name, args, element) {
+    super(apiClass.api, name, element);
     this.apiClass = apiClass;
-    this.name = name;
     this.args = args;
-    this.element = element;
   }
 }
 
-class APIEvent {
+class APIEvent extends APIEntry {
   static create(apiClass, title, descFragment) {
     const name = title.match(/'(.*)'/)[1];
     const element = document.createElement('api-event');
@@ -215,9 +222,8 @@ class APIEvent {
   }
 
   constructor(apiClass, name, element) {
+    super(apiClass.api, name, element);
     this.apiClass = apiClass;
-    this.name = name;
-    this.element = element;
   }
 }
 

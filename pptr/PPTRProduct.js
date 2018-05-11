@@ -52,22 +52,13 @@ class PPTRVersion extends App.ProductVersion {
 
     this._searchItems = [];
     for (const apiClass of this.api.classes) {
-      {
-        const url = app.linkURL(this.api.version, this.api.entryToId(apiClass));
-        this._searchItems.push(PPTRSearchItem.createForClass(url, apiClass));
-      }
-      for (const apiEvent of apiClass.events) {
-        const url = app.linkURL(this.api.version, this.api.entryToId(apiEvent));
-        this._searchItems.push(PPTRSearchItem.createForEvent(url, apiEvent));
-      }
-      for (const apiNamespace of apiClass.namespaces) {
-        const url = app.linkURL(this.api.version, this.api.entryToId(apiNamespace));
-        this._searchItems.push(PPTRSearchItem.createForNamespace(url, apiNamespace));
-      }
-      for (const apiMethod of apiClass.methods) {
-        const url = app.linkURL(this.api.version, this.api.entryToId(apiMethod));
-        this._searchItems.push(PPTRSearchItem.createForMethod(url, apiMethod));
-      }
+      this._searchItems.push(PPTRSearchItem.createForClass(apiClass));
+      for (const apiEvent of apiClass.events)
+        this._searchItems.push(PPTRSearchItem.createForEvent(apiEvent));
+      for (const apiNamespace of apiClass.namespaces)
+        this._searchItems.push(PPTRSearchItem.createForNamespace(apiNamespace));
+      for (const apiMethod of apiClass.methods)
+        this._searchItems.push(PPTRSearchItem.createForMethod(apiMethod));
     }
   }
 
@@ -121,17 +112,11 @@ class PPTRVersion extends App.ProductVersion {
     const apiDivider = document.createElement('sidebar-divider');
     apiDivider.innerHTML = `API <span>${this.api.version}</span>`;
     this._sidebarElements.push(apiDivider);
-    for (const section of this.api.sections) {
-      const route = app.linkURL(this.api.version, this.api.entryToId(section));
-      const item = createItem(section.name, route);
+
+    for (const apiEntry of [...this.api.sections, ...this.api.classes]) {
+      const item = createItem(apiEntry.name, apiEntry.linkURL());
       this._sidebarElements.push(item);
-      this._entryToSidebarElement.set(section, item);
-    }
-    for (const apiClass of this.api.classes) {
-      const route = app.linkURL(this.api.version, this.api.entryToId(apiClass));
-      const item = createItem(apiClass.name, route);
-      this._sidebarElements.push(item);
-      this._entryToSidebarElement.set(apiClass, item);
+      this._entryToSidebarElement.set(apiEntry, item);
     }
 
     function createItem(text, route) {
@@ -192,7 +177,7 @@ class PPTRVersion extends App.ProductVersion {
 }
 
 class PPTRSearchItem extends SearchComponent.Item {
-  static createForMethod(url, apiMethod) {
+  static createForMethod(apiMethod) {
     const className = apiMethod.apiClass.loweredName;
     const name = apiMethod.name;
     const args = apiMethod.args;
@@ -203,10 +188,10 @@ class PPTRSearchItem extends SearchComponent.Item {
       {text: className + '.', tagName: 'search-item-api-method-class'},
       {text: `${name}(${args})`, tagName: 'search-item-api-method-name'},
     ]);
-    return new PPTRSearchItem(url, text, 'pptr-method-icon', titleRenderer, desc ? desc.textContent : '');
+    return new PPTRSearchItem(apiMethod, text, 'pptr-method-icon', titleRenderer, desc ? desc.textContent : '');
   }
 
-  static createForEvent(url, apiEvent) {
+  static createForEvent(apiEvent) {
     const className = apiEvent.apiClass.loweredName;
     const name = apiEvent.name;
 
@@ -217,10 +202,10 @@ class PPTRSearchItem extends SearchComponent.Item {
       {text: `'${name}'`, tagName: 'search-item-api-method-name'},
       {text: ')', tagName: 'search-item-api-method-class'},
     ]);
-    return new PPTRSearchItem(url, text, 'pptr-event-icon', titleRenderer, desc ? desc.textContent : '');
+    return new PPTRSearchItem(apiEvent, text, 'pptr-event-icon', titleRenderer, desc ? desc.textContent : '');
   }
 
-  static createForNamespace(url, apiNamespace) {
+  static createForNamespace(apiNamespace) {
     const className = apiNamespace.apiClass.loweredName;
     const name = apiNamespace.name;
 
@@ -230,10 +215,10 @@ class PPTRSearchItem extends SearchComponent.Item {
       {text: className + '.', tagName: 'search-item-api-method-class'},
       {text: name, tagName: 'search-item-api-method-name'},
     ]);
-    return new PPTRSearchItem(url, text, 'pptr-ns-icon', titleRenderer, desc ? desc.textContent : '');
+    return new PPTRSearchItem(apiNamespace, text, 'pptr-ns-icon', titleRenderer, desc ? desc.textContent : '');
   }
 
-  static createForClass(url, apiClass) {
+  static createForClass(apiClass) {
     const className = apiClass.name;
 
     const desc = apiClass.element.querySelector('p');
@@ -241,12 +226,12 @@ class PPTRSearchItem extends SearchComponent.Item {
     const titleRenderer = matches => renderTokensWithMatches(matches, [
       {text: className, tagName: 'search-item-api-method-name'},
     ]);
-    return new PPTRSearchItem(url, text, 'pptr-class-icon', titleRenderer, desc ? desc.textContent : '');
+    return new PPTRSearchItem(apiClass, text, 'pptr-class-icon', titleRenderer, desc ? desc.textContent : '');
   }
 
-  constructor(url, text, iconTagName, titleRenderer, description) {
+  constructor(apiEntry, text, iconTagName, titleRenderer, description) {
     super();
-    this._url = url;
+    this._url = apiEntry.linkURL();
     this._text = text;
     this._iconTagName = iconTagName;
     this._titleRenderer = titleRenderer;
