@@ -126,7 +126,7 @@ class APIClass {
 
     const element = document.createElement('api-class');
     element.classList.add('api-entry');
-    element.innerHTML = `<h3><api-class-name>class: ${name}</api-class-name></h3>`;
+    element.innerHTML = `<h3><pptr-class-icon></pptr-class-icon><api-class-name>class: ${name}</api-class-name></h3>`;
     element.appendChild(extractSiblingsIntoFragment(fragment.firstChild, headers[0]));
     const apiClass = new APIClass(name, element);
 
@@ -162,10 +162,12 @@ class APINamespace {
     element.classList.add('api-entry');
     element.innerHTML = [
       `<h4>`,
+        '<pptr-ns-icon></pptr-ns-icon>',
         `<api-ns-classname>${apiClass.loweredName}</api-ns-classname>`,
         `<api-ns-name>.${name}</api-ns-name>`,
       `</h4>`
     ].join('');
+    element.appendChild(fragment);
     return new APINamespace(apiClass, name, element);
   }
 
@@ -184,6 +186,7 @@ class APIMethod {
     element.classList.add('api-entry');
     element.innerHTML = [
       `<h4>
+        <pptr-method-icon></pptr-method-icon>
         <api-method-classname>${apiClass.loweredName}</api-method-classname>`,
         `<api-method-name>.${name}</api-method-name>`,
         `<api-method-args>(${args})</api-method-args>`,
@@ -206,7 +209,7 @@ class APIEvent {
     const name = title.match(/'(.*)'/)[1];
     const element = document.createElement('api-event');
     element.classList.add('api-entry');
-    element.innerHTML = `<h4>event: <api-event-name>'${name}'</api-event-name></h4>`;
+    element.innerHTML = `<h4><pptr-event-icon></pptr-event-icon>${apiClass.loweredName}.on(<api-event-name>'${name}'</api-event-name>)</h4>`;
     element.appendChild(descFragment);
     return new APIEvent(apiClass, name, element);
   }

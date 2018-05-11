@@ -151,8 +151,8 @@ class PPTRVersion extends App.ProductVersion {
 
     this._insertBox(element).appendChild(apiClass.element);
 
-    this._renderElements(element, 'Events', apiClass.events.map(e => e.element));
     this._renderElements(element, 'NameSpaces', apiClass.namespaces.map(ns => ns.element));
+    this._renderElements(element, 'Events', apiClass.events.map(e => e.element));
     this._renderElements(element, 'Methods', apiClass.methods.map(method => method.element));
     return element;
   }
@@ -275,10 +275,10 @@ class PPTRSearchItem extends SearchComponent.Item {
   }
 
   subtitleElement() {
-    if (!this._subtitleElement) {
-      this._subtitleElement = document.createElement('div');
-      this._subtitleElement.textContent = this._description;
-    }
+    if (!this._description)
+      return null;
+    if (!this._subtitleElement)
+      this._subtitleElement = document.createTextNode(this._description);
     return this._subtitleElement;
   }
 }

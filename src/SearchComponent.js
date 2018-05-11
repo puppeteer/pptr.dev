@@ -210,12 +210,18 @@ class SearchComponent {
     itemIcon.appendChild(result.item.iconElement());
     const itemTitle = document.createElement('search-item-title');
     itemTitle.appendChild(result.item.titleElement(result.matches));
-    const itemSubtitle = document.createElement('search-item-subtitle');
-    itemSubtitle.appendChild(result.item.subtitleElement());
     item[SearchComponent._symbol] = result.item;
     item.appendChild(itemIcon);
     item.appendChild(itemTitle);
-    item.appendChild(itemSubtitle);
+
+    const subtitleElement = result.item.subtitleElement();
+    if (subtitleElement) {
+      const itemSubtitle = document.createElement('search-item-subtitle');
+      itemSubtitle.appendChild(result.item.subtitleElement());
+      item.appendChild(itemSubtitle);
+    } else {
+      item.classList.add('no-subtitle');
+    }
     return item;
   }
 

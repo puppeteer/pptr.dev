@@ -52,16 +52,31 @@ pptr-event-icon,
 pptr-class-icon,
 pptr-ns-icon,
 pptr-method-icon {
-  vertical-align: top;
+  vertical-align: middle;
   display: inline-block;
   padding: 3px;
   font-size: 12px;
   color: #fff;
   border-radius: 3px;
   user-select: none;
-  width: 50px;
   text-align: center;
   font-family: var(--monospace);
+  line-height: 1;
+}
+
+/* Icons inside API documentation */
+pptr-api pptr-event-icon,
+pptr-api pptr-method-icon,
+pptr-api pptr-ns-icon,
+pptr-api pptr-class-icon {
+  margin-right: 1ex;
+}
+/* Icons inside search items */
+search-item pptr-event-icon,
+search-item pptr-method-icon,
+search-item pptr-ns-icon,
+search-item pptr-class-icon {
+  width: 50px;
 }
 
 pptr-method-icon {
@@ -69,7 +84,7 @@ pptr-method-icon {
 }
 
 pptr-method-icon::after {
-  content: 'method';
+  content: 'Method';
 }
 
 pptr-event-icon {
@@ -77,7 +92,7 @@ pptr-event-icon {
 }
 
 pptr-event-icon::after {
-  content: 'event';
+  content: 'Event';
 }
 
 pptr-class-icon {
@@ -85,7 +100,7 @@ pptr-class-icon {
 }
 
 pptr-class-icon::after {
-  content: 'class';
+  content: 'Class';
 }
 
 pptr-ns-icon {
@@ -93,7 +108,7 @@ pptr-ns-icon {
 }
 
 pptr-ns-icon::after {
-  content: 'ns';
+  content: 'NS';
 }
 
 search-item-api-method-class {
