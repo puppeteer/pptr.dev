@@ -167,11 +167,11 @@ class PPTRVersion extends App.ProductVersion {
       const item = document.createElement('a');
       item.classList.add('pptr-sidebar-icon-item');
       item.href = route;
+      item.target = '_blank';
       if (icon)
         item.appendChild(icon);
       const title = document.createElement('span');
       title.textContent = text;
-      title.appendChild(document.createElement('external-link-icon'));
       item.appendChild(title);
       return item;
     }

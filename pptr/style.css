@@ -72,6 +72,11 @@ pptr-api api-section img {
   grid-template-areas: "icon title";
 }
 
+.pptr-sidebar-item,
+.pptr-sidebar-icon-item {
+  text-decoration: none !important;
+}
+
 .pptr-sidebar-icon-item img {
   grid-area: icon;
   height: 100%;

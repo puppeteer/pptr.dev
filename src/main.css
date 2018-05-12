@@ -36,6 +36,10 @@ a {
   text-decoration: none;
 }
 
+a:hover {
+  text-decoration: underline;
+}
+
 external-link-icon {
   background-position: center right;
   background-repeat: no-repeat;
