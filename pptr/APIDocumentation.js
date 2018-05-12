@@ -5,7 +5,15 @@ class APIDocumentation {
     const writer = new commonmark.HtmlRenderer();
     const result = writer.render(ast);
     const domParser = new DOMParser();
-    return document.importNode(domParser.parseFromString(result, 'text/html').body, true);
+
+    // Translate all links to api.md to local links.
+    const doc = document.importNode(domParser.parseFromString(result, 'text/html').body, true);
+    for (const a of doc.querySelectorAll('a')) {
+      const match = a.href.match(/github.com\/GoogleChrome\/puppeteer\/blob\/(v[^/]+)\/docs\/api.md#(.*)/);
+      if (match)
+        a.href = app.linkURL('Puppeteer', match[1], APIDocumentation._idFromGHAnchor(match[2]));
+    }
+    return doc;
   }
   /**
    * @param {string} version
