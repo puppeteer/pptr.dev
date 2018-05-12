@@ -59,7 +59,9 @@ class APIDocumentation {
       else
         api.sections.push(APISection.create(api, title, content));
     }
-    api._initialize();
+    api._initializeContentIds();
+    for (const apiClass of api.classes)
+      apiClass._initializeTableOfContents();
     return api;
   }
 
@@ -80,7 +82,7 @@ class APIDocumentation {
     return this._defaultContentId;
   }
 
-  _initialize() {
+  _initializeContentIds() {
     const generateGithubAnchor = (title) => {
       const id = title.trim().toLowerCase().replace(/\s/g, '-').replace(/[^-0-9a-zа-яё]/ig, '');
       let dedupId = id;
@@ -176,6 +178,43 @@ class APIClass extends APIEntry {
     this.methods = [];
     this.events = [];
     this.namespaces = [];
+  }
+
+  _initializeTableOfContents() {
+    const addHeader = (tagName, text) => {
+      const header = document.createElement(tagName);
+      header.textContent = text;
+      this.element.appendChild(header);
+    };
+
+    if (this.events.length) {
+      addHeader('h4', 'Events');
+      const ul = document.createElement('ul');
+      for (const apiEvent of this.events)
+        createTOC(ul, `${this.loweredName}.on('${apiEvent.name}')`, apiEvent);
+      this.element.appendChild(ul);
+    }
+    if (this.namespaces.length) {
+      addHeader('h4', 'Namespaces');
+      const ul = document.createElement('ul');
+      for (const ns of this.namespaces)
+        createTOC(ul, this.loweredName + '.' + ns.name, ns);
+      this.element.appendChild(ul);
+    }
+    if (this.methods.length) {
+      addHeader('h4', 'Methods');
+      const ul = document.createElement('ul');
+      for (const apiMethod of this.methods)
+        createTOC(ul, `${this.loweredName}.${apiMethod.name}(${apiMethod.args})`, apiMethod);
+      this.element.appendChild(ul);
+    }
+
+    function createTOC(ul, text, entity) {
+      const li = document.createElement('li');
+      li.innerHTML = `<a href=${entity.linkURL()}>${text}</a>`;
+      ul.appendChild(li);
+    }
+
   }
 }
 
