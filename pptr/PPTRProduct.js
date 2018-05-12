@@ -124,36 +124,52 @@ class PPTRVersion extends App.ProductVersion {
 
   _initializeSidebarElements() {
     this._sidebarElements = [];
-    const resourcesDivider = document.createElement('sidebar-divider');
+    const resourcesDivider = document.createElement('pptr-sidebar-divider');
     resourcesDivider.textContent = 'Resources';
     this._sidebarElements.push(resourcesDivider);
-    this._sidebarElements.push(createItem('Slack', 'https://join.slack.com/t/puppeteer/shared_invite/enQtMzU4MjIyMDA5NTM4LTM1OTdkNDhlM2Y4ZGUzZDdjYjM5ZWZlZGFiZjc4MTkyYTVlYzIzYjU5NDIyNzgyMmFiNDFjN2UzNWU0N2ZhZDc'));
-    this._sidebarElements.push(createItem('StackOverflow', 'https://stackoverflow.com/questions/tagged/puppeteer'));
-    this._sidebarElements.push(createItem('Github', 'https://github.com/GoogleChrome/puppeteer/issues'));
-    this._sidebarElements.push(createItem('ToubleShooting', 'https://github.com/GoogleChrome/puppeteer/blob/master/docs/troubleshooting.md'));
+    this._sidebarElements.push(createResourcesItem(iconURL('/images/slack.svg', 'slack'), 'Slack', 'https://join.slack.com/t/puppeteer/shared_invite/enQtMzU4MjIyMDA5NTM4LTM1OTdkNDhlM2Y4ZGUzZDdjYjM5ZWZlZGFiZjc4MTkyYTVlYzIzYjU5NDIyNzgyMmFiNDFjN2UzNWU0N2ZhZDc'));
+    this._sidebarElements.push(createResourcesItem(iconURL('/images/stackoverflow.svg', 'stackoverflow'), 'StackOverflow', 'https://stackoverflow.com/questions/tagged/puppeteer'));
+    this._sidebarElements.push(createResourcesItem(iconURL('/images/github.png', 'github'), 'Github', 'https://github.com/GoogleChrome/puppeteer/issues'));
+    this._sidebarElements.push(createResourcesItem(iconURL('/images/wrench.svg', 'troubleshooting'), 'ToubleShooting', 'https://github.com/GoogleChrome/puppeteer/blob/master/docs/troubleshooting.md'));
 
     const apiDivider = document.createElement('pptr-sidebar-divider');
     apiDivider.innerHTML = `API <span>${this.api.version}</span>`;
     this._sidebarElements.push(apiDivider);
 
     for (const apiEntry of [...this.api.sections, ...this.api.classes]) {
-      const item = createItem(apiEntry.name, apiEntry.linkURL());
-      if (apiEntry instanceof APIClass) {
-        const icon = document.createElement('pptr-class-icon');
-        item.insertBefore(icon, item.firstChild);
-      }
+      const icon = apiEntry instanceof APIClass ?  document.createElement('pptr-class-icon') : null;
+      const item = createItem(icon, apiEntry.name, apiEntry.linkURL());
       this._sidebarElements.push(item);
       this._entryToSidebarElement.set(apiEntry, item);
     }
 
-    function createItem(text, route) {
+    function iconURL(url, className) {
+      const img = document.createElement('img');
+      img.classList.add(className);
+      img.src = url;
+      return img;
+    }
+
+    function createItem(icon, text, route) {
       const item = document.createElement('a');
       item.classList.add('pptr-sidebar-item');
       item.href = route;
-      if (item.hostname !== location.hostname)
-        item.innerHTML = `${text}<external-link-icon></external-link-icon>`;
-      else
-        item.textContent = text;
+      if (icon)
+        item.appendChild(icon);
+      item.appendChild(document.createTextNode(text));
+      return item;
+    }
+
+    function createResourcesItem(icon, text, route) {
+      const item = document.createElement('a');
+      item.classList.add('pptr-sidebar-icon-item');
+      item.href = route;
+      if (icon)
+        item.appendChild(icon);
+      const title = document.createElement('span');
+      title.textContent = text;
+      title.appendChild(document.createElement('external-link-icon'));
+      item.appendChild(title);
       return item;
     }
   }
