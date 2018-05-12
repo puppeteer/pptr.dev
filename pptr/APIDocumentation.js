@@ -194,7 +194,9 @@ class APIClass extends APIEntry {
 
   constructor(api, name, element) {
     super(api, name, element);
-    this.loweredName = name.substring(0, 1).toLowerCase() + name.substring(1);
+    let lowerIndex = 1;
+    while (lowerIndex < this.name.length && this.name[lowerIndex + 1] === this.name[lowerIndex + 1].toUpperCase()) ++lowerIndex;
+    this.loweredName = name.substring(0, lowerIndex).toLowerCase() + name.substring(lowerIndex);
     this.methods = [];
     this.events = [];
     this.namespaces = [];
