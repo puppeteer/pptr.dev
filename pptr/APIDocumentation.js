@@ -47,7 +47,7 @@ class APIDocumentation {
 
     // Add release notes if we have any.
     if (releaseNotes) {
-      api.sections.push(APISection.create(api, 'Release Notes', APIDocumentation._markdownToDOM(releaseNotes)));
+      api.sections.push(APISection.createReleaseNotes(api, APIDocumentation._markdownToDOM(releaseNotes)));
     }
 
     // All class headers are rendered as H3 tags
@@ -143,6 +143,14 @@ class APISection extends APIEntry {
     element.innerHTML = `<h1>${title}</h1>`;
     element.appendChild(descFragment);
     return new APISection(api, title, element);
+  }
+
+  static createReleaseNotes(api, descFragment) {
+    const element = document.createElement('api-section');
+    element.classList.add('api-entry');
+    element.innerHTML = `<h1>${api.version} Release Notes</h1>`;
+    element.appendChild(descFragment);
+    return new APISection(api, 'Release Notes', element);
   }
 
   constructor(api, name, element) {
