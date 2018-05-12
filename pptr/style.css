@@ -184,7 +184,7 @@ pptr-event-icon {
 }
 
 pptr-event-icon::after {
-  content: 'Event';
+  content: 'EVT';
 }
 
 pptr-class-icon {
@@ -192,7 +192,7 @@ pptr-class-icon {
 }
 
 pptr-class-icon::after {
-  content: 'Class';
+  content: 'CLS';
 }
 
 pptr-ns-icon {
