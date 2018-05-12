@@ -54,6 +54,10 @@ class App {
     this._content.show(content.element, content.scrollAnchor);
     this._sidebar.setSelected(content.selectedSidebarElement);
     this._search.setInputValue(content.title);
+    if (content.title)
+      document.title = this._version.name() + ' ' + content.title;
+    else
+      document.title = this._product.name() + ' ' + this._version.name();
     this._content.element.focus();
   }
 
