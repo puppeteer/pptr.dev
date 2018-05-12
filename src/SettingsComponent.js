@@ -48,7 +48,7 @@ class SettingsComponent extends EventEmitter {
     settingsHeader.innerHTML = `<h3>Settings</h3>`;
     const closeIcon = document.createElement('img');
     closeIcon.classList.add('settings-close-icon');
-    closeIcon.src = '/images/close.svg';
+    closeIcon.src = './images/close.svg';
     settingsHeader.appendChild(closeIcon);
     this._contentElement.appendChild(settingsHeader);
     if (product) {
@@ -57,7 +57,7 @@ class SettingsComponent extends EventEmitter {
       for (const versionName of product.versionNames()) {
         const item = document.createElement('product-version');
         const icon = document.createElement('img');
-        icon.src = '/images/checkmark.svg';
+        icon.src = './images/checkmark.svg';
         item.appendChild(icon);
         const name = document.createElement('version-name');
         name.textContent = versionName;

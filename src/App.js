@@ -11,7 +11,7 @@ class App {
     });
 
     this._settingsButton = document.createElement('settings-button');
-    this._settingsButton.innerHTML = '<img src="/images/cog.svg"></img>';
+    this._settingsButton.innerHTML = '<img src="./images/cog.svg"></img>';
     this._settingsButton.addEventListener('click', () => {
       this._settings.show(this._product, this._version);
     }, false);
