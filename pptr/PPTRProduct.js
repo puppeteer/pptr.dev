@@ -118,7 +118,7 @@ class PPTRVersion extends App.ProductVersion {
     if (entry instanceof APISection) {
       const element = document.createElement('pptr-api');
       this._renderElements(element, null, [entry.element]);
-      const title = entry.name;
+      const title = '';
       const selectedSidebarElement = this._entryToSidebarElement.get(entry);
       return {element, title, selectedSidebarElement};
     }
