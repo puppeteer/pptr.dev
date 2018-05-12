@@ -52,7 +52,7 @@ class PPTRProduct extends App.Product {
   }
 
   defaultVersionName() {
-    return this._releases[0].name;
+    return this._releases[1].name;
   }
 
   versionNames() {
