@@ -36,6 +36,10 @@ class APIDocumentation {
     }
 
     // Highlight all code blocks.
+    for (const node of doc.querySelectorAll('code.language-javascript')) {
+      node.classList.remove('language-javascript');
+      node.classList.add('language-js');
+    }
     for (const code of doc.querySelectorAll('code.language-js'))
       CodeMirror.runMode(code.textContent, 'text/javascript', code);
 
