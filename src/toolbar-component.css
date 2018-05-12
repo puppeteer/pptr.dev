@@ -37,3 +37,8 @@ toolbar-component
 input[type=search]:focus {
   outline: none;
 }
+
+toolbar-component toolbar-section {
+  display: flex;
+  align-items: center;
+}

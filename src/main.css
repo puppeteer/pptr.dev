@@ -25,6 +25,11 @@ settings-button:hover {
   opacity: 1;
 }
 
+app-title {
+  font-size: 20px;
+  color: white;
+}
+
 a {
   font-weight: normal !important;
   color: #0366d6;
