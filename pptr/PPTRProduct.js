@@ -1,19 +1,17 @@
 class PPTRProduct extends App.Product {
   static async create() {
     const releases = JSON.parse(await maybeFetchReleases()).map(release => ({
-      name: 'pptr-' + release.tag_name,
+      name: release.tag_name,
       releaseNotes: release.body,
-      version: release.tag_name
     }));
     releases.unshift({name: 'Tip-Of-Tree', version: 'master'});
     // The very first release had no notes.
     releases.push({
-      name: 'pptr-v0.9.0',
-      version: 'v0.9.0',
+      name: 'v0.9.0',
       releaseNotes: '',
     });
 
-    const texts = await Promise.all(releases.map(release => fetchAPI(release.version)));
+    const texts = await Promise.all(releases.map(release => fetchAPI(release.name)));
     for (let i = 0; i < texts.length; ++i)
       releases[i].text = texts[i];
     return new PPTRProduct(releases);

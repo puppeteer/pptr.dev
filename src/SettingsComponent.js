@@ -60,7 +60,7 @@ class SettingsComponent extends EventEmitter {
         icon.src = './images/checkmark.svg';
         item.appendChild(icon);
         const name = document.createElement('version-name');
-        name.textContent = versionName;
+        name.textContent = product.name() + ' ' + versionName;
         item.appendChild(name);
         item[SettingsComponent._Symbol] = {product, versionName};
         versionsContainer.appendChild(item);

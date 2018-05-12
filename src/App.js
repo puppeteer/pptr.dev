@@ -33,7 +33,7 @@ class App {
     if (!this._product)
       return;
     const params = new URLSearchParams(window.location.hash.substring(1));
-    const versionName = params.get('product');
+    const versionName = params.get('version');
     let contentId = params.get('show');
 
     if (!this._version || this._version.name() !== versionName) {
@@ -61,15 +61,15 @@ class App {
   }
 
   navigate(versionName, contentId) {
-    window.location.hash = this.linkURL(versionName, contentId);
+    window.location.hash = this.linkURL(this._product.name(), versionName, contentId);
   }
 
   navigateURL(url) {
     window.location = url;
   }
 
-  linkURL(versionName, contentId) {
-    let result = `#?product=${versionName}`;
+  linkURL(productName, versionName, contentId) {
+    let result = `#?product=${productName}&version=${versionName}`;
     if (contentId)
       result += `&show=${contentId}`;
     return result;

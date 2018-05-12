@@ -23,7 +23,7 @@ class APIDocumentation {
         // Link referencing other part of documentation.
         const githubAnchor = href.substring(1);
         const entryId = APIDocumentation._idFromGHAnchor(githubAnchor);
-        anchor.setAttribute('href', app.linkURL(version, entryId));
+        anchor.setAttribute('href', app.linkURL('Puppeteer', version, entryId));
       } else if (href.startsWith('/') || href.startsWith('../') || href.startsWith('./')) {
         // Link pointing somewhere to PPTR repository.
         const isRelease = /^\d+\.\d+\.\d+$/.test(version);
@@ -132,7 +132,7 @@ class APIEntry {
   }
 
   linkURL() {
-    return app.linkURL(this.api.version, this.contentId);
+    return app.linkURL('Puppeteer', this.api.version, this.contentId);
   }
 }
 
