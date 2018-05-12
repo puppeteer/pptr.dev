@@ -4,7 +4,7 @@ class PPTRProduct extends App.Product {
       name: release.tag_name,
       releaseNotes: release.body,
     }));
-    releases.unshift({name: 'Tip-Of-Tree', version: 'master'});
+    releases.unshift({name: 'master'});
     // The very first release had no notes.
     releases.push({
       name: 'v0.9.0',
