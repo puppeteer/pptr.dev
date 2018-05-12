@@ -13,12 +13,7 @@ class PPTRProduct extends App.Product {
       releaseNotes: '',
     });
 
-    const textPromises = [];
-    for (const release of releases) {
-      const url = `https://raw.githubusercontent.com/GoogleChrome/puppeteer/${release.version}/docs/api.md`;
-      textPromises.push(fetch(url).then(response => response.text()));
-    }
-    const texts = await Promise.all(textPromises);
+    const texts = await Promise.all(releases.map(release => fetchAPI(release.version)));
     for (let i = 0; i < texts.length; ++i)
       releases[i].text = texts[i];
     return new PPTRProduct(releases);
@@ -32,6 +27,18 @@ class PPTRProduct extends App.Product {
         localStorage.setItem('pptr-releases-timestamp', Date.now());
       }
       return localStorage.getItem('pptr-releases');
+    }
+
+    async function fetchAPI(version) {
+      const key = `pptr-api-${version}`;
+      let api = localStorage.getItem(key);
+      if (!api) {
+        const url = `https://raw.githubusercontent.com/GoogleChrome/puppeteer/${version}/docs/api.md`;
+        api = await fetch(url).then(response => response.text());
+        if (version !== 'master')
+          localStorage.setItem(key, api);
+      }
+      return api;
     }
   }
 
