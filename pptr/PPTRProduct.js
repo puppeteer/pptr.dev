@@ -79,8 +79,6 @@ class PPTRVersion extends App.ProductVersion {
     this._initializeSidebarElements();
 
     this._searchItems = [];
-    for (const apiSection of this.api.sections)
-      this._searchItems.push(PPTRSearchItem.createForSection(apiSection));
     for (const apiClass of this.api.classes) {
       this._searchItems.push(PPTRSearchItem.createForClass(apiClass));
       for (const apiEvent of apiClass.events)
@@ -277,14 +275,6 @@ class PPTRSearchItem extends SearchComponent.Item {
       {text: className, tagName: 'search-item-api-method-name'},
     ]);
     return new PPTRSearchItem(apiClass, text, 'pptr-class-icon', titleRenderer, desc ? desc.textContent : '');
-  }
-
-  static createForSection(apiSection) {
-    const text = apiSection.name;
-    const titleRenderer = matches => renderTokensWithMatches(matches, [
-      {text, tagName: 'search-item-api-method-name'},
-    ]);
-    return new PPTRSearchItem(apiSection, text, null /* iconTagName */, titleRenderer, null /* description */);
   }
 
   constructor(apiEntry, text, iconTagName, titleRenderer, description) {
