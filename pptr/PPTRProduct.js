@@ -51,7 +51,7 @@ class PPTRProduct extends App.Product {
     console.time('Compute API Lifespan');
     const classRegex = /### class:\s+(\w+)\s*$/;
     const eventRegex = /#### event:\s+'(\w+)'\s*$/;
-    const methodRegex = /#### \w+\.(\w+)\(/;
+    const methodRegex = /#### \w+\.([\w$]+)\(/;
     const nsRegex = /#### \w+\.(\w+)\s*$/;
 
     for (const release of this._releases) {
