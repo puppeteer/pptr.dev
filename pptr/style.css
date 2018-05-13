@@ -65,6 +65,7 @@ pptr-api-since {
   vertical-align: super;
   font-family: var(--monospace);
   margin-left: 0em;
+  user-select: none;
 }
 
 pptr-api-since::before {
