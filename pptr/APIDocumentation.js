@@ -99,6 +99,10 @@ class APIDocumentation {
     this._idToEntry = new Map();
   }
 
+  defaultContentId() {
+    return this._defaultContentId;
+  }
+
   _initializeContentIds() {
     const generateGithubAnchor = (title) => {
       const id = title.trim().toLowerCase().replace(/\s/g, '-').replace(/[^-0-9a-zа-яё]/ig, '');
@@ -249,11 +253,6 @@ class APIClass extends APIEntry {
       }
     }
   }
-
-  defaultContentId() {
-    return this._defaultContentId;
-  }
-
 
   _initializeTableOfContents() {
     const addHeader = (tagName, text) => {
