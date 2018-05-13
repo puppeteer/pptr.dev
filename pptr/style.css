@@ -167,12 +167,13 @@ pptr-sidebar-divider {
   font-weight: bold;
   padding-left: 6px;
   text-align: left;
-  display: block;
-  padding: 4px 0 4px 2ex;
+  display: flex;
+  padding: 4px 2ex;
   background-color: #fafafa;
   border-top: 1px solid var(--divider-color);
   border-bottom: 1px solid var(--divider-color);
   width: 100%;
+  justify-content: space-between;
 }
 
 pptr-event-icon,
