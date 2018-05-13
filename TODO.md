@@ -1,5 +1,5 @@
 - icons for resources in sidear
 - resources that navigate to other websties should not get selected
 - infer for every class where it takes role (methods / events / namespaces)
-- add "table-of-contents" for every class
 - dim optional method arguments
+- infer "since"
