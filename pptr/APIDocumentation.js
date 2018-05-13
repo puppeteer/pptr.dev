@@ -5,9 +5,9 @@ class APIDocumentation {
     const writer = new commonmark.HtmlRenderer();
     const result = writer.render(ast);
     const domParser = new DOMParser();
+    const doc = document.importNode(domParser.parseFromString(result, 'text/html').body, true);
 
     // Translate all links to api.md to local links.
-    const doc = document.importNode(domParser.parseFromString(result, 'text/html').body, true);
     for (const a of doc.querySelectorAll('a')) {
       const match = a.href.match(/github.com\/GoogleChrome\/puppeteer\/blob\/(v[^/]+)\/docs\/api.md#(.*)/);
       if (match)
@@ -21,6 +21,14 @@ class APIDocumentation {
           a.appendChild(icon);
       }
     }
+    // Highlight all code blocks.
+    for (const node of doc.querySelectorAll('code.language-javascript')) {
+      node.classList.remove('language-javascript');
+      node.classList.add('language-js');
+    }
+    for (const code of doc.querySelectorAll('code.language-js'))
+      CodeMirror.runMode(code.textContent, 'text/javascript', code);
+
     return doc;
   }
   /**
@@ -47,14 +55,6 @@ class APIDocumentation {
         anchor.setAttribute('href', `https://github.com/GoogleChrome/puppeteer/blob/${branch}/docs/${href}`);
       }
     }
-
-    // Highlight all code blocks.
-    for (const node of doc.querySelectorAll('code.language-javascript')) {
-      node.classList.remove('language-javascript');
-      node.classList.add('language-js');
-    }
-    for (const code of doc.querySelectorAll('code.language-js'))
-      CodeMirror.runMode(code.textContent, 'text/javascript', code);
 
     const api = new APIDocumentation(version);
 
