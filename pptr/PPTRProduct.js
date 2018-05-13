@@ -146,8 +146,7 @@ class PPTRVersion extends App.ProductVersion {
     super();
     this._name = name;
 
-    this.api = APIDocumentation.create(name, releaseNotes, apiText);
-    this.api.initializeSinceAndUntilLabels(classesLifespan);
+    this.api = APIDocumentation.create(name, releaseNotes, apiText, classesLifespan);
 
     this._sidebarElements = [];
     this._entryToSidebarElement = new Map();

@@ -78,8 +78,11 @@ class APIDocumentation {
         api.sections.push(APISection.create(api, title, content));
     }
     api._initializeContentIds();
-    for (const apiClass of api.classes)
+    for (const apiClass of api.classes) {
+      const classLifespan = classesLifespan.get(apiClass.name);
+      apiClass._initializeSinceAndUntilLabels(classLifespan);
       apiClass._initializeTableOfContents();
+    }
     return api;
   }
 
@@ -94,42 +97,6 @@ class APIDocumentation {
 
     this._defaultContentId = null;
     this._idToEntry = new Map();
-  }
-
-  initializeSinceAndUntilLabels(classesLifespan) {
-    for (const apiClass of this.classes) {
-      const classLifespan = classesLifespan.get(apiClass.name);
-      if (!classLifespan)
-        continue;
-      const sinceElement = apiClass.element.querySelector('pptr-api-since');
-      sinceElement.textContent = classLifespan.since;
-
-      for (const apiEvent of apiClass.events) {
-        const sinceElement = apiEvent.element.querySelector('pptr-api-since');
-        if (classLifespan.eventsSince.has(apiEvent.name))
-          sinceElement.textContent = classLifespan.eventsSince.get(apiEvent.name);
-        else
-          sinceElement.remove();
-      }
-      for (const apiMethod of apiClass.methods) {
-        const sinceElement = apiMethod.element.querySelector('pptr-api-since');
-        if (classLifespan.methodsSince.has(apiMethod.name))
-          sinceElement.textContent = classLifespan.methodsSince.get(apiMethod.name);
-        else
-          sinceElement.remove();
-      }
-      for (const apiNamespace of apiClass.namespaces) {
-        const sinceElement = apiNamespace.element.querySelector('pptr-api-since');
-        if (classLifespan.namespacesSince.has(apiNamespace.name))
-          sinceElement.textContent = classLifespan.namespacesSince.get(apiNamespace.name);
-        else
-          sinceElement.remove();
-      }
-    }
-  }
-
-  defaultContentId() {
-    return this._defaultContentId;
   }
 
   _initializeContentIds() {
@@ -175,6 +142,10 @@ class APIEntry {
     this.element = element;
     // This has to be assigned later.
     this.contentId = null;
+    // Version when the APIEntry was first introduced.
+    this.sinceVersion = '';
+    // Version when the APIEntry was removed.
+    this.untilVersion = '';
   }
 
   linkURL() {
@@ -240,6 +211,50 @@ class APIClass extends APIEntry {
     this.namespaces = [];
   }
 
+  _initializeSinceAndUntilLabels(classLifespan) {
+    if (!classLifespan) {
+      console.error('Error: missing Class API Lifespan information for class ' + this.name);
+      return;
+    }
+    const sinceElement = this.element.querySelector('pptr-api-since');
+    sinceElement.textContent = classLifespan.since;
+    this.sinceVersion = classLifespan.since;
+    this.untilVersion = classLifespan.until;
+
+    for (const apiEvent of this.events) {
+      const sinceElement = apiEvent.element.querySelector('pptr-api-since');
+      if (classLifespan.eventsSince.has(apiEvent.name)) {
+        apiEvent.sinceVersion = classLifespan.eventsSince.get(apiEvent.name);
+        sinceElement.textContent = apiEvent.sinceVersion;
+      } else {
+        sinceElement.remove();
+      }
+    }
+    for (const apiMethod of this.methods) {
+      const sinceElement = apiMethod.element.querySelector('pptr-api-since');
+      if (classLifespan.methodsSince.has(apiMethod.name)) {
+        apiMethod.sinceVersion = classLifespan.methodsSince.get(apiMethod.name);
+        sinceElement.textContent = apiMethod.sinceVersion;
+      } else {
+        sinceElement.remove();
+      }
+    }
+    for (const apiNamespace of this.namespaces) {
+      const sinceElement = apiNamespace.element.querySelector('pptr-api-since');
+      if (classLifespan.namespacesSince.has(apiNamespace.name)) {
+        apiNamespace.sinceVersion = classLifespan.namespacesSince.get(apiNamespace.name);
+        sinceElement.textContent = apiNamespace.sinceVersion;
+      } else {
+        sinceElement.remove();
+      }
+    }
+  }
+
+  defaultContentId() {
+    return this._defaultContentId;
+  }
+
+
   _initializeTableOfContents() {
     const addHeader = (tagName, text) => {
       const header = document.createElement(tagName);
@@ -250,6 +265,7 @@ class APIClass extends APIEntry {
     if (this.events.length) {
       addHeader('h4', 'Events');
       const ul = document.createElement('ul');
+      ul.classList.add('pptr-table-of-contents');
       for (const apiEvent of this.events)
         createTOC(ul, `${this.loweredName}.on('${apiEvent.name}')`, apiEvent);
       this.element.appendChild(ul);
@@ -257,6 +273,7 @@ class APIClass extends APIEntry {
     if (this.namespaces.length) {
       addHeader('h4', 'Namespaces');
       const ul = document.createElement('ul');
+      ul.classList.add('pptr-table-of-contents');
       for (const ns of this.namespaces)
         createTOC(ul, this.loweredName + '.' + ns.name, ns);
       this.element.appendChild(ul);
@@ -264,6 +281,7 @@ class APIClass extends APIEntry {
     if (this.methods.length) {
       addHeader('h4', 'Methods');
       const ul = document.createElement('ul');
+      ul.classList.add('pptr-table-of-contents');
       for (const apiMethod of this.methods)
         createTOC(ul, `${this.loweredName}.${apiMethod.name}(${apiMethod.args})`, apiMethod);
       this.element.appendChild(ul);
@@ -271,7 +289,12 @@ class APIClass extends APIEntry {
 
     function createTOC(ul, text, entity) {
       const li = document.createElement('li');
-      li.innerHTML = `<a href=${entity.linkURL()}>${text}</a>`;
+      li.innerHTML = `<a href=${entity.linkURL()}>${text}</a> `;
+      if (entity.sinceVersion) {
+        const since = document.createElement('pptr-api-since');
+        since.textContent = entity.sinceVersion;
+        li.appendChild(since);
+      }
       ul.appendChild(li);
     }
 
