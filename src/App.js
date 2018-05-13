@@ -37,28 +37,33 @@ class App {
       return;
     const params = new URLSearchParams(window.location.hash.substring(1));
     const versionName = params.get('version');
-    let contentId = params.get('show');
 
-    if (!this._version || this._version.name() !== versionName) {
-      const version = this._product.getVersion(versionName);
-      if (!version) {
-        this.navigate(this._product.defaultVersionName(), contentId);
-        return;
-      }
-      this._version = version;
-      this._sidebar.setElements(this._version.sidebarElements());
-      this._search.setItems(this._version.searchItems());
+    let newVersion = this._version;
+    if (!this._version || this._version.name() !== versionName)
+      newVersion = this._product.getVersion(versionName);
+    let content = newVersion ? newVersion.content(params.get('show')) : null;
+    if (!newVersion) {
+      this.navigate(this._product.defaultVersionName());
+      return;
     }
+
+    if (!content) {
+      this.navigate(newVersion.name());
+      return;
+    }
+
+    this._version = newVersion;
+    this._sidebar.setElements(this._version.sidebarElements());
+    this._search.setItems(this._version.searchItems());
     this._titleElement.textContent = this._product.name() + ' ' + this._version.name();
-    const content = this._version.content(contentId);
-    this._content.show(content.element, content.scrollAnchor);
     this._sidebar.setSelected(content.selectedSidebarElement);
     this._search.setInputValue(content.title);
+    this._content.show(content.element, content.scrollAnchor);
+    this._content.element.focus();
     if (content.title)
-      document.title = this._version.name() + ' ' + content.title;
+      document.title = content.title;
     else
       document.title = this._product.name() + ' ' + this._version.name();
-    this._content.element.focus();
   }
 
   setProduct(product) {
