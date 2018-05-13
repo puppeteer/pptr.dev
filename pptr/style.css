@@ -68,12 +68,27 @@ pptr-api-since {
   font-weight: normal;
   vertical-align: super;
   font-family: var(--monospace);
-  margin-left: 0em;
   user-select: none;
 }
 
 pptr-api-since::before {
   content: 'since ';
+}
+
+pptr-api-until {
+  display: inline-block;
+  font-size: 10px;
+  color: white;
+  background: #EF9A9A;
+  border-radius: 2px;
+  padding: 1px 3px;
+  font-weight: normal;
+  vertical-align: super;
+  user-select: none;
+}
+
+pptr-api-until::before {
+  content: 'removed ';
 }
 
 .pptr-sidebar-item {

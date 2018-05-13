@@ -118,6 +118,43 @@ class PPTRProduct extends App.Product {
         }
       }
     }
+    // Compute "until" for classes, methods, namespaces and events.
+    for (let i = 0; i < this._releases.length - 1; ++i) {
+      const nextRelease = this._releases[i];
+      const release = this._releases[i + 1];
+      for (const [className, classOutline] of release.classesLifespan) {
+        const nextReleaseOutline = nextRelease.classesLifespan.get(className);
+        if (!nextReleaseOutline) {
+          classOutline.until = nextRelease.name;
+          for (const eventName of classOutline.eventsUntil.keys())
+            classOutline.eventsUntil.set(eventName, nextRelease.name);
+          for (const methodName of classOutline.methodsUntil.keys())
+            classOutline.methodsUntil.set(methodName, nextRelease.name);
+          for (const namespaceName of classOutline.namespacesUntil.keys())
+            classOutline.namespacesUntil.set(namespaceName, nextRelease.name);
+          continue;
+        }
+        classOutline.until = nextReleaseOutline.until;
+        for (const eventName of classOutline.eventsSince.keys()) {
+          if (nextReleaseOutline.eventsUntil.has(eventName))
+            classOutline.eventsUntil.set(eventName, nextReleaseOutline.eventsUntil.get(eventName));
+          else if (!nextReleaseOutline.eventsSince.has(eventName))
+            classOutline.eventsUntil.set(eventName, nextRelease.name);
+        }
+        for (const methodName of classOutline.methodsSince.keys()) {
+          if (nextReleaseOutline.methodsUntil.has(methodName))
+            classOutline.methodsUntil.set(methodName, nextReleaseOutline.methodsUntil.get(methodName));
+          else if (!nextReleaseOutline.methodsSince.has(methodName))
+            classOutline.methodsUntil.set(methodName, nextRelease.name);
+        }
+        for (const namespaceName of classOutline.namespacesSince.keys()) {
+          if (nextReleaseOutline.namespacesUntil.has(namespaceName))
+            classOutline.namespacesUntil.set(namespaceName, nextReleaseOutline.namespacesUntil.get(namespaceName));
+          else if (!nextReleaseOutline.namespacesSince.has(namespaceName))
+            classOutline.namespacesUntil.set(namespaceName, nextRelease.name);
+        }
+      }
+    }
     console.timeEnd('Compute API Lifespan');
   }
 
