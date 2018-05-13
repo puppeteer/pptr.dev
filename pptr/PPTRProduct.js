@@ -11,9 +11,9 @@ class PPTRProduct extends App.Product {
       releaseNotes: '',
     });
 
-    const texts = await Promise.all(releases.map(release => fetchAPI(release.name)));
-    for (let i = 0; i < texts.length; ++i)
-      releases[i].text = texts[i];
+    const apiTexts = await Promise.all(releases.map(release => fetchAPI(release.name)));
+    for (let i = 0; i < apiTexts.length; ++i)
+      releases[i].apiText = apiTexts[i];
     return new PPTRProduct(releases);
 
     async function maybeFetchReleases() {
@@ -43,6 +43,82 @@ class PPTRProduct extends App.Product {
   constructor(releases) {
     super();
     this._releases = releases;
+    this._initializeAPILifespan();
+  }
+
+  _initializeAPILifespan() {
+    // Compute "since" and "until" versions for API entities.
+    console.time('Compute API Lifespan');
+    const classRegex = /### class:\s+(\w+)\s*$/;
+    const eventRegex = /#### event:\s+'(\w+)'\s*$/;
+    const methodRegex = /#### \w+\.(\w+)\(/;
+    const nsRegex = /#### \w+\.(\w+)\s*$/;
+
+    for (const release of this._releases) {
+      release.classesLifespan = new Map();
+      let classOutline = null;
+      const titles = release.apiText.split('\n').filter(line => line.startsWith('###'));
+      for (const title of titles) {
+        // Handle classes
+        if (classRegex.test(title)) {
+          if (classOutline)
+            release.classesLifespan.set(classOutline.name, classOutline);
+          const className = title.match(classRegex)[1];
+          classOutline = {
+            name: className,
+            since: release.name,
+            until: '',
+            // Maps of name -> first introduced version
+            eventsSince: new Map(),
+            methodsSince: new Map(),
+            namespacesSince: new Map(),
+            // Maps of name -> first removed version
+            eventsUntil: new Map(),
+            methodsUntil: new Map(),
+            namespacesUntil: new Map(),
+          };
+        } else if (eventRegex.test(title)) {
+          console.assert(classOutline);
+          const eventName = title.match(eventRegex)[1];
+          classOutline.eventsSince.set(eventName, release.name);
+        } else if (methodRegex.test(title)) {
+          console.assert(classOutline);
+          const methodName = title.match(methodRegex)[1];
+          classOutline.methodsSince.set(methodName, release.name);
+        } else if (nsRegex.test(title)) {
+          console.assert(classOutline);
+          const nsName = title.match(nsRegex)[1];
+          classOutline.namespacesSince.set(nsName, release.name);
+        }
+      }
+      if (classOutline)
+        release.classesLifespan.set(classOutline.name, classOutline);
+    }
+
+    // Compute "since" for classes, methods, namespaces and events.
+    for (let i = this._releases.length - 2; i >= 0; --i) {
+      const previousRelease = this._releases[i + 1];
+      const release = this._releases[i];
+      for (const [className, classOutline] of release.classesLifespan) {
+        const previousClassOutline = previousRelease.classesLifespan.get(className);
+        if (!previousClassOutline)
+          continue;
+        classOutline.since = previousClassOutline.since;
+        for (const [eventName, since] of previousClassOutline.eventsSince) {
+          if (classOutline.eventsSince.has(eventName))
+            classOutline.eventsSince.set(eventName, since);
+        }
+        for (const [methodName, since] of previousClassOutline.methodsSince) {
+          if (classOutline.methodsSince.has(methodName))
+            classOutline.methodsSince.set(methodName, since);
+        }
+        for (const [namespaceName, since] of previousClassOutline.namespacesSince) {
+          if (classOutline.namespacesSince.has(namespaceName))
+            classOutline.namespacesSince.set(namespaceName, since);
+        }
+      }
+    }
+    console.timeEnd('Compute API Lifespan');
   }
 
   name() {
@@ -61,16 +137,17 @@ class PPTRProduct extends App.Product {
     const release = this._releases.find(release => release.name === name);
     if (!release)
       return null;
-    return new PPTRVersion(release.name, release.releaseNotes, release.text);
+    return new PPTRVersion(release);
   }
 }
 
 class PPTRVersion extends App.ProductVersion {
-  constructor(name, releaseNotes, apiText) {
+  constructor({name, releaseNotes, apiText, classesLifespan}) {
     super();
     this._name = name;
 
     this.api = APIDocumentation.create(name, releaseNotes, apiText);
+    this.api.initializeSinceAndUntilLabels(classesLifespan);
 
     this._sidebarElements = [];
     this._entryToSidebarElement = new Map();

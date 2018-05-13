@@ -35,8 +35,9 @@ class APIDocumentation {
    * @param {string} version
    * @param {string} releaseNotes
    * @param {string} markdownText
+   * @param {*} classesLifespan
    */
-  static create(version, releaseNotes, markdownText) {
+  static create(version, releaseNotes, markdownText, classesLifespan) {
     // Parse markdown into HTML
     const doc = APIDocumentation._markdownToDOM(markdownText);
 
@@ -93,6 +94,38 @@ class APIDocumentation {
 
     this._defaultContentId = null;
     this._idToEntry = new Map();
+  }
+
+  initializeSinceAndUntilLabels(classesLifespan) {
+    for (const apiClass of this.classes) {
+      const classLifespan = classesLifespan.get(apiClass.name);
+      if (!classLifespan)
+        continue;
+      const sinceElement = apiClass.element.querySelector('pptr-api-since');
+      sinceElement.textContent = classLifespan.since;
+
+      for (const apiEvent of apiClass.events) {
+        const sinceElement = apiEvent.element.querySelector('pptr-api-since');
+        if (classLifespan.eventsSince.has(apiEvent.name))
+          sinceElement.textContent = classLifespan.eventsSince.get(apiEvent.name);
+        else
+          sinceElement.remove();
+      }
+      for (const apiMethod of apiClass.methods) {
+        const sinceElement = apiMethod.element.querySelector('pptr-api-since');
+        if (classLifespan.methodsSince.has(apiMethod.name))
+          sinceElement.textContent = classLifespan.methodsSince.get(apiMethod.name);
+        else
+          sinceElement.remove();
+      }
+      for (const apiNamespace of apiClass.namespaces) {
+        const sinceElement = apiNamespace.element.querySelector('pptr-api-since');
+        if (classLifespan.namespacesSince.has(apiNamespace.name))
+          sinceElement.textContent = classLifespan.namespacesSince.get(apiNamespace.name);
+        else
+          sinceElement.remove();
+      }
+    }
   }
 
   defaultContentId() {
@@ -178,7 +211,7 @@ class APIClass extends APIEntry {
 
     const element = document.createElement('api-class');
     element.classList.add('api-entry');
-    element.innerHTML = `<h3><pptr-class-icon></pptr-class-icon><api-class-name>class: ${name}</api-class-name></h3>`;
+    element.innerHTML = `<h3><pptr-class-icon></pptr-class-icon> <api-class-name>class: ${name}</api-class-name> <pptr-api-since></pptr-api-since></h3>`;
     element.appendChild(extractSiblingsIntoFragment(fragment.firstChild, headers[0]));
     const apiClass = new APIClass(api, name, element);
 
@@ -255,6 +288,7 @@ class APINamespace extends APIEntry {
         '<pptr-ns-icon></pptr-ns-icon>',
         `<api-ns-classname>${apiClass.loweredName}</api-ns-classname>`,
         `<api-ns-name>.${name}</api-ns-name>`,
+        `<pptr-api-since></pptr-api-since>`,
       `</h4>`
     ].join('');
     element.appendChild(fragment);
@@ -279,6 +313,7 @@ class APIMethod extends APIEntry {
         <api-method-classname>${apiClass.loweredName}</api-method-classname>`,
         `<api-method-name>.${name}</api-method-name>`,
         `<api-method-args>(${args})</api-method-args>`,
+        `<pptr-api-since></pptr-api-since>`,
       `</h4>`
     ].join('');
     element.appendChild(descFragment);
@@ -297,7 +332,7 @@ class APIEvent extends APIEntry {
     const name = title.match(/'(.*)'/)[1];
     const element = document.createElement('api-event');
     element.classList.add('api-entry');
-    element.innerHTML = `<h4><pptr-event-icon></pptr-event-icon>${apiClass.loweredName}.on(<api-event-name>'${name}'</api-event-name>)</h4>`;
+    element.innerHTML = `<h4><pptr-event-icon></pptr-event-icon> ${apiClass.loweredName}.on(<api-event-name>'${name}'</api-event-name>) <pptr-api-since></pptr-api-since></h4>`;
     element.appendChild(descFragment);
     return new APIEvent(apiClass, name, element);
   }
