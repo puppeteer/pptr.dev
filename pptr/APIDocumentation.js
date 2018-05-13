@@ -12,6 +12,14 @@ class APIDocumentation {
       const match = a.href.match(/github.com\/GoogleChrome\/puppeteer\/blob\/(v[^/]+)\/docs\/api.md#(.*)/);
       if (match)
         a.href = app.linkURL('Puppeteer', match[1], APIDocumentation._idFromGHAnchor(match[2]));
+      // Mark link as external if necessary
+      if (a.hostname !== location.hostname && a.hostname.length) {
+        const icon = document.createElement('external-link-icon')
+        if (a.children.length === 1 && a.children[0].tagName === 'CODE')
+          a.children[0].appendChild(icon);
+        else
+          a.appendChild(icon);
+      }
     }
     return doc;
   }
@@ -38,9 +46,6 @@ class APIDocumentation {
         const branch = isRelease ? 'v' + version : 'master';
         anchor.setAttribute('href', `https://github.com/GoogleChrome/puppeteer/blob/${branch}/docs/${href}`);
       }
-      // Mark link as external if necessary
-      if (anchor.hostname !== location.hostname && anchor.hostname.length)
-        anchor.appendChild(document.createElement('external-link-icon'));
     }
 
     // Highlight all code blocks.

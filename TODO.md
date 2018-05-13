@@ -3,3 +3,4 @@
 - infer for every class where it takes role (methods / events / namespaces)
 - dim optional method arguments
 - infer "since"
+- linkify issue numbers and commit hashes
