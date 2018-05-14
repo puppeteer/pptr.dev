@@ -1,3 +1,2 @@
 - print Chromium version and release date in settings screen
-- maybe align search suggest box with input
-- make it work in FF and Safari
+- iPhone version
