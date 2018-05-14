@@ -26,15 +26,15 @@ class SidebarComponent {
   }
 
   setSelected(element) {
-    const item = element.parentElement;
-    if (!item || item.parentElement !== this.element)
-      return;
-    if (this._selectedItem === item)
-      return;
     if (this._selectedItem) {
       this._selectedItem.classList.remove('selected');
       this._selectedItem = null;
     }
+    if (!element)
+      return;
+    const item = element.parentElement;
+    if (!item || item.parentElement !== this.element)
+      return;
     this._selectedItem = item;
     this._selectedItem.classList.add('selected');
   }

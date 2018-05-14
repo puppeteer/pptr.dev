@@ -81,7 +81,7 @@ class APIDocumentation {
     for (const apiClass of api.classes) {
       const classLifespan = classesLifespan.get(apiClass.name);
       apiClass._initializeSinceAndUntilLabels(classLifespan);
-      apiClass._initializeTableOfContents();
+      apiClass._appendTableOfContents();
     }
     return api;
   }
@@ -95,12 +95,29 @@ class APIDocumentation {
     this.sections = [];
     this.classes = [];
 
-    this._defaultContentId = null;
     this._idToEntry = new Map();
   }
 
-  defaultContentId() {
-    return this._defaultContentId;
+  createOutline() {
+    const outline = document.createElement('content-box');
+    const header = document.createElement('h2');
+    header.textContent = 'Puppeteer ' + this.version;
+    outline.appendChild(header);
+    const ul = document.createElement('ul');
+    for (const apiClass of this.classes) {
+      const li = document.createElement('li');
+      li.appendChild(apiClass.createTableOfContentsElement());
+      ul.appendChild(li);
+      const childUL = document.createElement('ul');
+      for (const entry of [...apiClass.events, ...apiClass.namespaces, ...apiClass.methods]) {
+        const li = document.createElement('li');
+        li.appendChild(entry.createTableOfContentsElement());
+        childUL.appendChild(li);
+      }
+      li.appendChild(childUL);
+    }
+    outline.appendChild(ul);
+    return outline;
   }
 
   _initializeContentIds() {
@@ -130,8 +147,6 @@ class APIDocumentation {
       for (const ns of apiClass.namespaces)
         assignId(ns, `${apiClass.loweredName}.${ns.name}`);
     }
-
-    this._defaultContentId = this._idToEntry.keys().next().value;
   }
 
   idToEntry(id) {
@@ -143,6 +158,7 @@ class APIEntry {
   constructor(api, name, element, contentId) {
     this.api = api;
     this.name = name;
+    this.tableOfContentsText = name;
     this.element = element;
     // This has to be assigned later.
     this.contentId = null;
@@ -154,6 +170,25 @@ class APIEntry {
 
   linkURL() {
     return app.linkURL('Puppeteer', this.api.version, this.contentId);
+  }
+
+  createTableOfContentsElement() {
+    const fragment = document.createDocumentFragment();
+    const a = document.createElement('a');
+    a.href = this.linkURL();
+    a.textContent = this.tableOfContentsText;
+    fragment.appendChild(a);
+    if (this.sinceVersion) {
+      const since = document.createElement('pptr-api-since');
+      since.textContent = this.sinceVersion;
+      fragment.appendChild(since);
+    }
+    if (this.untilVersion) {
+      const until = document.createElement('pptr-api-until');
+      until.textContent = this.untilVersion;
+      fragment.appendChild(until);
+    }
+    return fragment;
   }
 }
 
@@ -207,6 +242,7 @@ class APIClass extends APIEntry {
 
   constructor(api, name, element) {
     super(api, name, element);
+    this.tableOfContentsText = `class: ${name}`;
     let lowerIndex = 1;
     while (lowerIndex < this.name.length && this.name[lowerIndex + 1] === this.name[lowerIndex + 1].toUpperCase()) ++lowerIndex;
     this.loweredName = name.substring(0, lowerIndex).toLowerCase() + name.substring(lowerIndex);
@@ -284,54 +320,27 @@ class APIClass extends APIEntry {
     }
   }
 
-  _initializeTableOfContents() {
-    const addHeader = (tagName, text) => {
-      const header = document.createElement(tagName);
-      header.textContent = text;
+  _appendTableOfContents() {
+    const addSection = (title, entities) => {
+      const header = document.createElement('h4');
+      header.textContent = title;
       this.element.appendChild(header);
+      const ul = document.createElement('ul');
+      ul.classList.add('pptr-table-of-contents');
+      for (const entity of entities) {
+        const li = document.createElement('li');
+        li.appendChild(entity.createTableOfContentsElement());
+        ul.appendChild(li);
+      }
+      this.element.appendChild(ul);
     };
 
-    if (this.events.length) {
-      addHeader('h4', 'Events');
-      const ul = document.createElement('ul');
-      ul.classList.add('pptr-table-of-contents');
-      for (const apiEvent of this.events)
-        createTOC(ul, `${this.loweredName}.on('${apiEvent.name}')`, apiEvent);
-      this.element.appendChild(ul);
-    }
-    if (this.namespaces.length) {
-      addHeader('h4', 'Namespaces');
-      const ul = document.createElement('ul');
-      ul.classList.add('pptr-table-of-contents');
-      for (const ns of this.namespaces)
-        createTOC(ul, this.loweredName + '.' + ns.name, ns);
-      this.element.appendChild(ul);
-    }
-    if (this.methods.length) {
-      addHeader('h4', 'Methods');
-      const ul = document.createElement('ul');
-      ul.classList.add('pptr-table-of-contents');
-      for (const apiMethod of this.methods)
-        createTOC(ul, `${this.loweredName}.${apiMethod.name}(${apiMethod.args})`, apiMethod);
-      this.element.appendChild(ul);
-    }
-
-    function createTOC(ul, text, entity) {
-      const li = document.createElement('li');
-      li.innerHTML = `<a href=${entity.linkURL()}>${text}</a> `;
-      if (entity.sinceVersion) {
-        const since = document.createElement('pptr-api-since');
-        since.textContent = entity.sinceVersion;
-        li.appendChild(since);
-      }
-      if (entity.untilVersion) {
-        const until = document.createElement('pptr-api-until');
-        until.textContent = entity.untilVersion;
-        li.appendChild(until);
-      }
-      ul.appendChild(li);
-    }
-
+    if (this.events.length)
+      addSection('Events', this.events);
+    if (this.namespaces.length)
+      addSection('Events', this.namespaces);
+    if (this.methods.length)
+      addSection('Events', this.methods);
   }
 }
 
@@ -355,6 +364,7 @@ class APINamespace extends APIEntry {
 
   constructor(apiClass, name, element) {
     super(apiClass.api, name, element);
+    this.tableOfContentsText = `${apiClass.loweredName}.${name}`;
     this.apiClass = apiClass;
   }
 }
@@ -381,6 +391,7 @@ class APIMethod extends APIEntry {
 
   constructor(apiClass, name, args, element) {
     super(apiClass.api, name, element);
+    this.tableOfContentsText = `${apiClass.loweredName}.${name}(${args})`;
     this.apiClass = apiClass;
     this.args = args;
   }
@@ -398,6 +409,7 @@ class APIEvent extends APIEntry {
 
   constructor(apiClass, name, element) {
     super(apiClass.api, name, element);
+    this.tableOfContentsText = `${apiClass.loweredName}.on('${name}')`;
     this.apiClass = apiClass;
   }
 }

@@ -214,7 +214,11 @@ class PPTRVersion extends App.ProductVersion {
   }
 
   content(contentId) {
-    contentId = contentId || this.api.defaultContentId();
+    if (!contentId || contentId === 'outline') {
+      const element = document.createElement('pptr-api');
+      element.appendChild(this.api.createOutline());
+      return { element, title: '' };
+    }
     const entry = this.api.idToEntry(contentId);
     if (!entry)
       return null;
@@ -249,7 +253,8 @@ class PPTRVersion extends App.ProductVersion {
     this._sidebarElements.push(createResourcesItem(iconURL('./images/wrench.svg', 'troubleshooting'), 'ToubleShooting', 'https://github.com/GoogleChrome/puppeteer/blob/master/docs/troubleshooting.md'));
 
     const apiDivider = document.createElement('pptr-sidebar-divider');
-    apiDivider.innerHTML = `API <span>${this.api.version}</span>`;
+    apiDivider.innerHTML = `API <a class=pptr-outline-icon href='${app.linkURL('Puppeteer', this.api.version, 'outline')}'><img src='./images/outline.svg'></img></a>`;
+    const outlineIcon = document.createElement('a');
     this._sidebarElements.push(apiDivider);
 
     for (const apiEntry of [...this.api.sections, ...this.api.classes]) {
