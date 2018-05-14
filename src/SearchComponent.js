@@ -120,7 +120,7 @@ class SearchComponent {
   }
 
   search(query) {
-    this.setVisible(true);
+    this._setVisible(true);
     const results = []
     this._remainingResults = [];
 
@@ -170,7 +170,7 @@ class SearchComponent {
 
   cancelSearch() {
     this.input.blur();
-    this.setVisible(false);
+    this._setVisible(false);
     this.input.value = this._defaultValue;
     app.focusContent();
   }
@@ -230,11 +230,13 @@ class SearchComponent {
     return item;
   }
 
-  setVisible(visible) {
+  _setVisible(visible) {
     if (visible === this._visible)
       return;
     this._visible = visible;
     if (visible) {
+      const box = this.input.getBoundingClientRect();
+      this.element.style.setProperty('--search-input-x', box.x + 'px');
       document.body.appendChild(this.element);
     } else {
       this.element.remove();
