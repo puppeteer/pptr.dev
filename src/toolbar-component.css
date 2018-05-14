@@ -24,7 +24,7 @@ input[type=search] {
     padding: 0 0 3px 20px;
     font-size: 20px;
     color: white;
-    width: 450px;
+    width: 250px;
     margin-left: 1ex;
     text-overflow: ellipsis;
 }

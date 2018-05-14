@@ -410,7 +410,7 @@ class APINamespace extends APIEntry {
     element.classList.add('api-entry');
     element.innerHTML = [
       `<h4>`,
-        '<pptr-ns-icon></pptr-ns-icon>',
+        '<pptr-ns-icon></pptr-ns-icon> ',
         `<api-ns-classname>${apiClass.loweredName}</api-ns-classname>`,
         `<api-ns-name>.${name}</api-ns-name>`,
         `<pptr-api-since></pptr-api-since>`,
