@@ -41,5 +41,6 @@
     window.app = new App(document.body);
     const product = await PPTRProduct.create();
     app.setProduct(product);
+    app.initializeDOM();
   });
 </script>
