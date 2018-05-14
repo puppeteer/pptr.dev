@@ -1,11 +1,66 @@
 class APIDocumentation {
-  static _markdownToDOM(markdownText) {
+  static _markdownToDOM(markdownText, safe = false, softbreak) {
     const reader = new commonmark.Parser();
     const ast = reader.parse(markdownText);
-    const writer = new commonmark.HtmlRenderer({safe: true});
+    const writer = new commonmark.HtmlRenderer({safe, softbreak});
     const result = writer.render(ast);
     const domParser = new DOMParser();
     const doc = document.importNode(domParser.parseFromString(result, 'text/html').body, true);
+
+    // Linkify Github Issue references
+    const issueRegex = /#(\d+)\b/gm;
+    let walker = document.createTreeWalker(doc, NodeFilter.SHOW_TEXT, {acceptNode: node => {
+      issueRegex.lastIndex = 0;
+      return issueRegex.test(node.textContent);
+    }});
+    const issueNodes = [];
+    while (walker.nextNode()) issueNodes.push(walker.currentNode);
+
+    for (const issueNode of issueNodes) {
+      const fragment = document.createDocumentFragment();
+      const text = issueNode.textContent;
+      issueRegex.lastIndex = 0;
+      let lastIndex = 0;
+      let match = null;
+      while (match = issueRegex.exec(text)) {
+        fragment.appendChild(document.createTextNode(text.substring(lastIndex, match.index)));
+        const link = document.createElement('a');
+        link.href = 'https://github.com/GoogleChrome/puppeteer/issues/' + match[1];
+        link.textContent = '#' + match[1];
+        fragment.appendChild(link);
+        lastIndex = issueRegex.lastIndex;
+      }
+      if (lastIndex < text.length)
+        fragment.appendChild(document.createTextNode(text.substring(lastIndex)));
+      issueNode.parentElement.replaceChild(fragment, issueNode);
+    }
+
+    // Linkify SHA references
+    const shaRegex = /\b([0123456789abcdef]{7,})\b/g;
+    walker = document.createTreeWalker(doc, NodeFilter.SHOW_TEXT, {acceptNode: node => {
+      shaRegex.lastIndex = 0;
+      return shaRegex.test(node.textContent);
+    }});
+    const shaNodes = [];
+    while (walker.nextNode()) shaNodes.push(walker.currentNode);
+    for (const shaNode of shaNodes) {
+      const fragment = document.createDocumentFragment();
+      const text = shaNode.textContent;
+      shaRegex.lastIndex = 0;
+      let lastIndex = 0;
+      let match = null;
+      while (match = shaRegex.exec(text)) {
+        fragment.appendChild(document.createTextNode(text.substring(lastIndex, match.index)));
+        const link = document.createElement('a');
+        link.href = 'https://github.com/GoogleChrome/puppeteer/commit/' + match[1];
+        link.innerHTML = `<code>${match[1]}</code>`;
+        fragment.appendChild(link);
+        lastIndex = shaRegex.lastIndex;
+      }
+      if (lastIndex < text.length)
+        fragment.appendChild(document.createTextNode(text.substring(lastIndex)));
+      shaNode.parentElement.replaceChild(fragment, shaNode);
+    }
 
     // Translate all links to api.md to local links.
     for (const a of doc.querySelectorAll('a')) {
@@ -31,6 +86,7 @@ class APIDocumentation {
 
     return doc;
   }
+
   /**
    * @param {string} version
    * @param {string} releaseNotes
@@ -38,6 +94,7 @@ class APIDocumentation {
    * @param {*} classesLifespan
    */
   static create(version, releaseNotes, markdownText, classesLifespan) {
+    console.time('Generate API HTML');
     // Parse markdown into HTML
     const doc = APIDocumentation._markdownToDOM(markdownText);
 
@@ -61,7 +118,7 @@ class APIDocumentation {
 
     // Add release notes if we have any.
     if (releaseNotes) {
-      api.sections.push(APISection.createReleaseNotes(api, APIDocumentation._markdownToDOM(releaseNotes)));
+      api.sections.push(APISection.createReleaseNotes(api, APIDocumentation._markdownToDOM(releaseNotes, true, '<br/>')));
     }
 
     // All class headers are rendered as H3 tags
@@ -83,6 +140,7 @@ class APIDocumentation {
       apiClass._initializeSinceAndUntilLabels(classLifespan);
       apiClass._appendTableOfContents();
     }
+    console.timeEnd('Generate API HTML');
     return api;
   }
 

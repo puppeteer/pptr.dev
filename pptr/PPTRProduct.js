@@ -48,7 +48,6 @@ class PPTRProduct extends App.Product {
 
   _initializeAPILifespan() {
     // Compute "since" and "until" versions for API entities.
-    console.time('Compute API Lifespan');
     const classRegex = /### class:\s+(\w+)\s*$/;
     const eventRegex = /#### event:\s+'(\w+)'\s*$/;
     const methodRegex = /#### \w+\.([\w$]+)\(/;
@@ -155,7 +154,6 @@ class PPTRProduct extends App.Product {
         }
       }
     }
-    console.timeEnd('Compute API Lifespan');
   }
 
   name() {
