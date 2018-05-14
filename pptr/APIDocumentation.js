@@ -163,6 +163,11 @@ class APIDocumentation {
     header.textContent = 'Puppeteer ' + this.version;
     outline.appendChild(header);
     const ul = document.createElement('ul');
+    for (const apiSection of this.sections) {
+      const li = document.createElement('li');
+      li.appendChild(apiSection.createTableOfContentsElement());
+      ul.appendChild(li);
+    }
     for (const apiClass of this.classes) {
       const li = document.createElement('li');
       li.appendChild(apiClass.createTableOfContentsElement());
