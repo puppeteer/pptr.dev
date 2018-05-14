@@ -84,6 +84,13 @@ class App {
     window.location.hash = this.linkURL(this._product.name(), versionName, contentId);
   }
 
+  navigateHome() {
+    if (this._version)
+      this.navigate(this._version.name());
+    else
+      this.navigate(this._product.defaultVersionName());
+  }
+
   navigateURL(url) {
     window.location = url;
   }

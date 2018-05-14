@@ -19,8 +19,8 @@ class SearchComponent {
 
     this._defaultValue = '';
 
-    this._cancelSearchItem = document.createElement('search-item-custom');
-    this._cancelSearchItem.textContent = 'Cancel Search';
+    this._gotoHomeItem = document.createElement('search-item-custom');
+    this._gotoHomeItem.textContent = 'Navigate Home';
 
     this._showOtherItem = document.createElement('search-item-custom');
 
@@ -83,9 +83,10 @@ class SearchComponent {
         this.cancelSearch();
         return;
       }
-      if (item === this._cancelSearchItem) {
+      if (item === this._gotoHomeItem) {
         event.preventDefault();
         this.cancelSearch();
+        app.navigateHome();
       } else if (item === this._showOtherItem) {
         // Render the rest.
         for (const result of this._remainingResults) {
@@ -152,7 +153,7 @@ class SearchComponent {
     }
     this._contentElement.innerHTML = '';
     if (!query)
-      this._contentElement.appendChild(this._cancelSearchItem);
+      this._contentElement.appendChild(this._gotoHomeItem);
 
     for (let i = 0; i < Math.min(results.length, SEARCH_RENDER_COUNT); ++i) {
       const item = this._renderResult(results[i]);
