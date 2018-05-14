@@ -204,7 +204,7 @@ class APISection extends APIEntry {
   static createReleaseNotes(api, descFragment) {
     const element = document.createElement('api-section');
     element.classList.add('api-entry');
-    element.innerHTML = `<h1>${api.version} Release Notes</h1>`;
+    element.innerHTML = `<h2>Puppeteer ${api.version} Release Notes</h2>`;
     element.appendChild(descFragment);
     return new APISection(api, 'Release Notes', element);
   }

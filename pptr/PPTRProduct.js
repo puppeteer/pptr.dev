@@ -214,6 +214,12 @@ class PPTRVersion extends App.ProductVersion {
   }
 
   content(contentId) {
+    if (!contentId) {
+      if (this.api.sections.length)
+        contentId = this.api.sections[0].contentId;
+      else
+        contentId = 'outline';
+    }
     if (!contentId || contentId === 'outline') {
       const element = document.createElement('pptr-api');
       element.appendChild(this.api.createOutline());
