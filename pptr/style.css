@@ -15,6 +15,13 @@ pptr-api content-box {
   overflow-x: hidden;
 }
 
+pptr-api-padding {
+  height: 75vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 pptr-api content-delimeter {
   display: block;
   border-bottom: double #b6b6b6a6 3px;
