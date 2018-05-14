@@ -220,7 +220,9 @@ class PPTRVersion extends App.ProductVersion {
 
   content(contentId) {
     if (!contentId) {
-      const element = document.createElement('pptr-api'); const contentBox = document.createElement('content-box'); element.appendChild(contentBox);
+      const element = document.createElement('pptr-api');
+      element.classList.add('pptr-readme');
+      const contentBox = document.createElement('content-box'); element.appendChild(contentBox);
       contentBox.appendChild(APIDocumentation.markdownToDOM(this._readmeText));
       return { element, title: '' };
     }

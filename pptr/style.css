@@ -15,6 +15,11 @@ pptr-api content-box {
   overflow-x: hidden;
 }
 
+pptr-api.pptr-readme img {
+  /* this is to make PPTR logo look nice with blockquote. */
+  background: white;
+}
+
 pptr-api-padding {
   height: 75vh;
   max-width: 890px;
