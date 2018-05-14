@@ -5,10 +5,10 @@ pptr-api > h3 {
 
 pptr-api content-box {
   display: block;
-  width: 98%;
+  max-width: 890px;
   border-radius: 2px;
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
-  margin: 16px auto 32px auto;
+  margin: 16px 45px 32px 45px;
   background-color: white;
   padding: 0 24px 0 24px;
   box-sizing: border-box;
@@ -17,9 +17,11 @@ pptr-api content-box {
 
 pptr-api-padding {
   height: 75vh;
+  max-width: 890px;
   display: flex;
   align-items: center;
   justify-content: center;
+  margin: 16px 45px 32px 45px;
 }
 
 pptr-api content-delimeter {
