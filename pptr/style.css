@@ -42,6 +42,11 @@ pptr-api li+li {
   margin-top: .25em;
 }
 
+pptr-api h6 {
+  font-size: 0.85em;
+  color: #6a737d;
+}
+
 pptr-api api-method-classname,
 pptr-api api-ns-classname {
   color: #ababab;

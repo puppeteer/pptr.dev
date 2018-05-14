@@ -1,6 +1,11 @@
 class PPTRProduct extends App.Product {
   static async create() {
-    const releases = JSON.parse(await maybeFetchReleases()).map(release => ({
+    const [releasesText, readmeText] = await Promise.all([
+      // Do not fetch too often to avoid GitHub API rate limiting: https://developer.github.com/v3/#rate-limiting
+      fetchCached('https://api.github.com/repos/GoogleChrome/puppeteer/releases', 'pptr-releases', 1000 * 60 * 5 /* 5 minutes */),
+      fetchCached('https://raw.githubusercontent.com/GoogleChrome/puppeteer/master/README.md', 'pptr-readme', 1000 * 60 * 60 * 24 /* 1 day */),
+    ]);
+    const releases = JSON.parse(releasesText).map(release => ({
       name: release.tag_name,
       releaseNotes: release.body,
     }));
@@ -14,17 +19,17 @@ class PPTRProduct extends App.Product {
     const apiTexts = await Promise.all(releases.map(release => fetchAPI(release.name)));
     for (let i = 0; i < apiTexts.length; ++i)
       releases[i].apiText = apiTexts[i];
-    return new PPTRProduct(releases);
+    return new PPTRProduct(readmeText, releases);
 
-    async function maybeFetchReleases() {
-      // Do not fetch too often to avoid GitHub API rate limiting: https://developer.github.com/v3/#rate-limiting
-      const fetchTimestamp = localStorage.getItem('pptr-releases-timestamp');
-      if (!fetchTimestamp || Date.now() - fetchTimestamp > 1000 * 60 * 5 /* 5 minutes */) {
-        const text = await fetch('https://api.github.com/repos/GoogleChrome/puppeteer/releases').then(r => r.text());
-        localStorage.setItem('pptr-releases', text);
-        localStorage.setItem('pptr-releases-timestamp', Date.now());
-      }
-      return localStorage.getItem('pptr-releases');
+    async function fetchCached(url, cacheName, cacheTime) {
+      const cacheTimestampName = cacheName + '-timestamp';
+      const fetchTimestamp = localStorage.getItem(cacheTimestampName);
+      if (fetchTimestamp && cacheTime && Date.now() - fetchTimestamp <= cacheTime)
+        return localStorage.getItem(cacheName);
+      const text = await fetch(url).then(r => r.text());
+      localStorage.setItem(cacheName, text);
+      localStorage.setItem(cacheTimestampName, Date.now());
+      return text;
     }
 
     async function fetchAPI(version) {
@@ -40,8 +45,9 @@ class PPTRProduct extends App.Product {
     }
   }
 
-  constructor(releases) {
+  constructor(readmeText, releases) {
     super();
+    this._readmeText = readmeText;
     this._releases = releases;
     this._initializeAPILifespan();
   }
@@ -172,14 +178,15 @@ class PPTRProduct extends App.Product {
     const release = this._releases.find(release => release.name === name);
     if (!release)
       return null;
-    return new PPTRVersion(release);
+    return new PPTRVersion(this._readmeText, release);
   }
 }
 
 class PPTRVersion extends App.ProductVersion {
-  constructor({name, releaseNotes, apiText, classesLifespan}) {
+  constructor(readmeText, {name, releaseNotes, apiText, classesLifespan}) {
     super();
     this._name = name;
+    this._readmeText = readmeText;
 
     this.api = APIDocumentation.create(name, releaseNotes, apiText, classesLifespan);
 
@@ -213,12 +220,11 @@ class PPTRVersion extends App.ProductVersion {
 
   content(contentId) {
     if (!contentId) {
-      if (this.api.sections.length)
-        contentId = this.api.sections[0].contentId;
-      else
-        contentId = 'outline';
+      const element = document.createElement('pptr-api'); const contentBox = document.createElement('content-box'); element.appendChild(contentBox);
+      contentBox.appendChild(APIDocumentation.markdownToDOM(this._readmeText));
+      return { element, title: '' };
     }
-    if (!contentId || contentId === 'outline') {
+    if (contentId === 'outline') {
       const element = document.createElement('pptr-api');
       element.appendChild(this.api.createOutline());
       return { element, title: '' };

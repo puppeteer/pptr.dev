@@ -1,5 +1,5 @@
 class APIDocumentation {
-  static _markdownToDOM(markdownText, safe = false, softbreak) {
+  static markdownToDOM(markdownText, safe = false, softbreak) {
     const reader = new commonmark.Parser();
     const ast = reader.parse(markdownText);
     const writer = new commonmark.HtmlRenderer({safe, softbreak});
@@ -96,7 +96,7 @@ class APIDocumentation {
   static create(version, releaseNotes, markdownText, classesLifespan) {
     console.time('Generate API HTML');
     // Parse markdown into HTML
-    const doc = APIDocumentation._markdownToDOM(markdownText);
+    const doc = APIDocumentation.markdownToDOM(markdownText);
 
     // Translate all relative links to ppdoc links.
     for (const anchor of doc.querySelectorAll('a')) {
@@ -118,7 +118,7 @@ class APIDocumentation {
 
     // Add release notes if we have any.
     if (releaseNotes) {
-      api.sections.push(APISection.createReleaseNotes(api, APIDocumentation._markdownToDOM(releaseNotes, true, '<br/>')));
+      api.sections.push(APISection.createReleaseNotes(api, APIDocumentation.markdownToDOM(releaseNotes, true, '<br/>')));
     }
 
     // All class headers are rendered as H3 tags
