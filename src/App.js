@@ -6,7 +6,6 @@ class App {
     this._search = new SearchComponent();
     this._settings = new SettingsComponent();
     this._settings.on(SettingsComponent.Events.VersionSelected, (product, versionName) => {
-      this.setProduct(product);
       this.navigate(versionName);
     });
 
@@ -34,31 +33,20 @@ class App {
     window.addEventListener('popstate', this._doNavigation.bind(this), false);
   }
 
-  initializeDOM() {
-    this._toolbar.left().appendChild(this._homeButton);
-    this._toolbar.left().appendChild(this._settingsButton);
-    this._toolbar.left().appendChild(this._titleElement);
-    this._toolbar.left().appendChild(this._search.input);
-  }
-
   _doNavigation() {
     if (!this._product)
       return;
     const params = new URLSearchParams(window.location.hash.substring(1));
-    const versionName = params.get('version');
+    const versionName = params.get('version') || this._product.defaultVersionName();
 
     let newVersion = this._version;
     if (!this._version || this._version.name() !== versionName)
       newVersion = this._product.getVersion(versionName);
     let content = newVersion ? newVersion.content(params.get('show')) : null;
-    if (!newVersion) {
-      this.navigate(this._product.defaultVersionName());
-      return;
-    }
 
     if (!content) {
-      this.navigate(newVersion.name());
-      return;
+      history.replaceState({}, '', this.linkURL(this._product.name(), newVersion.name()));
+      content = newVersion.content(null);
     }
 
     this._version = newVersion;
@@ -75,10 +63,14 @@ class App {
       document.title = this._product.name() + ' ' + this._version.name();
   }
 
-  setProduct(product) {
+  initialize(product) {
     if (this._product === product)
       return;
     this._product = product;
+    this._toolbar.left().appendChild(this._homeButton);
+    this._toolbar.left().appendChild(this._settingsButton);
+    this._toolbar.left().appendChild(this._titleElement);
+    this._toolbar.left().appendChild(this._search.input);
     this._doNavigation();
   }
 
@@ -106,14 +98,6 @@ class App {
 
   focusContent() {
     this._content.element.focus();
-  }
-
-  _show404() {
-    const element = document.createElement('div');
-    element.innerHTML = `
-      <h1>Not Found: 404!</h1>
-    `;
-    this._content.show(element);
   }
 }
 
