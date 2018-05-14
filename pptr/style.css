@@ -245,7 +245,7 @@ sidebar-item pptr-class-icon {
 }
 
 pptr-method-icon {
-  background-color: #ffa000b5;
+  background-color: #FF9800;
 }
 
 pptr-method-icon::after {
@@ -253,7 +253,7 @@ pptr-method-icon::after {
 }
 
 pptr-event-icon {
-  background-color: #2e7d32a8;
+  background-color: #4CAF50;
 }
 
 pptr-event-icon::after {
@@ -261,7 +261,7 @@ pptr-event-icon::after {
 }
 
 pptr-class-icon {
-  background-color: #3f51b5b0;
+  background-color: #3F51B5;
 }
 
 pptr-class-icon::after {
