@@ -9,8 +9,8 @@ search-component {
   justify-content: center;
   overflow: hidden;
   align-items: start;
-  --search-item-icon-width: 50px;
-  --search-item-gap: 10px;
+  --search-item-icon-width: 20px;
+  --search-item-gap: 13px;
   --search-item-padding: 18px;
 }
 
@@ -36,9 +36,7 @@ search-item {
   grid-template-columns: var(--search-item-icon-width) auto;
   grid-template-rows: auto auto;
   grid-column-gap: var(--search-item-gap);
-  grid-template-areas:
-    "icon title"
-    "icon subtitle";
+  grid-template-areas: "icon title"     "icon subtitle";
   padding: 4px var(--search-item-padding);
   cursor: pointer;
   min-height: 50px;
