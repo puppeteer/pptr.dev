@@ -1,6 +1,3 @@
-- icons for resources in sidear
-- resources that navigate to other websties should not get selected
-- infer for every class where it takes role (methods / events / namespaces)
-- dim optional method arguments
-- infer "since"
-- linkify issue numbers and commit hashes
+- print Chromium version and release date in settings screen
+- maybe align search suggest box with input
+- make it work in FF and Safari

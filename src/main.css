@@ -21,6 +21,7 @@ settings-button {
   transform: scale(1.25);
   cursor: pointer;
   opacity: 0.5;
+  flex-shrink: 0;
 }
 
 settings-button:hover {
@@ -35,6 +36,7 @@ home-button {
   transform: scale(0.75);
   cursor: pointer;
   opacity: 0.5;
+  flex-shrink: 0;
 }
 
 home-button:hover {
@@ -44,6 +46,8 @@ home-button:hover {
 app-title {
   font-size: 20px;
   color: white;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 a {
