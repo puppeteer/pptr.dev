@@ -27,7 +27,7 @@ class App {
     this._toolbar.left().appendChild(this._homeButton);
     this._toolbar.left().appendChild(this._settingsButton);
     this._toolbar.left().appendChild(this._titleElement);
-    this._toolbar.middle().appendChild(this._search.input);
+    this._toolbar.left().appendChild(this._search.input);
 
     container.appendChild(this._content.element);
     container.appendChild(this._sidebar.element);
@@ -62,7 +62,7 @@ class App {
     this._version = newVersion;
     this._sidebar.setElements(this._version.sidebarElements());
     this._search.setItems(this._version.searchItems());
-    this._titleElement.textContent = this._product.name() + ' ' + this._version.name();
+    this._titleElement.textContent = 'Search ' + this._product.name() + ' ' + this._version.name() + ': ';
     this._sidebar.setSelected(content.selectedSidebarElement);
     this._search.setInputValue(content.title);
     this._content.show(content.element, content.scrollAnchor);

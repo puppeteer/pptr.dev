@@ -18,19 +18,20 @@ input[type=search] {
     -webkit-appearance: none;
     margin: 0 auto;
     background: transparent;
-    text-align: center;
+    text-align: left;
     border: none;
     border-bottom: 1px solid rgba(255, 255, 255, 0.52);
     padding: 0 0 3px 20px;
     font-size: 20px;
     color: white;
     width: 450px;
+    margin-left: 1ex;
     text-overflow: ellipsis;
 }
 
 toolbar-component
 input[type=search]::-webkit-input-placeholder {
-  color: #ddd;
+  color: #eee;
 }
 
 toolbar-component
