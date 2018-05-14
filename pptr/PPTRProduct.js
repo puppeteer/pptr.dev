@@ -317,7 +317,7 @@ class PPTRVersion extends App.ProductVersion {
     this._renderElements(element, 'Methods', apiClass.methods.map(method => method.element));
 
     const padding = document.createElement('pptr-api-padding');
-    padding.innerHTML = '<img width=100 src="./images/pptr.png"></img>';
+    padding.innerHTML = '<img width=30 src="./images/pptr.png"></img>';
     element.appendChild(padding);
     return element;
   }
