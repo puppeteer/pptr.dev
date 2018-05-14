@@ -48,6 +48,7 @@ app-title {
   color: white;
   white-space: nowrap;
   flex-shrink: 0;
+  margin-left: 1ex;
 }
 
 a {
