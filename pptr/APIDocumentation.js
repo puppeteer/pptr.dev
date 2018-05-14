@@ -68,7 +68,8 @@ class APIDocumentation {
       if (match)
         a.href = app.linkURL('Puppeteer', match[1], APIDocumentation._idFromGHAnchor(match[2]));
       // Mark link as external if necessary
-      if (a.hostname !== location.hostname && a.hostname.length) {
+      const isImgLink = a.children.length === 1 && a.children[0].tagName === 'IMG';
+      if (a.hostname !== location.hostname && a.hostname.length && !isImgLink) {
         const icon = document.createElement('external-link-icon')
         if (a.children.length === 1 && a.children[0].tagName === 'CODE')
           a.children[0].appendChild(icon);
