@@ -29,7 +29,7 @@ input[type=search] {
 }
 
 toolbar-component
-input[type=search]::-webkit-input-placeholder {
+input[type=search]::placeholder {
   color: #eeeeeeb0;
   text-align: center;
 }
