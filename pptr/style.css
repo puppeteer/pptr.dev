@@ -208,19 +208,17 @@ pptr-event-icon,
 pptr-class-icon,
 pptr-ns-icon,
 pptr-method-icon {
-  vertical-align: middle;
   display: inline-flex;
   width: 16px;
   font-size: 12px;
   color: #fff;
   border-radius: 3px;
   user-select: none;
-  text-align: center;
   font-family: var(--monospace);
-  line-height: 1;
   height: 16px;
   align-items: center;
   justify-content: center;
+  font-weight: bold;
 }
 
 /* Icons inside API documentation */
