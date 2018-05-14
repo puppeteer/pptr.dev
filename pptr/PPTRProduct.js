@@ -224,6 +224,12 @@ class PPTRVersion extends App.ProductVersion {
       element.classList.add('pptr-readme');
       const contentBox = document.createElement('content-box'); element.appendChild(contentBox);
       contentBox.appendChild(APIDocumentation.markdownToDOM(this._readmeText));
+      // Move logo to the very beginning - it will look better.
+      const logo = contentBox.querySelector('img[align=right]');
+      if (logo) {
+        logo.remove();
+        contentBox.insertBefore(logo, contentBox.firstChild);
+      }
       return { element, title: '' };
     }
     if (contentId === 'outline') {
