@@ -7,7 +7,9 @@ class SidebarComponent {
   }
 
   _onClick(event) {
-    const item = event.path.find(node => node.parentElement === this.element);
+    let item = event.target;
+    while (item && item.parentElement !== this.element)
+      item = item.parentElement;
     if (item && this._selectedItem !== item) {
       if (this._selectedItem)
         this._selectedItem.classList.remove('selected');

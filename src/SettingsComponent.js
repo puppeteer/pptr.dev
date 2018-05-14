@@ -71,7 +71,7 @@ class SettingsComponent extends EventEmitter {
     }
     document.body.appendChild(this.element);
     if (this._selectedItem)
-      this._selectedItem.scrollIntoView();
+      this._selectedItem.scrollIntoViewIfNeeded();
   }
 
   hide() {
