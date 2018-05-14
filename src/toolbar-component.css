@@ -19,7 +19,7 @@ input[type=search] {
     background: transparent;
     text-align: left;
     border: none;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.52);
+    border-bottom: 2px solid rgb(255, 255, 255);
     padding-left: 1ex;
     font-size: 20px;
     color: white;
@@ -30,7 +30,8 @@ input[type=search] {
 
 toolbar-component
 input[type=search]::-webkit-input-placeholder {
-  color: #eeeeee7a;
+  color: #eeeeeeb0;
+  text-align: center;
 }
 
 toolbar-component
