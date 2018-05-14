@@ -259,9 +259,9 @@ class PPTRVersion extends App.ProductVersion {
     const resourcesDivider = document.createElement('pptr-sidebar-divider');
     resourcesDivider.textContent = 'Resources';
     this._sidebarElements.push(resourcesDivider);
-    this._sidebarElements.push(createResourcesItem(iconURL('./images/slack.svg', 'slack'), 'Slack', 'https://join.slack.com/t/puppeteer/shared_invite/enQtMzU4MjIyMDA5NTM4LTM1OTdkNDhlM2Y4ZGUzZDdjYjM5ZWZlZGFiZjc4MTkyYTVlYzIzYjU5NDIyNzgyMmFiNDFjN2UzNWU0N2ZhZDc'));
-    this._sidebarElements.push(createResourcesItem(iconURL('./images/stackoverflow.svg', 'stackoverflow'), 'StackOverflow', 'https://stackoverflow.com/questions/tagged/puppeteer'));
     this._sidebarElements.push(createResourcesItem(iconURL('./images/github.png', 'github'), 'Github', 'https://github.com/GoogleChrome/puppeteer/issues'));
+    this._sidebarElements.push(createResourcesItem(iconURL('./images/stackoverflow.svg', 'stackoverflow'), 'StackOverflow', 'https://stackoverflow.com/questions/tagged/puppeteer'));
+    this._sidebarElements.push(createResourcesItem(iconURL('./images/slack.svg', 'slack'), 'Slack', 'https://join.slack.com/t/puppeteer/shared_invite/enQtMzU4MjIyMDA5NTM4LTM1OTdkNDhlM2Y4ZGUzZDdjYjM5ZWZlZGFiZjc4MTkyYTVlYzIzYjU5NDIyNzgyMmFiNDFjN2UzNWU0N2ZhZDc'));
     this._sidebarElements.push(createResourcesItem(iconURL('./images/wrench.svg', 'troubleshooting'), 'ToubleShooting', 'https://github.com/GoogleChrome/puppeteer/blob/master/docs/troubleshooting.md'));
 
     const apiDivider = document.createElement('pptr-sidebar-divider');
