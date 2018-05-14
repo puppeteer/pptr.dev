@@ -2,7 +2,7 @@ class APIDocumentation {
   static _markdownToDOM(markdownText) {
     const reader = new commonmark.Parser();
     const ast = reader.parse(markdownText);
-    const writer = new commonmark.HtmlRenderer();
+    const writer = new commonmark.HtmlRenderer({safe: true});
     const result = writer.render(ast);
     const domParser = new DOMParser();
     const doc = document.importNode(domParser.parseFromString(result, 'text/html').body, true);
