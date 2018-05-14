@@ -16,8 +16,15 @@ class App {
       this._settings.show(this._product, this._version);
     }, false);
 
+    this._homeButton = document.createElement('home-button');
+    this._homeButton.innerHTML = '<img src="./images/home.svg"></img>';
+    this._homeButton.addEventListener('click', () => {
+      this.navigate(this._version.name());
+    }, false);
+
     this._titleElement = document.createElement('app-title');
 
+    this._toolbar.left().appendChild(this._homeButton);
     this._toolbar.left().appendChild(this._settingsButton);
     this._toolbar.left().appendChild(this._titleElement);
     this._toolbar.middle().appendChild(this._search.input);
