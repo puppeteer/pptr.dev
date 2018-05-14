@@ -129,6 +129,8 @@ class FuzzySearch {
     var score = 10;
     if (isCapsMatch)
       score += 6;
+    if (!consecutiveMatch && (!j || /[^\w$]/.test(data[j - 1])))
+      score += 2;
     score += consecutiveMatch * 4;
     return score;
   }
