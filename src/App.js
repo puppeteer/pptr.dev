@@ -6,7 +6,9 @@ class App {
     this._search = new SearchComponent();
     this._settings = new SettingsComponent();
     this._settings.on(SettingsComponent.Events.VersionSelected, (product, versionName) => {
-      this.navigate(versionName);
+      const params = new URLSearchParams(window.location.hash.substring(1));
+      const contentId = params.get('show') || undefined;
+      this.navigate(versionName, contentId);
     });
 
     this._settingsButton = document.createElement('settings-button');
