@@ -10,6 +10,8 @@ class APIDocumentation {
     // Linkify Github Issue references
     const issueRegex = /#(\d+)\b/gm;
     let walker = document.createTreeWalker(doc, NodeFilter.SHOW_TEXT, {acceptNode: node => {
+      if (node.parentElement.tagName === 'A')
+        return false;
       issueRegex.lastIndex = 0;
       return issueRegex.test(node.textContent);
     }});
@@ -38,6 +40,8 @@ class APIDocumentation {
     // Linkify SHA references
     const shaRegex = /\b([0123456789abcdef]{7,})\b/g;
     walker = document.createTreeWalker(doc, NodeFilter.SHOW_TEXT, {acceptNode: node => {
+      if (node.parentElement.tagName === 'A')
+        return false;
       shaRegex.lastIndex = 0;
       return shaRegex.test(node.textContent);
     }});
