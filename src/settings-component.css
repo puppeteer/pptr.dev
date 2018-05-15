@@ -16,7 +16,6 @@ settings-component settings-content {
   max-width: 700px;
   width: 70%;
   max-height: 70%;
-  height: 70%;
   background: white;
   overflow: hidden;
   flex-grow: 0;
