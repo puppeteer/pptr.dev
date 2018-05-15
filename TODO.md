@@ -1,2 +1,5 @@
-- print Chromium version and release date in settings screen
-- iPhone version
+- print Chromium version / release / date / link upstream in settings screen next to every version
+- mobile support
+- the "version" in title should be clickable
+- the "settings" screen should contain a "Releases fetched XXX minutes ago. Fetch now." button.
+- embed workbox to support service worker
