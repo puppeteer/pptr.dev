@@ -29,6 +29,7 @@ class SettingsComponent extends EventEmitter {
         return;
       this._selectItem(item);
       const {product, versionName} = item[SettingsComponent._Symbol];
+      this.hide();
       this.emit(SettingsComponent.Events.VersionSelected, product, versionName);
     }, false);
     this.element.addEventListener('click', () => this.hide(), false);
