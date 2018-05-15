@@ -196,14 +196,6 @@ pptr-sidebar-divider {
   align-items: center;
 }
 
-pptr-sidebar-divider .pptr-outline-icon {
-  opacity: 0.5;
-}
-
-pptr-sidebar-divider .pptr-outline-icon:hover {
-  opacity: 1;
-}
-
 pptr-event-icon,
 pptr-class-icon,
 pptr-ns-icon,

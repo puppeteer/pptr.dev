@@ -235,7 +235,7 @@ class PPTRVersion extends App.ProductVersion {
     if (contentId === 'outline') {
       const element = document.createElement('pptr-api');
       element.appendChild(this.api.createOutline());
-      return { element, title: '' };
+      return { element, title: '', selectedSidebarElement: this._outlineItem };
     }
     const entry = this.api.idToEntry(contentId);
     if (!entry)
@@ -271,10 +271,12 @@ class PPTRVersion extends App.ProductVersion {
     this._sidebarElements.push(createResourcesItem(iconURL('./images/wrench.svg', 'troubleshooting'), 'ToubleShooting', 'https://github.com/GoogleChrome/puppeteer/blob/master/docs/troubleshooting.md'));
 
     const apiDivider = document.createElement('pptr-sidebar-divider');
-    apiDivider.innerHTML = `API <a class=pptr-outline-icon href='${app.linkURL('Puppeteer', this.api.version, 'outline')}'><img src='./images/outline.svg'></img></a>`;
+    apiDivider.textContent = `API`;
     const outlineIcon = document.createElement('a');
     this._sidebarElements.push(apiDivider);
 
+    this._outlineItem = createItem(null, 'Outline', app.linkURL('Puppeteer', this.api.version, 'outline'));
+    this._sidebarElements.push(this._outlineItem);
     for (const apiEntry of [...this.api.sections, ...this.api.classes]) {
       const icon = apiEntry instanceof APIClass ?  document.createElement('pptr-class-icon') : null;
       const item = createItem(icon, apiEntry.name, apiEntry.linkURL());
