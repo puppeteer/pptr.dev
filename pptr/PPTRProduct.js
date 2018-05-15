@@ -52,6 +52,24 @@ class PPTRProduct extends App.Product {
     this._initializeAPILifespan();
   }
 
+  toolbarElements() {
+    const toolbarElements = [];
+    toolbarElements.push(iconButton('https://stackoverflow.com/questions/tagged/puppeteer', './images/stackoverflow.svg', 'pptr-stackoverflow'));
+    toolbarElements.push(iconButton('https://join.slack.com/t/puppeteer/shared_invite/enQtMzU4MjIyMDA5NTM4LTM1OTdkNDhlM2Y4ZGUzZDdjYjM5ZWZlZGFiZjc4MTkyYTVlYzIzYjU5NDIyNzgyMmFiNDFjN2UzNWU0N2ZhZDc', './images/slack.svg', 'pptr-slack'));
+    toolbarElements.push(iconButton('https://github.com/GoogleChrome/puppeteer/blob/master/docs/troubleshooting.md', './images/wrench.svg', 'pptr-troubleshooting'));
+    toolbarElements.push(iconButton('https://github.com/GoogleChrome/puppeteer/issues', './images/github.png', 'pptr-github'));
+    return toolbarElements;
+
+    function iconButton(linkURL, iconURL, iconClass) {
+      const a = document.createElement('a');
+      a.innerHTML = `<img src="${iconURL}"></img>`;
+      a.classList.add(iconClass);
+      a.href = linkURL;
+      a.target = '_blank';
+      return a;
+    }
+  }
+
   _initializeAPILifespan() {
     // Compute "since" and "until" versions for API entities.
     const classRegex = /### class:\s+(\w+)\s*$/;
@@ -204,6 +222,7 @@ class PPTRVersion extends App.ProductVersion {
       for (const apiMethod of apiClass.methods)
         this._searchItems.push(PPTRSearchItem.createForMethod(apiMethod));
     }
+
   }
 
   name() {
@@ -216,6 +235,10 @@ class PPTRVersion extends App.ProductVersion {
 
   sidebarElements() {
     return this._sidebarElements;
+  }
+
+  toolbarElements() {
+    return this._toolbarElements;
   }
 
   content(contentId) {
@@ -263,12 +286,6 @@ class PPTRVersion extends App.ProductVersion {
   _initializeSidebarElements() {
     this._sidebarElements = [];
     const resourcesDivider = document.createElement('pptr-sidebar-divider');
-    resourcesDivider.textContent = 'Resources';
-    this._sidebarElements.push(resourcesDivider);
-    this._sidebarElements.push(createResourcesItem(iconURL('./images/github.png', 'github'), 'Github', 'https://github.com/GoogleChrome/puppeteer/issues'));
-    this._sidebarElements.push(createResourcesItem(iconURL('./images/stackoverflow.svg', 'stackoverflow'), 'StackOverflow', 'https://stackoverflow.com/questions/tagged/puppeteer'));
-    this._sidebarElements.push(createResourcesItem(iconURL('./images/slack.svg', 'slack'), 'Slack', 'https://join.slack.com/t/puppeteer/shared_invite/enQtMzU4MjIyMDA5NTM4LTM1OTdkNDhlM2Y4ZGUzZDdjYjM5ZWZlZGFiZjc4MTkyYTVlYzIzYjU5NDIyNzgyMmFiNDFjN2UzNWU0N2ZhZDc'));
-    this._sidebarElements.push(createResourcesItem(iconURL('./images/wrench.svg', 'troubleshooting'), 'ToubleShooting', 'https://github.com/GoogleChrome/puppeteer/blob/master/docs/troubleshooting.md'));
 
     const apiDivider = document.createElement('pptr-sidebar-divider');
     apiDivider.textContent = `API`;
@@ -284,13 +301,6 @@ class PPTRVersion extends App.ProductVersion {
       this._entryToSidebarElement.set(apiEntry, item);
     }
 
-    function iconURL(url, className) {
-      const img = document.createElement('img');
-      img.classList.add(className);
-      img.src = url;
-      return img;
-    }
-
     function createItem(icon, text, route) {
       const item = document.createElement('a');
       item.classList.add('pptr-sidebar-item');
@@ -298,19 +308,6 @@ class PPTRVersion extends App.ProductVersion {
       if (icon)
         item.appendChild(icon);
       item.appendChild(document.createTextNode(text));
-      return item;
-    }
-
-    function createResourcesItem(icon, text, route) {
-      const item = document.createElement('a');
-      item.classList.add('pptr-sidebar-icon-item');
-      item.href = route;
-      item.target = '_blank';
-      if (icon)
-        item.appendChild(icon);
-      const title = document.createElement('span');
-      title.textContent = text;
-      item.appendChild(title);
       return item;
     }
   }

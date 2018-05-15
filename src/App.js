@@ -64,13 +64,14 @@ class App {
   }
 
   initialize(product) {
-    if (this._product === product)
-      return;
     this._product = product;
     this._toolbar.left().appendChild(this._homeButton);
-    this._toolbar.left().appendChild(this._settingsButton);
     this._toolbar.left().appendChild(this._titleElement);
     this._toolbar.left().appendChild(this._search.input);
+
+    for (const e of product.toolbarElements())
+      this._toolbar.right().appendChild(e);
+    this._toolbar.right().appendChild(this._settingsButton);
     this._doNavigation();
   }
 
@@ -103,6 +104,10 @@ class App {
 
 App.Product = class {
   name() {
+  }
+
+  toolbarElements() {
+    return [];
   }
 
   defaultVersionName() {

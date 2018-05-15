@@ -123,43 +123,61 @@ pptr-api-until::before {
   width: 100%;
 }
 
-.pptr-sidebar-icon-item {
-  width: 100%;
-  height: 48px;
-  align-content: center;
-  display: grid;
-  grid-template-columns: 36px auto;
-  grid-template-rows: auto;
-  grid-column-gap: 10px;
-  grid-template-areas: "icon title";
-}
-
-.pptr-sidebar-item,
-.pptr-sidebar-icon-item {
+.pptr-sidebar-item {
   text-decoration: none !important;
 }
 
-.pptr-sidebar-icon-item img {
-  grid-area: icon;
-  height: 100%;
-  justify-self: right;
+.pptr-slack {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.pptr-sidebar-icon-item span {
-  grid-area: title;
+.pptr-slack img {
+  width: 44px;
+  opacity: 0.5;
 }
 
-.pptr-sidebar-icon-item img.slack {
-  transform: scale(1.5);
+.pptr-slack img:hover {
+  opacity: 1;
 }
 
-.pptr-sidebar-icon-item img.troubleshooting {
-  opacity: 0.75;
-  transform: scale(0.9);
+.pptr-stackoverflow {
 }
 
-.pptr-sidebar-icon-item img.github {
-  transform: scale(0.9);
+.pptr-stackoverflow img {
+  width: 29px;
+  opacity: 0.5;
+}
+
+.pptr-stackoverflow img:hover {
+  opacity: 1;
+}
+
+.pptr-troubleshooting {
+  padding: 0 11px 0 3px;
+}
+
+.pptr-troubleshooting img{
+  opacity: 0.5;
+  width: 22px;
+}
+
+.pptr-troubleshooting img:hover {
+  opacity: 1;
+}
+
+.pptr-github {
+  padding: 0 3px;
+}
+
+.pptr-github img:hover {
+  opacity: 1;
+}
+
+.pptr-github img {
+  width: 22px;
+  opacity: 0.5;
 }
 
 pptr-api code:not(.language-js) {

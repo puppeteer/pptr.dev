@@ -18,10 +18,13 @@ settings-button {
   display: flex;
   align-items: center;
   justify-content: center;
-  transform: scale(1.25);
   cursor: pointer;
   opacity: 0.5;
   flex-shrink: 0;
+}
+
+settings-button img {
+  width: 31px;
 }
 
 settings-button:hover {
