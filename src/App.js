@@ -20,7 +20,7 @@ class App {
     this._homeButton = document.createElement('home-button');
     this._homeButton.innerHTML = '<img src="./images/home.svg"></img>';
     this._homeButton.addEventListener('click', () => {
-      this.navigate(this._version.name());
+      this.navigateURL('');
     }, false);
 
     this._titleElement = document.createElement('app-title');
