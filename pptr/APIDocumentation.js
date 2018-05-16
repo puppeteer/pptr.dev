@@ -406,9 +406,9 @@ class APIClass extends APIEntry {
     if (this.events.length)
       addSection('Events', this.events);
     if (this.namespaces.length)
-      addSection('Events', this.namespaces);
+      addSection('Namespaces', this.namespaces);
     if (this.methods.length)
-      addSection('Events', this.methods);
+      addSection('Methods', this.methods);
   }
 }
 
