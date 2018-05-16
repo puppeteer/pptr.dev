@@ -24,6 +24,10 @@ class App {
     }, false);
 
     this._titleElement = document.createElement('app-title');
+    this._titleVersionName = document.createElement('app-title-version-name');
+    this._titleVersionName.addEventListener('click', () => {
+      this._settings.show(this._product, this._version);
+    }, false);
 
     container.appendChild(this._content.element);
     container.appendChild(this._sidebar.element);
@@ -54,7 +58,11 @@ class App {
     this._version = newVersion;
     this._sidebar.setElements(this._version.sidebarElements());
     this._search.setItems(this._version.searchItems());
-    this._titleElement.textContent = this._product.name() + ' ' + this._version.name() + ' Search: ';
+    this._titleElement.textContent = '';
+    this._titleElement.appendChild(document.createTextNode(this._product.name() + ' '));
+    this._titleVersionName.textContent = this._version.name();
+    this._titleElement.appendChild(this._titleVersionName);
+    this._titleElement.appendChild(document.createTextNode(' Search: '));
     this._sidebar.setSelected(content.selectedSidebarElement);
     this._search.setInputValue(content.title);
     this._content.show(content.element, content.scrollAnchor);

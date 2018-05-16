@@ -54,6 +54,15 @@ app-title {
   margin-left: 1ex;
 }
 
+app-title-version-name {
+  border-bottom: 1px dashed white;
+  cursor: pointer;
+}
+
+app-title-version-name:hover {
+  border-bottom: 2px dashed white;
+}
+
 a {
   font-weight: normal !important;
   color: #0366d6;
