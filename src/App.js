@@ -115,7 +115,11 @@ App.Product = class {
   defaultVersionName() {
   }
 
-  versionNames() {
+  /**
+   * @return {!Array<!{name: string, description: string, date: Date}>}
+   */
+  versionDescriptions() {
+    return [];
   }
 
   getVersion(name) {

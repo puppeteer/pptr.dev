@@ -8,13 +8,54 @@ class PPTRProduct extends App.Product {
     const releases = JSON.parse(releasesText).map(release => ({
       name: release.tag_name,
       releaseNotes: release.body,
+      date: new Date(release.published_at)
     }));
-    releases.unshift({name: 'master'});
-    // The very first release had no notes.
+    // Add initial release - was published as a tag.
     releases.push({
       name: 'v0.9.0',
+      date: new Date('August 16, 2017'),
       releaseNotes: '',
     });
+
+    // Initialize release priorities that define their sorting order.
+    for (const release of releases) {
+      const [major, minor, patch] = release.name.substring(1).split('.').map(e => parseInt(e, 10));
+      release.priority = major * 100 * 100 + minor * 100 + patch;
+    }
+
+    releases.sort((a, b) => b.priority - a.priority);
+
+    // Fill predefined chromium versions for past releases:
+    for (const release of releases) {
+      if (release.name === 'v0.9.0') {
+        release.chromiumVersion = 'Chromium 62.0.3188.0 (r494755)';
+      } else if (release.name === 'v0.10.0' || release.name === 'v0.10.1') {
+        release.chromiumVersion = 'Chromium 62.0.3193.0 (r496140)';
+      } else if (release.name === 'v0.13.0') {
+        release.chromiumVersion = 'Chromium 64.0.3265.0 (r515411)';
+      } else if (release.name === 'v1.1.0' || release.name === 'v1.1.1') {
+        release.chromiumVersion = 'Chromium 66.0.3347.0 (r536395)';
+      } else if (release.name === 'v1.3.0') {
+        release.chromiumVersion = 'Chromium 67.0.3392.0 (r536395)';
+      }
+    }
+
+    // Add tip-of-tree version.
+    releases.unshift({
+      name: 'master',
+      priority: Number.MAX_SAFE_INTEGER,
+      chromiumVersion: 'N/A',
+      releaseNotes: ''
+    });
+
+    // Parse chromium versionss from release notes, where possible.
+    for (const release of releases) {
+      if (!release.releaseNotes || release.chromiumVersion)
+        continue;
+      const match = release.releaseNotes.match(/Chromium\s+(\d+\.\d+.\d+.\d+)\s*\((r\d{6})\)/i);
+      if (match)
+        release.chromiumVersion = `Chromium ${match[1]} (${match[2]})`;
+    }
 
     const apiTexts = await Promise.all(releases.map(release => fetchAPI(release.name)));
     for (let i = 0; i < apiTexts.length; ++i)
@@ -190,6 +231,20 @@ class PPTRProduct extends App.Product {
 
   versionNames() {
     return this._releases.map(release => release.name);
+  }
+
+  /**
+   * @return {!Array<!{name: string, description: string}>}
+   */
+  versionDescriptions() {
+    const descriptions = this._releases.map(release => {
+      return {
+        name: release.name,
+        description: release.chromiumVersion,
+        date: release.date
+      };
+    });
+    return descriptions;
   }
 
   getVersion(name) {

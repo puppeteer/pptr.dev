@@ -55,17 +55,23 @@ class SettingsComponent extends EventEmitter {
     if (product) {
       //this._contentElement.innerHTML = `<h3>${product.name()}</h3>`;
       const versionsContainer = document.createElement('product-versions');
-      for (const versionName of product.versionNames()) {
+      for (const description of product.versionDescriptions()) {
         const item = document.createElement('product-version');
         const icon = document.createElement('img');
         icon.src = './images/checkmark.svg';
         item.appendChild(icon);
         const name = document.createElement('version-name');
-        name.textContent = product.name() + ' ' + versionName;
+        name.textContent = product.name() + ' ' + description.name;
         item.appendChild(name);
-        item[SettingsComponent._Symbol] = {product, versionName};
+        const subtitle = document.createElement('version-description');
+        subtitle.textContent = description.description;
+        item.appendChild(subtitle);
+        const date = document.createElement('version-date');
+        date.textContent = formatDate(description.date);
+        item.appendChild(date);
+        item[SettingsComponent._Symbol] = {product, versionName: description.name};
         versionsContainer.appendChild(item);
-        if (versionName === version.name())
+        if (description.name === version.name())
           this._selectItem(item);
       }
       this._contentElement.appendChild(versionsContainer);
@@ -73,6 +79,16 @@ class SettingsComponent extends EventEmitter {
     document.body.appendChild(this.element);
     if (this._selectedItem)
       this._selectedItem.scrollIntoViewIfNeeded();
+
+    function formatDate(date) {
+      if (!date)
+        return 'N/A';
+      const monthNames = [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ];
+      const day = date.getDate();
+      const month = date.getMonth();
+      const year = date.getFullYear();
+      return monthNames[month] + ' ' + day + ', ' + year;
+    }
   }
 
   hide() {
