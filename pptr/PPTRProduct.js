@@ -1,20 +1,24 @@
+const LOCAL_STORAGE_KEY = 'pptr-api-data';
+
 class PPTRProduct extends App.Product {
-  static async create() {
+  static async fetchReleaseAndReadme() {
+    const fetchTimestamp = Date.now();
     const [releasesText, readmeText] = await Promise.all([
-      // Do not fetch too often to avoid GitHub API rate limiting: https://developer.github.com/v3/#rate-limiting
-      fetchCached('https://api.github.com/repos/GoogleChrome/puppeteer/releases', 'pptr-releases', 1000 * 60 * 5 /* 5 minutes */),
-      fetchCached('https://raw.githubusercontent.com/GoogleChrome/puppeteer/master/README.md', 'pptr-readme', 1000 * 60 * 60 * 24 /* 1 day */),
+      fetch('https://api.github.com/repos/GoogleChrome/puppeteer/releases').then(r => r.text()),
+      fetch('https://raw.githubusercontent.com/GoogleChrome/puppeteer/master/README.md').then(r => r.text()),
     ]);
     const releases = JSON.parse(releasesText).map(release => ({
       name: release.tag_name,
       releaseNotes: release.body,
-      date: new Date(release.published_at)
+      timestamp: (new Date(release.published_at)).getTime(),
+      apiText: ''
     }));
     // Add initial release - was published as a tag.
     releases.push({
       name: 'v0.9.0',
-      date: new Date('August 16, 2017'),
+      timestamp: (new Date('August 16, 2017')).getTime(),
       releaseNotes: '',
+      apiText: '',
     });
 
     // Initialize release priorities that define their sorting order.
@@ -43,9 +47,9 @@ class PPTRProduct extends App.Product {
     // Add tip-of-tree version.
     releases.unshift({
       name: 'master',
-      priority: Number.MAX_SAFE_INTEGER,
       chromiumVersion: 'N/A',
-      releaseNotes: ''
+      releaseNotes: '',
+      apiText: ''
     });
 
     // Parse chromium versionss from release notes, where possible.
@@ -57,39 +61,31 @@ class PPTRProduct extends App.Product {
         release.chromiumVersion = `Chromium ${match[1]} (${match[2]})`;
     }
 
-    const apiTexts = await Promise.all(releases.map(release => fetchAPI(release.name)));
+    const apiTexts = await Promise.all(releases.map(release => fetch(`https://raw.githubusercontent.com/GoogleChrome/puppeteer/${release.name}/docs/api.md`).then(r => r.text())));
     for (let i = 0; i < apiTexts.length; ++i)
       releases[i].apiText = apiTexts[i];
-    return new PPTRProduct(readmeText, releases);
 
-    async function fetchCached(url, cacheName, cacheTime) {
-      const cacheTimestampName = cacheName + '-timestamp';
-      const fetchTimestamp = localStorage.getItem(cacheTimestampName);
-      if (fetchTimestamp && cacheTime && Date.now() - fetchTimestamp <= cacheTime)
-        return localStorage.getItem(cacheName);
-      const text = await fetch(url).then(r => r.text());
-      localStorage.setItem(cacheName, text);
-      localStorage.setItem(cacheTimestampName, Date.now());
-      return text;
-    }
-
-    async function fetchAPI(version) {
-      const key = `pptr-api-${version}`;
-      let api = localStorage.getItem(key);
-      if (!api) {
-        const url = `https://raw.githubusercontent.com/GoogleChrome/puppeteer/${version}/docs/api.md`;
-        api = await fetch(url).then(response => response.text());
-        if (version !== 'master')
-          localStorage.setItem(key, api);
-      }
-      return api;
-    }
+    return {fetchTimestamp, readmeText, releases};
   }
 
-  constructor(readmeText, releases) {
+  static async create() {
+    let data = localStorage.getItem(LOCAL_STORAGE_KEY);
+    data = data ? JSON.parse(data) : null;
+    if (!data) {
+      data = await PPTRProduct.fetchReleaseAndReadme();
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data));
+    } else if (Date.now() - data.fetchTimestamp > 5 * 60 * 1000) {
+      // Kick off update process in the background.
+      PPTRProduct.fetchReleaseAndReadme().then(data => localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data)));
+    }
+    return new PPTRProduct(data.readmeText, data.releases, data.fetchTimestamp);
+  }
+
+  constructor(readmeText, releases, fetchTimestamp) {
     super();
     this._readmeText = readmeText;
     this._releases = releases;
+    this._fetchTimestamp = fetchTimestamp;
     this._initializeAPILifespan();
   }
 
@@ -241,10 +237,28 @@ class PPTRProduct extends App.Product {
       return {
         name: release.name,
         description: release.chromiumVersion,
-        date: release.date
+        date: release.timestamp ? new Date(release.timestamp) : null,
       };
     });
     return descriptions;
+  }
+
+  settingsFooterElement() {
+    const settingsFooter = document.createElement('pptr-settings-footer');
+    const diff = Date.now() - this._fetchTimestamp;
+    let time = '';
+    if (diff < 1000)
+      time = 'Just Now';
+    else if (1000 <= diff && diff <= 60 * 1000)
+      time = `${Math.round(diff / 1000)} seconds ago`;
+    else if (60 * 1000 <= diff && diff <= 60 * 60 * 1000)
+      time = `${Math.round(diff / 60 / 1000)} minutes ago`;
+    else if (60 * 60 * 1000 <= diff && diff <= 24 * 60 * 60 * 1000)
+      time = `${Math.round(diff / 60 / 60 / 1000)} hours ago`;
+    else if (24 * 60 * 60 * 1000 <= diff)
+      time = `${Math.round(diff / 24 / 60 / 60 / 1000)} days ago`;
+    settingsFooter.textContent = 'Data fetched ' + time;
+    return settingsFooter;
   }
 
   getVersion(name) {

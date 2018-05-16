@@ -75,6 +75,7 @@ class SettingsComponent extends EventEmitter {
           this._selectItem(item);
       }
       this._contentElement.appendChild(versionsContainer);
+      this._contentElement.appendChild(product.settingsFooterElement());
     }
     document.body.appendChild(this.element);
     if (this._selectedItem)

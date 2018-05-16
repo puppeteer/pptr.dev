@@ -130,6 +130,9 @@ App.Product = class {
     return [];
   }
 
+  settingsFooterElement() {
+  }
+
   getVersion(name) {
   }
 }

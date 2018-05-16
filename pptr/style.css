@@ -20,6 +20,13 @@ pptr-api.pptr-readme img {
   background: white;
 }
 
+pptr-settings-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 90%;
+}
+
 pptr-api-padding {
   height: 75vh;
   max-width: 890px;
