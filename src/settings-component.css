@@ -25,10 +25,23 @@ settings-component settings-content {
   position: relative;
 }
 
+@media only screen and (max-width: 800px) {
+  settings-component settings-content {
+    max-width: 100%;
+    max-height: 100%;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: unset;
+    height: unset;
+  }
+}
+
 settings-component product-versions {
   display: block;
   border: 0.25em solid var(--divider-color);
-  margin: 1em;
   overflow: auto;
 }
 
@@ -37,6 +50,7 @@ settings-component settings-header {
   display: flex;
   justify-content: space-between;
   padding: 0 1ex;
+  flex-shrink: 0;
 }
 
 settings-component settings-header h3 {
@@ -57,9 +71,9 @@ settings-component .settings-close-icon:hover {
 
 settings-component product-version {
   display: grid;
-  grid-template-columns: 50px auto 100px 40%;
-  grid-template-rows: auto ;
-  grid-template-areas: "icon name date description";
+  grid-template-columns: 100px 100px auto;
+  grid-template-rows: auto;
+  grid-template-areas: "name date description";
   grid-column-gap: 10px;
   padding: 1em;
   align-items: center;
@@ -69,15 +83,6 @@ settings-component product-version {
 
 settings-component product-version:hover {
   background-color: var(--hover-color);
-}
-
-settings-component product-version img {
-  grid-area: icon;
-  justify-self: center;
-}
-
-settings-component product-version:not(.selected) img {
-  display: none;
 }
 
 settings-component product-version.selected {
@@ -92,6 +97,7 @@ settings-component product-version version-name {
 settings-component product-version version-description {
   grid-area: description;
   font-size: 90%;
+  justify-self: center;
 }
 
 settings-component product-version version-date {

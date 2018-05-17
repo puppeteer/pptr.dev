@@ -71,8 +71,16 @@ self.__precacheManifest = [
     "revision": "5a5d43fb5504cd8984e4e59f1832ee3e"
   },
   {
+    "url": "images/menu.svg",
+    "revision": "6aa1bfbadbdeb0e73c5c945c2dbc0019"
+  },
+  {
     "url": "images/pptr.png",
     "revision": "924f28bd0281fb8e45b19f1364cfaf8e"
+  },
+  {
+    "url": "images/search.svg",
+    "revision": "69536ad6f996355f6c73270a0c018ac8"
   },
   {
     "url": "images/slack.svg",
@@ -88,7 +96,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "8a727816f0b70afcd51acacfe4f8fdcc"
+    "revision": "1ba14a1350b32f5380f49fc18ef77642"
   },
   {
     "url": "pptr/APIDocumentation.js",
@@ -100,15 +108,15 @@ self.__precacheManifest = [
   },
   {
     "url": "pptr/style.css",
-    "revision": "80385cd179d8701236ece5b01d51d69a"
+    "revision": "942dcb5f86c49cfbb11433307bf1b44c"
   },
   {
     "url": "src/App.js",
-    "revision": "c4c0e3fc80ec5af6083517326fcc9c41"
+    "revision": "60760e50c6a351a123664f8f790ceded"
   },
   {
     "url": "src/content-component.css",
-    "revision": "ab03f9dbf93629e32b109a0e3de6d8d7"
+    "revision": "5ba5cc5a82217e1284ccb13c4524bd5f"
   },
   {
     "url": "src/ContentComponent.js",
@@ -124,7 +132,7 @@ self.__precacheManifest = [
   },
   {
     "url": "src/main.css",
-    "revision": "46881b17a912037a2cf240ba22208d8d"
+    "revision": "591d85f8228fc1f77a69e73be05cb9d0"
   },
   {
     "url": "src/polyfills.js",
@@ -132,35 +140,35 @@ self.__precacheManifest = [
   },
   {
     "url": "src/search-component.css",
-    "revision": "0d058ac11c3e6ddeb07e0132996edcae"
+    "revision": "5f32dfe3c24bc0f50adabe5292ae1b2d"
   },
   {
     "url": "src/SearchComponent.js",
-    "revision": "26bf58b9c38575ab2f7d4d952b1af5eb"
+    "revision": "f4029a03e989b82a569315febb73fd94"
   },
   {
     "url": "src/settings-component.css",
-    "revision": "b7b8c10b644d4ff7dde2b07ef57e084e"
+    "revision": "1c59a71bf7b35a62211015b63b97c84a"
   },
   {
     "url": "src/SettingsComponent.js",
-    "revision": "a02aedebb90d9435f694d72b89f5f001"
+    "revision": "2ad3e93960f61e501994b03f5bb962b8"
   },
   {
     "url": "src/sidebar-component.css",
-    "revision": "14942463e7b3c5c55bae4acd6f0adc55"
+    "revision": "38eedddc24102f2a17d3f3cff6fa7077"
   },
   {
     "url": "src/SidebarComponent.js",
-    "revision": "371d7ad03450b580928cfd8d1d0c0af1"
+    "revision": "f9d584cca440359fbd0c95013a71d7c7"
   },
   {
     "url": "src/toolbar-component.css",
-    "revision": "84a0094f7c19bf548d1cc985de1343b8"
+    "revision": "2df9d2c12e778cb68da44d62e3ca3446"
   },
   {
     "url": "src/ToolbarComponent.js",
-    "revision": "09495d00fce63f556b16241964478c65"
+    "revision": "7dab84110451067f2dcc8e7e561ef18d"
   },
   {
     "url": "third_party/commonmark.min.js",

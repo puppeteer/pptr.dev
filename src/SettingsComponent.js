@@ -56,15 +56,11 @@ class SettingsComponent extends EventEmitter {
     settingsHeader.appendChild(closeIcon);
     this._contentElement.appendChild(settingsHeader);
     if (product) {
-      //this._contentElement.innerHTML = `<h3>${product.name()}</h3>`;
       const versionsContainer = document.createElement('product-versions');
       for (const description of product.versionDescriptions()) {
         const item = document.createElement('product-version');
-        const icon = document.createElement('img');
-        icon.src = './images/checkmark.svg';
-        item.appendChild(icon);
         const name = document.createElement('version-name');
-        name.textContent = product.name() + ' ' + description.name;
+        name.textContent = description.name;
         item.appendChild(name);
         const subtitle = document.createElement('version-description');
         subtitle.textContent = description.description;

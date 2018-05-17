@@ -9,3 +9,8 @@ content-component {
   -webkit-overflow-scrolling: touch;
 }
 
+@media only screen and (max-width: 800px) {
+  content-component {
+    left: 0;
+  }
+}

@@ -13,14 +13,14 @@
 }
 
 settings-button {
-  padding-right: 15px;
-  padding-left: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   opacity: 0.5;
   flex-shrink: 0;
+  display: none;
+  transform: scale(0.8);
 }
 
 settings-button img {
@@ -32,7 +32,6 @@ settings-button:hover {
 }
 
 home-button {
-  padding-left: 15px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -46,12 +45,45 @@ home-button:hover {
   opacity: 1;
 }
 
+menu-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0.5;
+  flex-shrink: 0;
+  display: none;
+}
+
+menu-button:hover {
+  opacity: 1;
+}
+
+search-button {
+  padding-right: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0.5;
+  flex-shrink: 0;
+  display: none;
+}
+
+search-button:hover {
+  opacity: 1;
+}
+
 app-title {
   font-size: 20px;
   color: white;
   white-space: nowrap;
   flex-shrink: 0;
   margin-left: 1ex;
+}
+
+.show-mobile-search app-title {
+  display: none;
 }
 
 app-title-version-name {
@@ -89,3 +121,14 @@ blockquote {
   border-left: 0.25em solid #FFEB3B;
 }
 
+@media only screen and (max-width: 800px) {
+  search-button,
+  settings-button,
+  menu-button {
+    display: flex;
+  }
+
+  app-title {
+    display: none;
+  }
+}

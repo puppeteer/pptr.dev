@@ -14,22 +14,41 @@ class App {
     this._settingsButton = document.createElement('settings-button');
     this._settingsButton.innerHTML = '<img src="./images/cog.svg"></img>';
     this._settingsButton.addEventListener('click', () => {
+      this._sidebar.hideOnMobile();
       this._settings.show(this._product, this._version);
+    }, false);
+
+    this._menuButton = document.createElement('menu-button');
+    this._menuButton.innerHTML = '<img src="./images/menu.svg"></img>';
+    this._menuButton.addEventListener('click', () => {
+      this._sidebar.toggleOnMobile();
+    }, false);
+
+    this._searchButton = document.createElement('search-button');
+    this._searchButton.innerHTML = '<img src="./images/search.svg"></img>';
+    this._searchButton.addEventListener('click', event => {
+      this._search.toggleSearch();
+      this._sidebar.hideOnMobile();
+      event.stopPropagation();
+      event.preventDefault();
     }, false);
 
     this._homeButton = document.createElement('home-button');
     this._homeButton.innerHTML = '<img src="./images/home.svg"></img>';
     this._homeButton.addEventListener('click', () => {
+      this._sidebar.hideOnMobile();
       this.navigateURL('');
     }, false);
 
     this._titleElement = document.createElement('app-title');
     this._titleVersionName = document.createElement('app-title-version-name');
     this._titleVersionName.addEventListener('click', () => {
+      this._sidebar.hideOnMobile();
       this._settings.show(this._product, this._version);
     }, false);
 
     container.appendChild(this._content.element);
+    container.appendChild(this._sidebar.glasspane);
     container.appendChild(this._sidebar.element);
     container.appendChild(this._toolbar.element);
 
@@ -42,6 +61,7 @@ class App {
   _doNavigation() {
     if (!this._product)
       return;
+    this._sidebar.hideOnMobile();
     const params = new URLSearchParams(window.location.hash.substring(1));
     const versionName = params.get('version') || this._product.defaultVersionName();
 
@@ -75,13 +95,16 @@ class App {
 
   initialize(product) {
     this._product = product;
+    this._toolbar.left().appendChild(this._menuButton);
     this._toolbar.left().appendChild(this._homeButton);
     this._toolbar.left().appendChild(this._titleElement);
     this._toolbar.left().appendChild(this._search.input);
 
+    this._toolbar.middle().appendChild(this._searchButton);
+    this._toolbar.middle().appendChild(this._settingsButton);
+
     for (const e of product.toolbarElements())
       this._toolbar.right().appendChild(e);
-    this._toolbar.right().appendChild(this._settingsButton);
     this._doNavigation();
   }
 

@@ -22,6 +22,30 @@ sidebar-component sidebar-item.selected {
   background-color: var(--selected-color);
 }
 
-sidebar-component
-sidebar-divider {
+sidebar-component sidebar-glasspane {
+  display: none;
+}
+
+@media only screen and (max-width: 800px) {
+  sidebar-component {
+    display: none;
+  }
+
+  sidebar-component.show-on-mobile {
+    display: block;
+    left: 0;
+    right: 0;
+    top: var(--search-height);
+    bottom: 0;
+  }
+
+  sidebar-glasspane.show-on-mobile {
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: var(--search-height);
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
 }

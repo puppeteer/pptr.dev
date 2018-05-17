@@ -15,6 +15,12 @@ pptr-api content-box {
   overflow-x: hidden;
 }
 
+@media only screen and (max-width: 800px) {
+  pptr-api content-box {
+    margin: 7px 5px;
+  }
+}
+
 pptr-api.pptr-readme img {
   /* this is to make PPTR logo look nice with blockquote. */
   background: white;
@@ -25,6 +31,7 @@ pptr-settings-footer {
   align-items: center;
   justify-content: center;
   font-size: 90%;
+  margin: 1em;
 }
 
 pptr-api-padding {
@@ -326,3 +333,5 @@ pptr-api .cm-hr {color: #999;}
 pptr-api .cm-link {color: #00c;}
 
 pptr-api .cm-error {color: #f00;}
+
+

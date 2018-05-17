@@ -105,6 +105,13 @@ class SearchComponent {
     }, false);
   }
 
+  toggleSearch() {
+    if (this._visible)
+      this.cancelSearch();
+    else
+      this.search(this._defaultValue);
+  }
+
   setItems(items) {
     this._items = items;
   }

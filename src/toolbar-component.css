@@ -11,6 +11,7 @@ toolbar-component {
   justify-content: space-between;
   overflow: hidden;
   z-index: 100;
+  padding: 0 15px;
 }
 
 toolbar-component
@@ -23,9 +24,9 @@ input[type=search] {
     padding-left: 1ex;
     font-size: 20px;
     color: white;
-    width: 250px;
     margin-left: 1ex;
     text-overflow: ellipsis;
+    width: 250px;
 }
 
 toolbar-component
@@ -42,4 +43,14 @@ input[type=search]:focus {
 toolbar-component toolbar-section {
   display: flex;
   align-items: center;
+}
+
+@media only screen and (max-width: 800px) {
+  toolbar-section.right {
+    display: none;
+  }
+
+  toolbar-component input[type=search] {
+    width: initial;
+  }
 }
