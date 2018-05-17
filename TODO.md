@@ -1,3 +1,2 @@
-- the "settings" screen should contain a "Fetch now." button.
 - mobile support
-- linkify chromium versions to where we download them from.
+- linkify chromium versions to where we download them from (there are many! Maybe doesn't worth it?!)
