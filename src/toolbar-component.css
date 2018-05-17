@@ -21,10 +21,10 @@ input[type=search] {
     text-align: left;
     border: none;
     border-bottom: 2px solid rgb(255, 255, 255);
-    padding-left: 1ex;
+    padding: 0 1ex;
     font-size: 20px;
     color: white;
-    margin-left: 1ex;
+    margin: 0 1ex;
     text-overflow: ellipsis;
     max-width: 250px;
     flex-grow: 1;

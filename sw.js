@@ -104,7 +104,7 @@ self.__precacheManifest = [
   },
   {
     "url": "pptr/PPTRProduct.js",
-    "revision": "2b4aa13442d8110d6bff03340124d46e"
+    "revision": "4c0f81005c183e483a49fc50c8baef7e"
   },
   {
     "url": "pptr/style.css",
@@ -164,7 +164,7 @@ self.__precacheManifest = [
   },
   {
     "url": "src/toolbar-component.css",
-    "revision": "3ddafe116a78a1b65247cc5776268b39"
+    "revision": "1765166c512ada697e87e1020da448dc"
   },
   {
     "url": "src/ToolbarComponent.js",

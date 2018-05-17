@@ -320,8 +320,13 @@ class PPTRVersion extends App.ProductVersion {
     if (!contentId) {
       const element = document.createElement('pptr-api');
       element.classList.add('pptr-readme');
-      const contentBox = document.createElement('content-box'); element.appendChild(contentBox);
-      contentBox.appendChild(APIDocumentation.markdownToDOM(this._readmeText));
+      const contentBox = document.createElement('content-box');
+      element.appendChild(contentBox);
+      const rendered = APIDocumentation.markdownToDOM(this._readmeText);
+      var fragment = document.createDocumentFragment();
+      while (rendered.firstChild)
+        fragment.appendChild(rendered.firstChild);
+      contentBox.appendChild(fragment);
       // Move logo to the very beginning - it will look better.
       const logo = contentBox.querySelector('img[align=right]');
       if (logo) {
