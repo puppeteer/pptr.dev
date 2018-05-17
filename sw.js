@@ -148,7 +148,7 @@ self.__precacheManifest = [
   },
   {
     "url": "src/settings-component.css",
-    "revision": "1c59a71bf7b35a62211015b63b97c84a"
+    "revision": "81e982acd983ad540dc55e9a65206b1e"
   },
   {
     "url": "src/SettingsComponent.js",

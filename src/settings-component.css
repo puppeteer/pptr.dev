@@ -43,6 +43,7 @@ settings-component product-versions {
   display: block;
   border: 0.25em solid var(--divider-color);
   overflow: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 settings-component settings-header {
