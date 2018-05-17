@@ -152,6 +152,7 @@ class SearchComponent {
         results.push({item, score: 0, matches: []});
     }
     this._contentElement.innerHTML = '';
+    this._contentElement.scrollTop = 0;
     if (!query)
       this._contentElement.appendChild(this._gotoHomeItem);
 
@@ -165,7 +166,7 @@ class SearchComponent {
       this._showOtherItem.textContent = `Show Remaining ${this._remainingResults.length} Results.`;
       this._contentElement.appendChild(this._showOtherItem);
     }
-    this._selectElement(this._contentElement.firstChild);
+    this._selectElement(this._contentElement.firstChild, true /* omitScroll */);
   }
 
   cancelSearch() {
@@ -195,12 +196,13 @@ class SearchComponent {
     this._selectElement(previous);
   }
 
-  _selectElement(item) {
+  _selectElement(item, omitScroll) {
     if (this._selectedElement)
       this._selectedElement.classList.remove('selected');
     this._selectedElement = item;
     if (this._selectedElement) {
-      this._selectedElement.scrollIntoViewIfNeeded(false);
+      if (!omitScroll)
+        this._selectedElement.scrollIntoViewIfNeeded(false);
       this._selectedElement.classList.add('selected');
     }
   }

@@ -12,6 +12,7 @@ search-component {
   --search-item-icon-width: 20px;
   --search-item-gap: 13px;
   --search-item-padding: 18px;
+  contain: strict;
 }
 
 search-component search-results {
