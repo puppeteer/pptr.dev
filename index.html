@@ -1,3 +1,18 @@
+<!--
+
+    I M P O R T A N T
+
+TL;DR: When changing index.html, bump a "revision" number of the "index.js" entry in "sw.js"
+
+Why?
+- There's a service worker powered by Workbox.
+- Workbox handles navigation requests separately
+- Workbox requires navigation request entries to be pre-cached
+- Precaching requires us to version things manually
+
+So here we are.
+
+-->
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
 <!-- polyfills -->

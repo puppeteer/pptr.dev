@@ -1,8 +1,24 @@
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/3.2.0/workbox-sw.js');
 
+// Precache main resource so that the app can be loaded offline.
+workbox.precaching.precache([
+  {
+    url: '/index.html',
+    // Bump this number every time a new resource is added to index.html
+    revision: '1',
+  }
+]);
+workbox.routing.registerNavigationRoute('/index.html');
+
 // Cache CSS and JS
 workbox.routing.registerRoute(
   /\.(?:js|css)$/,
+  workbox.strategies.staleWhileRevalidate(),
+);
+
+// Cache github images
+workbox.routing.registerRoute(
+  /^https:\/\/user-images\.githubusercontent\.com\/.*/,
   workbox.strategies.staleWhileRevalidate(),
 );
 
