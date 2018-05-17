@@ -45,4 +45,8 @@
     const product = await PPTRProduct.create();
     app.initialize(product);
   });
+  window.addEventListener('load', () => {
+    if ('serviceWorker' in navigator)
+      navigator.serviceWorker.register('/sw.js');
+  });
 </script>

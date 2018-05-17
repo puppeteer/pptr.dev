@@ -1,4 +1,3 @@
 - the "settings" screen should contain a "Fetch now." button.
-- embed workbox to support service worker
 - mobile support
 - linkify chromium versions to where we download them from.
