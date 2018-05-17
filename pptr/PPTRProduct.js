@@ -81,7 +81,7 @@ class PPTRProduct extends App.Product {
       data = await PPTRProduct.fetchReleaseAndReadme();
       app.setLoadingScreen(false);
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data));
-    } else if (Date.now() - data.fetchTimestamp > 5 * 60 * 1000) {
+    } else if (Date.now() - data.fetchTimestamp > 60 * 60 * 1000 /* 1 hour */) {
       // Kick off update process in the background.
       PPTRProduct.fetchReleaseAndReadme().then(data => localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data)));
     }

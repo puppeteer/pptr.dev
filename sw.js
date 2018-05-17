@@ -104,7 +104,7 @@ self.__precacheManifest = [
   },
   {
     "url": "pptr/PPTRProduct.js",
-    "revision": "4c0f81005c183e483a49fc50c8baef7e"
+    "revision": "38dd82d933ca224701b2b19337e0e46f"
   },
   {
     "url": "pptr/style.css",
