@@ -69,6 +69,11 @@ class PPTRProduct extends App.Product {
   }
 
   static async create() {
+    // Cleanup previously used storage.
+    // Using LocalStorage with PWA is not a good idea.
+    if (localStorage.getItem('pptr-releases-timestamp'))
+      localStorage.clear();
+    // --- CLEANUP DONE ---
     let data = localStorage.getItem(LOCAL_STORAGE_KEY);
     data = data ? JSON.parse(data) : null;
     if (!data) {

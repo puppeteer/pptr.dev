@@ -104,7 +104,7 @@ self.__precacheManifest = [
   },
   {
     "url": "pptr/PPTRProduct.js",
-    "revision": "3cdba103ee920575193ad5cd4c90a93a"
+    "revision": "4c6c8cb92e79bd84d885797b0eb0ea11"
   },
   {
     "url": "pptr/style.css",
@@ -144,7 +144,7 @@ self.__precacheManifest = [
   },
   {
     "url": "src/SearchComponent.js",
-    "revision": "f4029a03e989b82a569315febb73fd94"
+    "revision": "ef7d4744d0c10017ef2fb13d7bfac1ac"
   },
   {
     "url": "src/settings-component.css",
@@ -164,7 +164,7 @@ self.__precacheManifest = [
   },
   {
     "url": "src/toolbar-component.css",
-    "revision": "2df9d2c12e778cb68da44d62e3ca3446"
+    "revision": "3ddafe116a78a1b65247cc5776268b39"
   },
   {
     "url": "src/ToolbarComponent.js",
