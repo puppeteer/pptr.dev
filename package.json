@@ -4,11 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "workbox generateSW",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "commonmark": "^0.28.1"
+    "commonmark": "^0.28.1",
+    "workbox-cli": "^3.2.0"
   }
 }

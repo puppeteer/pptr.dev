@@ -1,9 +1,3 @@
-/**
- * To generate a service worker out of this config, run:
- *
- *     npx workbox-cli generateSW
- *
- */
 module.exports = {
   swDest: './sw.js',
   globDirectory: '.',
