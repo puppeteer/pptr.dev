@@ -102,7 +102,6 @@ class PPTRProduct extends App.Product {
       a.innerHTML = `<img src="${iconURL}"></img>`;
       a.classList.add(iconClass);
       a.href = linkURL;
-      a.target = '_blank';
       return a;
     }
   }
