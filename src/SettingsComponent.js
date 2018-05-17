@@ -18,6 +18,9 @@ class SettingsComponent extends EventEmitter {
     this._contentElement.addEventListener('click', event => {
       event.stopPropagation();
       event.preventDefault();
+      // Allow selecting versions.
+      if (!window.getSelection().isCollapsed)
+        return;
       if (event.target.classList.contains('settings-close-icon')) {
         this.hide();
         return;
