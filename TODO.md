@@ -1,4 +1,4 @@
-- the "version" in title should be clickable
-- the "settings" screen should contain a "Releases fetched XXX minutes ago. Fetch now." button.
+- the "settings" screen should contain a "Fetch now." button.
 - embed workbox to support service worker
 - mobile support
+- linkify chromium versions to where we download them from.
