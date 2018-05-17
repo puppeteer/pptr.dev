@@ -156,7 +156,7 @@ self.__precacheManifest = [
   },
   {
     "url": "src/sidebar-component.css",
-    "revision": "38eedddc24102f2a17d3f3cff6fa7077"
+    "revision": "b21576ca587a332e9fae35fbea420219"
   },
   {
     "url": "src/SidebarComponent.js",

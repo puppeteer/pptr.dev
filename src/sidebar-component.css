@@ -6,6 +6,7 @@ sidebar-component {
   bottom: 0;
   left: 0;
   overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
   border-right: 1px solid var(--divider-color);
   overflow-x: hidden;
 }
