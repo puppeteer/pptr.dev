@@ -104,7 +104,7 @@ self.__precacheManifest = [
   },
   {
     "url": "pptr/PPTRProduct.js",
-    "revision": "4c6c8cb92e79bd84d885797b0eb0ea11"
+    "revision": "2b4aa13442d8110d6bff03340124d46e"
   },
   {
     "url": "pptr/style.css",
@@ -112,7 +112,7 @@ self.__precacheManifest = [
   },
   {
     "url": "src/App.js",
-    "revision": "60760e50c6a351a123664f8f790ceded"
+    "revision": "77a29cffb27e81d987a88f02f0fd94ef"
   },
   {
     "url": "src/content-component.css",
@@ -132,7 +132,7 @@ self.__precacheManifest = [
   },
   {
     "url": "src/main.css",
-    "revision": "591d85f8228fc1f77a69e73be05cb9d0"
+    "revision": "6384ce40c0b9f1b51fbaeda9b8d43ec8"
   },
   {
     "url": "src/polyfills.js",

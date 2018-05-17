@@ -1,2 +1,0 @@
-- mobile support
-- linkify chromium versions to where we download them from (there are many! Maybe doesn't worth it?!)

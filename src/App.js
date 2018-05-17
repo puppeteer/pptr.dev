@@ -1,5 +1,6 @@
 class App {
   constructor(container) {
+    this._container = container;
     this._content = new ContentComponent();
     this._sidebar = new SidebarComponent();
     this._toolbar = new ToolbarComponent();
@@ -47,11 +48,6 @@ class App {
       this._settings.show(this._product, this._version);
     }, false);
 
-    container.appendChild(this._content.element);
-    container.appendChild(this._sidebar.glasspane);
-    container.appendChild(this._sidebar.element);
-    container.appendChild(this._toolbar.element);
-
     this._product = null;
     this._version = null;
 
@@ -95,6 +91,12 @@ class App {
 
   initialize(product) {
     this._product = product;
+
+    this._container.appendChild(this._content.element);
+    this._container.appendChild(this._sidebar.glasspane);
+    this._container.appendChild(this._sidebar.element);
+    this._container.appendChild(this._toolbar.element);
+
     this._toolbar.left().appendChild(this._menuButton);
     this._toolbar.left().appendChild(this._homeButton);
     this._toolbar.left().appendChild(this._titleElement);
@@ -132,6 +134,28 @@ class App {
 
   focusContent() {
     this._content.element.focus();
+  }
+
+  setLoadingScreen(visible, text) {
+    if (this._loadingScreen) {
+      this._loadingScreen.remove();
+      this._loadingScreen = null;
+    }
+    if (!visible)
+      return;
+    this._loadingScreen = document.createElement('loading-screen');
+    this._loadingScreen.innerHTML = `
+      <loading-logo></loading-logo>
+      <div class='text'>${text}</div>
+      <div class='spinner'>
+        <div class='rect1'></div>
+        <div class='rect2'></div>
+        <div class='rect3'></div>
+        <div class='rect4'></div>
+        <div class='rect5'></div>
+      </div>
+    `;
+    document.body.appendChild(this._loadingScreen);
   }
 }
 

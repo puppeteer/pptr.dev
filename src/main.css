@@ -12,6 +12,10 @@
   color: var(--black);
 }
 
+body {
+  background-color: #fafafa;
+}
+
 settings-button {
   display: flex;
   align-items: center;
@@ -119,6 +123,90 @@ blockquote {
   padding: 1px 1em 1px 2em;
   margin: 2em 0;
   border-left: 0.25em solid #FFEB3B;
+}
+
+loading-screen {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  //
+  background-color: rgba(0, 0, 0, 0.5);
+  flex-direction: column;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+
+loading-screen loading-logo {
+  opacity: 0.1;
+  position: absolute;
+  background-image: url(/images/pptr.png);
+  background-repeat: no-repeat;
+  background-position: center;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+
+loading-screen .text {
+  white-space: pre-wrap;
+  text-align: center;
+  margin: 2em;
+}
+
+loading-screen .spinner {
+  width: 50px;
+  height: 40px;
+  text-align: center;
+  font-size: 10px;
+  margin: 100px;
+}
+
+loading-screen .spinner > div {
+  background-color: var(--black);
+  height: 100%;
+  width: 6px;
+  display: inline-block;
+  -webkit-animation: sk-stretchdelay 1.2s infinite ease-in-out;
+  animation: sk-stretchdelay 1.2s infinite ease-in-out;
+}
+
+loading-screen .spinner .rect2 {
+  -webkit-animation-delay: -1.1s;
+  animation-delay: -1.1s;
+}
+
+loading-screen .spinner .rect3 {
+  -webkit-animation-delay: -1.0s;
+  animation-delay: -1.0s;
+}
+
+loading-screen .spinner .rect4 {
+  -webkit-animation-delay: -0.9s;
+  animation-delay: -0.9s;
+}
+
+loading-screen .spinner .rect5 {
+  -webkit-animation-delay: -0.8s;
+  animation-delay: -0.8s;
+}
+
+@-webkit-keyframes sk-stretchdelay {
+  0%, 40%, 100% { -webkit-transform: scaleY(0.4) }
+  20% { -webkit-transform: scaleY(1.0) }
+}
+
+@keyframes sk-stretchdelay {
+  0%, 40%, 100% {
+    transform: scaleY(0.4);
+    -webkit-transform: scaleY(0.4);
+  }  20% {
+    transform: scaleY(1.0);
+    -webkit-transform: scaleY(1.0);
+  }
 }
 
 @media only screen and (max-width: 800px) {

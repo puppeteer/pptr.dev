@@ -77,7 +77,9 @@ class PPTRProduct extends App.Product {
     let data = localStorage.getItem(LOCAL_STORAGE_KEY);
     data = data ? JSON.parse(data) : null;
     if (!data) {
+      app.setLoadingScreen(true, 'Please give us a few seconds to download Puppeteer releases for the first time.\n Next time we\'ll do it in background.');
       data = await PPTRProduct.fetchReleaseAndReadme();
+      app.setLoadingScreen(false);
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data));
     } else if (Date.now() - data.fetchTimestamp > 5 * 60 * 1000) {
       // Kick off update process in the background.
