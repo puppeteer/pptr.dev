@@ -10,6 +10,7 @@ class SearchComponent {
     this.input.setAttribute('autocomplete', 'off');
     this.input.setAttribute('autocapitalize', 'off');
     this.input.setAttribute('spellcheck', 'false');
+    this.input.setAttribute('size', '1');
     this.input.setAttribute('placeholder', 'start typing to search...');
 
     this._contentElement = document.createElement('search-results');
