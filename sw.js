@@ -1,20 +1,4 @@
 /**
- * Copyright 2018 Google Inc. All rights reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the 'License');
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an 'AS IS' BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-/**
  * Welcome to your Workbox-powered service worker!
  *
  * You'll need to register this file in your web app and you should
@@ -112,79 +96,79 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "1ba14a1350b32f5380f49fc18ef77642"
+    "revision": "7e05cb0487a75d0fc0dc3d4c2a3cb562"
   },
   {
     "url": "pptr/APIDocumentation.js",
-    "revision": "ee43b24635bb79b55c92c4ada3d6f3d5"
+    "revision": "bbf5aa37882527f4cbb6bfb11d7fbfdc"
   },
   {
     "url": "pptr/PPTRProduct.js",
-    "revision": "38dd82d933ca224701b2b19337e0e46f"
+    "revision": "3a48f366460848e2f4ddbd7cc281148c"
   },
   {
     "url": "pptr/style.css",
-    "revision": "942dcb5f86c49cfbb11433307bf1b44c"
+    "revision": "81692f1f5a51e4d50d212f5bc68812a3"
   },
   {
     "url": "src/App.js",
-    "revision": "77a29cffb27e81d987a88f02f0fd94ef"
+    "revision": "07c3b1719a527efe2fc6a4f1c67598e7"
   },
   {
     "url": "src/content-component.css",
-    "revision": "5ba5cc5a82217e1284ccb13c4524bd5f"
+    "revision": "590bfe05cd7b0ef7c2439f1a4d6bfd4b"
   },
   {
     "url": "src/ContentComponent.js",
-    "revision": "7fe9db8bba0ecf0e0cd52f4ed2e12222"
+    "revision": "df7c8ce5352cc85e37a1b3fd18e7ce27"
   },
   {
     "url": "src/EventEmitter.js",
-    "revision": "d683e1e2369dc73f326f633d686b6048"
+    "revision": "826dd87509464bbf4f1d3a3881bd77d7"
   },
   {
     "url": "src/FuzzySearch.js",
-    "revision": "3e4337a91a77f09e3759dd6ccec61299"
+    "revision": "3d28bbb154c2f9cacab39d897a47b010"
   },
   {
     "url": "src/main.css",
-    "revision": "6384ce40c0b9f1b51fbaeda9b8d43ec8"
+    "revision": "a863165abae17d35b8cae2713b1ee220"
   },
   {
     "url": "src/polyfills.js",
-    "revision": "af16e7f55535a8dbbb30e730b8adb7a0"
+    "revision": "4abe9576e05d4e78c0b6a018da751725"
   },
   {
     "url": "src/search-component.css",
-    "revision": "5f32dfe3c24bc0f50adabe5292ae1b2d"
+    "revision": "b0eda28e072367337371141c4a6a4798"
   },
   {
     "url": "src/SearchComponent.js",
-    "revision": "ef7d4744d0c10017ef2fb13d7bfac1ac"
+    "revision": "6e28d58016847e26b3115efac3bc7cf4"
   },
   {
     "url": "src/settings-component.css",
-    "revision": "81e982acd983ad540dc55e9a65206b1e"
+    "revision": "295c1816f1c9e54f99c9dbb5385342eb"
   },
   {
     "url": "src/SettingsComponent.js",
-    "revision": "2ad3e93960f61e501994b03f5bb962b8"
+    "revision": "14055ba62f7ef4cb5565f4c7e8f0851b"
   },
   {
     "url": "src/sidebar-component.css",
-    "revision": "b21576ca587a332e9fae35fbea420219"
+    "revision": "82ce3f13fafe662b66273e69776c17ad"
   },
   {
     "url": "src/SidebarComponent.js",
-    "revision": "f9d584cca440359fbd0c95013a71d7c7"
+    "revision": "7ba57459acb4b00bea1312672ed0844a"
   },
   {
     "url": "src/toolbar-component.css",
-    "revision": "1765166c512ada697e87e1020da448dc"
+    "revision": "941fb2992258726f6574dee7e46e7174"
   },
   {
     "url": "src/ToolbarComponent.js",
-    "revision": "7dab84110451067f2dcc8e7e561ef18d"
+    "revision": "42ca3e594d93754827027576f43e5377"
   },
   {
     "url": "third_party/commonmark.min.js",
