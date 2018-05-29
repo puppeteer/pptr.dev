@@ -1,14 +1,14 @@
 {
-  "name": "ppdoc",
-  "version": "1.0.0",
-  "description": "",
+  "name": "pptrdev",
+  "version": "0.1.0",
+  "description": "Source code for pptr.dev website",
   "main": "index.js",
   "scripts": {
     "build": "workbox generateSW",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "The Chromium Authors",
+  "license": "Apache-2.0",
   "devDependencies": {
     "commonmark": "^0.28.1",
     "workbox-cli": "^3.2.0"
