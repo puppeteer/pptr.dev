@@ -71,6 +71,8 @@ class App {
   }
 
   _doNavigation() {
+    gtag('config', 'UA-106086244-2', {'page_path': window.location.href.substring(window.location.origin.length)});
+
     if (!this._product)
       return;
     this._sidebar.hideOnMobile();

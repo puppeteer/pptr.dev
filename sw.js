@@ -112,7 +112,7 @@ self.__precacheManifest = [
   },
   {
     "url": "src/App.js",
-    "revision": "07c3b1719a527efe2fc6a4f1c67598e7"
+    "revision": "45dd74e36723d078ff6a1fd09b78d4d8"
   },
   {
     "url": "src/content-component.css",
