@@ -19,6 +19,9 @@ importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.2.0/workbox
 workbox.skipWaiting();
 workbox.clientsClaim();
 
+// Enable offline GoogleAnalytics.
+workbox.googleAnalytics.initialize();
+
 workbox.precaching.suppressWarnings();
 workbox.precaching.precacheAndRoute([
   {
