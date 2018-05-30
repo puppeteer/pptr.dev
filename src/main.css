@@ -147,7 +147,7 @@ loading-screen {
 loading-screen loading-logo {
   opacity: 0.1;
   position: absolute;
-  background-image: url(./images/pptr.png);
+  background-image: url(/images/pptr.png);
   background-repeat: no-repeat;
   background-position: center;
   left: 0;
