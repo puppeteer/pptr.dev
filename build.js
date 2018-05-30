@@ -56,7 +56,7 @@ if (os.platform() === 'win32') {
     if (scripts.length) {
       // Use first script to reference /dist/script.js
       const dist = scripts.shift();
-      dist.src = '/dist/script.js';
+      dist.src = './dist/script.js';
       scripts.forEach(script => script.remove());
     }
     const links = $$('link[rel=stylesheet]').filter(link => link.href.startsWith('file://'));
@@ -64,7 +64,7 @@ if (os.platform() === 'win32') {
     if (links.length) {
       // Use first link to reference /dist/style.css
       const dist = links.shift();
-      dist.href = '/dist/style.css';
+      dist.href = './dist/style.css';
       links.forEach(link => link.remove());
     }
     return {scriptPaths, stylePaths};
