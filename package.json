@@ -12,6 +12,7 @@
   "devDependencies": {
     "commonmark": "^0.28.1",
     "csso": "^3.5.0",
+    "idb-keyval": "^3.0.4",
     "node-static": "^0.7.10",
     "puppeteer": "^1.4.0",
     "uglify-es": "^3.3.9",

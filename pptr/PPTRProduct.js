@@ -85,21 +85,17 @@ class PPTRProduct extends App.Product {
   }
 
   static async create() {
-    // Cleanup previously used storage.
-    // Using LocalStorage with PWA is not a good idea.
-    if (localStorage.getItem('pptr-releases-timestamp'))
-      localStorage.clear();
-    // --- CLEANUP DONE ---
-    let data = localStorage.getItem(LOCAL_STORAGE_KEY);
-    data = data ? JSON.parse(data) : null;
+    const store = new idbKeyval.Store('pptr-db', 'pptr-store');
+    let data = await idbKeyval.get(LOCAL_STORAGE_KEY, store);
     if (!data) {
       app.setLoadingScreen(true, 'Please give us a few seconds to download Puppeteer releases for the first time.\n Next time we\'ll do it in background.');
       data = await PPTRProduct.fetchReleaseAndReadme();
       app.setLoadingScreen(false);
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data));
+      // Save in the background.
+      idbKeyval.set(LOCAL_STORAGE_KEY, data, store);
     } else if (Date.now() - data.fetchTimestamp > 60 * 60 * 1000 /* 1 hour */) {
       // Kick off update process in the background.
-      PPTRProduct.fetchReleaseAndReadme().then(data => localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data)));
+      PPTRProduct.fetchReleaseAndReadme().then(data => idbKeyval.set(LOCAL_STORAGE_KEY, data, store));
     }
     return new PPTRProduct(data.readmeText, data.releases, data.fetchTimestamp);
   }
