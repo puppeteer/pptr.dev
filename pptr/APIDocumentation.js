@@ -289,7 +289,8 @@ class APISection extends APIEntry {
     const element = document.createElement('api-section');
     element.classList.add('api-entry');
     element.innerHTML = `<h2>Puppeteer ${api.version} Release Notes</h2>`;
-    element.appendChild(descFragment);
+    while (descFragment.firstChild)
+      element.appendChild(descFragment.firstChild);
     return new APISection(api, 'Release Notes', element);
   }
 
