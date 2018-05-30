@@ -117,7 +117,7 @@ class PPTRProduct extends App.Product {
     toolbarElements.push(iconButton('https://stackoverflow.com/questions/tagged/puppeteer', './images/stackoverflow.svg', 'pptr-stackoverflow'));
     toolbarElements.push(iconButton('https://join.slack.com/t/puppeteer/shared_invite/enQtMzU4MjIyMDA5NTM4LTM1OTdkNDhlM2Y4ZGUzZDdjYjM5ZWZlZGFiZjc4MTkyYTVlYzIzYjU5NDIyNzgyMmFiNDFjN2UzNWU0N2ZhZDc', './images/slack.svg', 'pptr-slack'));
     toolbarElements.push(iconButton('https://github.com/GoogleChrome/puppeteer/blob/master/docs/troubleshooting.md', './images/wrench.svg', 'pptr-troubleshooting'));
-    toolbarElements.push(iconButton('https://github.com/GoogleChrome/puppeteer/issues', './images/github.png', 'pptr-github'));
+    toolbarElements.push(iconButton('https://github.com/GoogleChrome/puppeteer', './images/github.png', 'pptr-github'));
     return toolbarElements;
 
     function iconButton(linkURL, iconURL, iconClass) {
