@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-module.exports = {
-  swDest: './sw.js',
-  globDirectory: '.',
-  globPatterns: ['**/*.{js,css,html,svg,png}'],
-  globIgnores: ['workbox-config.js', 'node_modules/**/*'],
-  // This is needed to make our SPA to work offline.
-  navigateFallback: 'index.html',
-  clientsClaim: true,
-  skipWaiting: true,
-  runtimeCaching: [{
-    // Cache common github images (e.g. pptr logo).
-    urlPattern: /^https:\/\/user-images\.githubusercontent\.com\/.*/,
-    handler: 'staleWhileRevalidate'
-  }],
-};
+importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.2.0/workbox-sw.js");
+
+workbox.skipWaiting();
+workbox.clientsClaim();
+
+workbox.precaching.suppressWarnings();
+workbox.precaching.precacheAndRoute([], {});
+
+// This is needed to make SPA to work offline.
+workbox.routing.registerNavigationRoute("index.html");
+
+// Cache common github images (e.g. pptr logo).
+workbox.routing.registerRoute(/^https:\/\/user-images\.githubusercontent\.com\/.*/, workbox.strategies.staleWhileRevalidate(), 'GET');
