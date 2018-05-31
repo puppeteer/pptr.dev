@@ -110,7 +110,7 @@ workbox.precaching.precacheAndRoute([
   },
   {
     "url": "dist/script.js",
-    "revision": "d19d0d4f4b424912b0af5d2072897ba5"
+    "revision": "873ece9ea08adf905f6a9ea7fc056720"
   },
   {
     "url": "dist/style.css",

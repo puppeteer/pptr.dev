@@ -205,12 +205,15 @@ class APIDocumentation {
   }
 
   _initializeContentIds() {
+    const githubAnchors = new Set();
+
     const generateGithubAnchor = (title) => {
       const id = title.trim().toLowerCase().replace(/\s/g, '-').replace(/[^-0-9a-zа-яё]/ig, '');
       let dedupId = id;
       let counter = 0;
-      while (this._idToEntry.has(dedupId))
+      while (githubAnchors.has(dedupId))
         dedupId = id + '-' + (++counter);
+      githubAnchors.add(dedupId);
       return dedupId;
     }
 
