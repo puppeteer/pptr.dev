@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-class SidebarComponent {
+export class SidebarComponent {
   constructor() {
     this.element = document.createElement('sidebar-component');
     this.element.addEventListener('click', this._onClick.bind(this), false);

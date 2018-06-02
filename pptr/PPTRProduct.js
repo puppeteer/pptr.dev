@@ -13,10 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import {Store as IDBStore, get as idbGet, set as idbSet} from '../third_party/idb-keyval.mjs';
+
+import {APIDocumentation, APISection, APIMethod, APIClass} from './APIDocumentation.js';
+import {App} from '../src/App.js';
+import {SearchComponent} from '../src/SearchComponent.js';
 
 const LOCAL_STORAGE_KEY = 'pptr-api-data';
 
-class PPTRProduct extends App.Product {
+export class PPTRProduct extends App.Product {
   static async fetchReleaseAndReadme() {
     const fetchTimestamp = Date.now();
     const [releasesText, readmeText] = await Promise.all([
@@ -85,17 +90,17 @@ class PPTRProduct extends App.Product {
   }
 
   static async create() {
-    const store = new idbKeyval.Store('pptr-db', 'pptr-store');
-    let data = await idbKeyval.get(LOCAL_STORAGE_KEY, store);
+    const store = new IDBStore('pptr-db', 'pptr-store');
+    let data = await idbGet(LOCAL_STORAGE_KEY, store);
     if (!data) {
       app.setLoadingScreen(true, 'Please give us a few seconds to download Puppeteer releases for the first time.\n Next time we\'ll do it in background.');
       data = await PPTRProduct.fetchReleaseAndReadme();
       app.setLoadingScreen(false);
       // Save in the background.
-      idbKeyval.set(LOCAL_STORAGE_KEY, data, store);
+      idbSet(LOCAL_STORAGE_KEY, data, store);
     } else if (Date.now() - data.fetchTimestamp > 60 * 60 * 1000 /* 1 hour */) {
       // Kick off update process in the background.
-      PPTRProduct.fetchReleaseAndReadme().then(data => idbKeyval.set(LOCAL_STORAGE_KEY, data, store));
+      PPTRProduct.fetchReleaseAndReadme().then(data => idbSet(LOCAL_STORAGE_KEY, data, store));
     }
     return new PPTRProduct(data.readmeText, data.releases, data.fetchTimestamp);
   }

@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
+import {FuzzySearch} from './FuzzySearch.js';
+
 // Number of search results to render immediately.
 const SEARCH_RENDER_COUNT = 50;
 
-class SearchComponent {
+export class SearchComponent {
   constructor() {
     this.element = document.createElement('search-component');
 

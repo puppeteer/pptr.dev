@@ -19,7 +19,7 @@ const REGEX_SPECIAL_CHARACTERS = '^[]{}()\\.^$*+?|-,';
 /**
  * @unrestricted
  */
-class FuzzySearch {
+export class FuzzySearch {
   /**
    * @param {string} query
    */

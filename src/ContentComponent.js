@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-class ContentComponent {
+export class ContentComponent {
   constructor() {
     this.element = document.createElement('content-component');
     this.element.tabIndex = 0;

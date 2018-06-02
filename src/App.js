@@ -13,8 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import {ContentComponent} from './ContentComponent.js';
+import {SidebarComponent} from './SidebarComponent.js';
+import {ToolbarComponent} from './ToolbarComponent.js';
+import {SearchComponent} from './SearchComponent.js';
+import {SettingsComponent} from './SettingsComponent.js';
 
-class App {
+export class App {
   constructor(container) {
     this._container = container;
     this._content = new ContentComponent();

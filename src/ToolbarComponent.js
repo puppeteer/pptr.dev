@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-class ToolbarComponent extends EventEmitter {
+export class ToolbarComponent {
   constructor() {
-    super();
     this.element = document.createElement('toolbar-component');
     this._left = document.createElement('toolbar-section');
     this._left.classList.add('left');

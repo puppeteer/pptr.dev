@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-class EventEmitter {
+export class EventEmitter {
   constructor() {
     /** @type {!Map<string, !Set<function(*)>>} */
     this._eventListeners = new Map();

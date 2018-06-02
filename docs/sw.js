@@ -25,6 +25,46 @@ workbox.googleAnalytics.initialize();
 workbox.precaching.suppressWarnings();
 workbox.precaching.precacheAndRoute([
   {
+    "url": "favicons/android-chrome-192x192.png",
+    "revision": "05be0b0c0d82fd26e50eef9fd255f21e"
+  },
+  {
+    "url": "favicons/android-chrome-384x384.png",
+    "revision": "0b84f07f6d1a9f09b52f47dc9a744ba8"
+  },
+  {
+    "url": "favicons/apple-touch-icon.png",
+    "revision": "f993b772518d7d488b1f2f7e03908f22"
+  },
+  {
+    "url": "favicons/browserconfig.xml",
+    "revision": "a89eb8c368c15b982c5808ce906e8ac2"
+  },
+  {
+    "url": "favicons/favicon-16x16.png",
+    "revision": "9af3980ba3ffc11ccb9b01dfbe2555b6"
+  },
+  {
+    "url": "favicons/favicon-32x32.png",
+    "revision": "e2f8da1b76492c82494e071e4c9e3d64"
+  },
+  {
+    "url": "favicons/favicon.ico",
+    "revision": "ddd8a3f15f6a2a620d9011aaf2559178"
+  },
+  {
+    "url": "favicons/mstile-150x150.png",
+    "revision": "203fc1bff1934f7b478c0bd2c6713854"
+  },
+  {
+    "url": "favicons/safari-pinned-tab.svg",
+    "revision": "d4e8575115db91ea0154f94a64686b08"
+  },
+  {
+    "url": "favicons/site.webmanifest",
+    "revision": "a9c9fb6c3df71946b07c72a3ee687918"
+  },
+  {
     "url": "images/checkmark.svg",
     "revision": "094c946e202c6b49672d422f3c50307f"
   },
@@ -69,56 +109,16 @@ workbox.precaching.precacheAndRoute([
     "revision": "dba7613975ea6b812b22d6a6c8f74db7"
   },
   {
-    "url": "favicons/android-chrome-192x192.png",
-    "revision": "05be0b0c0d82fd26e50eef9fd255f21e"
-  },
-  {
-    "url": "favicons/android-chrome-384x384.png",
-    "revision": "0b84f07f6d1a9f09b52f47dc9a744ba8"
-  },
-  {
-    "url": "favicons/apple-touch-icon.png",
-    "revision": "f993b772518d7d488b1f2f7e03908f22"
-  },
-  {
-    "url": "favicons/browserconfig.xml",
-    "revision": "a89eb8c368c15b982c5808ce906e8ac2"
-  },
-  {
-    "url": "favicons/favicon-16x16.png",
-    "revision": "9af3980ba3ffc11ccb9b01dfbe2555b6"
-  },
-  {
-    "url": "favicons/favicon-32x32.png",
-    "revision": "e2f8da1b76492c82494e071e4c9e3d64"
-  },
-  {
-    "url": "favicons/favicon.ico",
-    "revision": "ddd8a3f15f6a2a620d9011aaf2559178"
-  },
-  {
-    "url": "favicons/mstile-150x150.png",
-    "revision": "203fc1bff1934f7b478c0bd2c6713854"
-  },
-  {
-    "url": "favicons/safari-pinned-tab.svg",
-    "revision": "d4e8575115db91ea0154f94a64686b08"
-  },
-  {
-    "url": "favicons/site.webmanifest",
-    "revision": "a9c9fb6c3df71946b07c72a3ee687918"
-  },
-  {
-    "url": "dist/script.js",
-    "revision": "873ece9ea08adf905f6a9ea7fc056720"
-  },
-  {
-    "url": "dist/style.css",
-    "revision": "cf945408f2416f41b89b53c102801388"
-  },
-  {
     "url": "index.html",
-    "revision": "8a5f728be7103935d9885ad757ff0818"
+    "revision": "06b84c4670aeb2ff634d824d45c79202"
+  },
+  {
+    "url": "index.js",
+    "revision": "66fd25dfe2b8d10a9bd9c5baa3a848ae"
+  },
+  {
+    "url": "style.css",
+    "revision": "39e68d9069bab064f72e5379757a94ad"
   }
 ], {});
 

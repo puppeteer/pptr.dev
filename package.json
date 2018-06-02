@@ -5,16 +5,21 @@
   "main": "index.js",
   "scripts": {
     "build": "node build.js",
-    "serve": "static . -p 8888"
+    "prod": "static ./docs -p 8888",
+    "serve": "static . -p 8887"
   },
   "author": "The Chromium Authors",
   "license": "Apache-2.0",
   "devDependencies": {
     "commonmark": "^0.28.1",
     "csso": "^3.5.0",
+    "glob": "^7.1.2",
     "idb-keyval": "^3.0.4",
+    "ncp": "^2.0.0",
     "node-static": "^0.7.10",
     "puppeteer": "^1.4.0",
+    "rimraf": "^2.6.2",
+    "rollup": "^0.59.4",
     "uglify-es": "^3.3.9",
     "workbox-cli": "^3.2.0"
   }

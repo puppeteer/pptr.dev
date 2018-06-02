@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import {EventEmitter} from './EventEmitter.js';
 
-class SettingsComponent extends EventEmitter {
+export class SettingsComponent extends EventEmitter {
   constructor() {
     super();
     this.element = document.createElement('settings-component');

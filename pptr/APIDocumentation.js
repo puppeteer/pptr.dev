@@ -13,8 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import {} from '../third_party/commonmark.min.js';
+import {} from '../third_party/runmode-standalone.js';
+import {} from '../third_party/javascript.js';
 
-class APIDocumentation {
+export class APIDocumentation {
   static markdownToDOM(markdownText, safe = false, softbreak) {
     const reader = new commonmark.Parser();
     const ast = reader.parse(markdownText);
@@ -241,7 +244,7 @@ class APIDocumentation {
   }
 }
 
-class APIEntry {
+export class APIEntry {
   constructor(api, name, element, contentId) {
     this.api = api;
     this.name = name;
@@ -279,7 +282,7 @@ class APIEntry {
   }
 }
 
-class APISection extends APIEntry {
+export class APISection extends APIEntry {
   static create(api, title, descFragment) {
     const element = document.createElement('api-section');
     element.classList.add('api-entry');
@@ -302,7 +305,7 @@ class APISection extends APIEntry {
   }
 }
 
-class APIClass extends APIEntry {
+export class APIClass extends APIEntry {
   static create(api, title, fragment) {
     const name = title.replace(/^class:/i, '').trim();
     const headers = fragment.querySelectorAll('h4');
@@ -432,7 +435,7 @@ class APIClass extends APIEntry {
   }
 }
 
-class APINamespace extends APIEntry {
+export class APINamespace extends APIEntry {
   static create(apiClass, title, fragment) {
     const name = title.split('.').pop();
     const element = document.createElement('api-ns');
@@ -457,7 +460,7 @@ class APINamespace extends APIEntry {
   }
 }
 
-class APIMethod extends APIEntry {
+export class APIMethod extends APIEntry {
   static create(apiClass, title, descFragment) {
     const name = title.match(/\.([^(]*)/)[1];
     const args = title.match(/\((.*)\)/)[1];
@@ -485,7 +488,7 @@ class APIMethod extends APIEntry {
   }
 }
 
-class APIEvent extends APIEntry {
+export class APIEvent extends APIEntry {
   static create(apiClass, title, descFragment) {
     const name = title.match(/'(.*)'/)[1];
     const element = document.createElement('api-event');
