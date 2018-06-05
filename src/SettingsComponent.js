@@ -93,6 +93,10 @@ export class SettingsComponent extends EventEmitter {
       this._contentElement.appendChild(versionsContainer);
       this._contentElement.appendChild(product.settingsFooterElement());
     }
+    const websiteVersionText = window.__WEBSITE_VERSION__ || 'tip-of-tree';
+    const websiteVersion = document.createElement('website-version');
+    websiteVersion.innerHTML = `<div>WebSite Version: <code>${websiteVersionText}</code> <a href="https://github.com/GoogleChromeLabs/pptr.dev/issues">File a bug!</a></div>`;
+    this._contentElement.appendChild(websiteVersion);
     document.body.appendChild(this.element);
     if (this._selectedItem)
       this._selectedItem.scrollIntoViewIfNeeded();
