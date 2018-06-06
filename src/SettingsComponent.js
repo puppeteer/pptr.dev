@@ -33,7 +33,11 @@ export class SettingsComponent extends EventEmitter {
       }
     }, false);
     this._contentElement.addEventListener('click', event => {
-      event.stopPropagation();
+      // Support clicks on links, e.g. "file a bug".
+      if (event.target.tagName === 'A') {
+        event.stopPropagation();
+        return;
+      }
       event.preventDefault();
       // Allow selecting versions.
       if (!window.getSelection().isCollapsed)
