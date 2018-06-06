@@ -103,6 +103,7 @@ if (os.platform() === 'win32') {
       swSrc: path.join(__dirname, 'sw-template.js'),
       swDest: path.join(DST_PATH, 'sw.js'),
       globDirectory: DST_PATH,
+      globIgnores: ['CNAME'],
       globPatterns: ['**/*']
     });
     const kbSize = Math.round(size / 1024 * 100) / 100;
