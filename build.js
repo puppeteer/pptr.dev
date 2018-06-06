@@ -31,8 +31,14 @@ if (os.platform() === 'win32') {
   const BUILD_VERSION = await generateVersion();
 
   await step(`1. cleanup output folder`, async () => {
+    let cnameText = null;
+    const cnamePath = path.join(DST_PATH, 'CNAME');
+    if (fs.existsSync(cnamePath))
+      cnameText = fs.readFileSync(cnamePath, 'utf8');
     await rmAsync(DST_PATH);
     fs.mkdirSync(DST_PATH);
+    if (cnameText)
+      fs.writeFileSync(cnamePath, cnameText, 'utf8');
   });
 
   await step('2. generate index.js', async () => {
