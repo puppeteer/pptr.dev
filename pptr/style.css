@@ -246,6 +246,10 @@ pptr-sidebar-divider {
   align-items: center;
 }
 
+pptr-api li.table-of-contents-entry {
+  white-space: nowrap;
+}
+
 pptr-event-icon,
 pptr-class-icon,
 pptr-ns-icon,

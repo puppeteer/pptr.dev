@@ -188,16 +188,19 @@ export class APIDocumentation {
     const ul = document.createElement('ul');
     for (const apiSection of this.sections) {
       const li = document.createElement('li');
+      li.classList.add('table-of-contents-entry');
       li.appendChild(apiSection.createTableOfContentsElement());
       ul.appendChild(li);
     }
     for (const apiClass of this.classes) {
       const li = document.createElement('li');
+      li.classList.add('table-of-contents-entry');
       li.appendChild(apiClass.createTableOfContentsElement());
       ul.appendChild(li);
       const childUL = document.createElement('ul');
       for (const entry of [...apiClass.events, ...apiClass.namespaces, ...apiClass.methods]) {
         const li = document.createElement('li');
+        li.classList.add('table-of-contents-entry');
         li.appendChild(entry.createTableOfContentsElement());
         childUL.appendChild(li);
       }
@@ -431,6 +434,7 @@ export class APIClass extends APIEntry {
       ul.classList.add('pptr-table-of-contents');
       for (const entity of entities) {
         const li = document.createElement('li');
+        li.classList.add('table-of-contents-entry');
         li.appendChild(entity.createTableOfContentsElement());
         ul.appendChild(li);
       }
