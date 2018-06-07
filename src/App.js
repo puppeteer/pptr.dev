@@ -168,15 +168,17 @@ export class App {
       return;
     this._loadingScreen = document.createElement('loading-screen');
     this._loadingScreen.innerHTML = `
-      <loading-logo></loading-logo>
-      <div class='text'>${text}</div>
-      <div class='spinner'>
-        <div class='rect1'></div>
-        <div class='rect2'></div>
-        <div class='rect3'></div>
-        <div class='rect4'></div>
-        <div class='rect5'></div>
-      </div>
+      <loading-content>
+        <div class='text'>${text}</div>
+        <img src='/images/pptr.png'></img>
+        <div class='spinner'>
+          <div class='rect1'></div>
+          <div class='rect2'></div>
+          <div class='rect3'></div>
+          <div class='rect4'></div>
+          <div class='rect5'></div>
+        </div>
+      </loading-content>
     `;
     document.body.appendChild(this._loadingScreen);
   }

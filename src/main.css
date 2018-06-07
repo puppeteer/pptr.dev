@@ -135,25 +135,21 @@ loading-screen {
   position: absolute;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  background-color: rgba(0, 0, 0, 0.5);
-  flex-direction: column;
+  justify-content: center;
   left: 0;
   right: 0;
   top: 0;
   bottom: 0;
 }
 
-loading-screen loading-logo {
+loading-screen loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+loading-screen img {
   opacity: 0.1;
-  position: absolute;
-  background-image: url(/images/pptr.png);
-  background-repeat: no-repeat;
-  background-position: center;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
 }
 
 loading-screen .text {
@@ -167,11 +163,11 @@ loading-screen .spinner {
   height: 40px;
   text-align: center;
   font-size: 10px;
-  margin: 100px;
+  margin-top: 30px;
 }
 
 loading-screen .spinner > div {
-  background-color: var(--black);
+  background-color: #40b5a491;
   height: 100%;
   width: 6px;
   display: inline-block;
