@@ -271,6 +271,8 @@ export class APIEntry {
     if (this.sinceVersion) {
       const since = document.createElement('pptr-api-since');
       since.textContent = this.sinceVersion;
+      if (this.api.version === this.sinceVersion)
+        since.classList.add('pptr-new-api');
       fragment.appendChild(since);
     }
     if (this.untilVersion) {
@@ -349,10 +351,13 @@ export class APIClass extends APIEntry {
     }
     this.sinceVersion = classLifespan.since;
     const sinceElement = this.element.querySelector('pptr-api-since');
-    if (this.sinceVersion)
+    if (this.sinceVersion) {
       sinceElement.textContent = classLifespan.since;
-    else
+      if (this.sinceVersion === this.api.version)
+        sinceElement.classList.add('pptr-new-api');
+    } else {
       sinceElement.remove();
+    }
 
     this.untilVersion = classLifespan.until;
     const untilElement = this.element.querySelector('pptr-api-until');
@@ -366,6 +371,8 @@ export class APIClass extends APIEntry {
       if (classLifespan.eventsSince.has(apiEvent.name)) {
         apiEvent.sinceVersion = classLifespan.eventsSince.get(apiEvent.name);
         sinceElement.textContent = apiEvent.sinceVersion;
+        if (apiEvent.sinceVersion === this.api.version)
+          sinceElement.classList.add('pptr-new-api');
       } else {
         sinceElement.remove();
       }
@@ -382,6 +389,8 @@ export class APIClass extends APIEntry {
       if (classLifespan.methodsSince.has(apiMethod.name)) {
         apiMethod.sinceVersion = classLifespan.methodsSince.get(apiMethod.name);
         sinceElement.textContent = apiMethod.sinceVersion;
+        if (apiMethod.sinceVersion === this.api.version)
+          sinceElement.classList.add('pptr-new-api');
       } else {
         sinceElement.remove();
       }
@@ -398,6 +407,8 @@ export class APIClass extends APIEntry {
       if (classLifespan.namespacesSince.has(apiNamespace.name)) {
         apiNamespace.sinceVersion = classLifespan.namespacesSince.get(apiNamespace.name);
         sinceElement.textContent = apiNamespace.sinceVersion;
+        if (apiNamespace.sinceVersion === this.api.version)
+          sinceElement.classList.add('pptr-new-api');
       } else {
         sinceElement.remove();
       }

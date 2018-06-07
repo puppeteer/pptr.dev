@@ -108,10 +108,21 @@ pptr-api-since {
   vertical-align: super;
   font-family: var(--monospace);
   user-select: none;
+
 }
 
 pptr-api-since::before {
   content: 'since ';
+}
+
+pptr-api-since.pptr-new-api {
+  background: #81c784d4;
+  color: white;
+  margin-left:4px;
+}
+
+pptr-api-since.pptr-new-api::before {
+  content: 'new in ';
 }
 
 pptr-api-until {
@@ -124,6 +135,7 @@ pptr-api-until {
   font-weight: normal;
   vertical-align: super;
   user-select: none;
+  margin-left: 4px;
 }
 
 pptr-api-until::before {
