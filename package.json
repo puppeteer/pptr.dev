@@ -1,6 +1,6 @@
 {
   "name": "pptrdev",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Source code for pptr.dev website",
   "main": "index.js",
   "scripts": {
