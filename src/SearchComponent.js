@@ -67,21 +67,16 @@ export class SearchComponent {
     }, false);
 
     // Activate search on any keypress
-    document.addEventListener('keypress', event => {
+    document.addEventListener('keydown', event => {
       if (this.input === document.activeElement)
         return;
-      if (/\S/.test(event.key)) {
+      if (event.ctrlKey || event.metaKey || event.altKey)
+        return;
+      if (/\S/.test(event.key) || event.keyCode === 8 || event.keyCode === 46) {
         this.input.focus();
         if (event.key !== '.')
           this.input.value = '';
       }
-    }, false);
-    // Activate search on backspace
-    document.addEventListener('keydown', event => {
-      if (this.input === document.activeElement)
-        return;
-      if (event.keyCode === 8 || event.keyCode === 46)
-        this.input.focus();
     }, false);
     // Activate on paste
     document.addEventListener('paste', event => {
