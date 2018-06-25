@@ -13,31 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import {html} from './html.js';
 
 export class ToolbarComponent {
   constructor() {
-    this.element = document.createElement('toolbar-component');
-    this._left = document.createElement('toolbar-section');
-    this._left.classList.add('left');
-    this._middle = document.createElement('toolbar-section');
-    this._middle.classList.add('middle');
-    this._right = document.createElement('toolbar-section');
-    this._right.classList.add('right');
-    this.element.appendChild(this._left);
-    this.element.appendChild(this._middle);
-    this.element.appendChild(this._right);
+    this.element = html`
+      <toolbar-component>
+        <toolbar-section class=left></toolbar-section>
+        <toolbar-section class=middle></toolbar-section>
+        <toolbar-section class=right></toolbar-section>
+      </toolbar-component>
+    `;
   }
 
   left() {
-    return this._left;
+    return this.element.querySelector('toolbar-section.left');
   }
 
   middle() {
-    return this._middle;
+    return this.element.querySelector('toolbar-section.middle');
   }
 
   right() {
-    return this._right;
+    return this.element.querySelector('toolbar-section.right');
   }
 }
 

@@ -122,11 +122,7 @@ export class PPTRProduct extends App.Product {
     return toolbarElements;
 
     function iconButton(linkURL, iconURL, iconClass) {
-      const a = document.createElement('a');
-      a.innerHTML = `<img src="${iconURL}"></img>`;
-      a.classList.add(iconClass);
-      a.href = linkURL;
-      return a;
+      return html`<a href=${linkURL} class=${iconClass}><img src='${iconURL}'></img></a>`;
     }
   }
 
@@ -267,7 +263,6 @@ export class PPTRProduct extends App.Product {
   }
 
   settingsFooterElement() {
-    const settingsFooter = document.createElement('pptr-settings-footer');
     const diff = Date.now() - this._fetchTimestamp;
     let time = '';
     if (diff < 1000)
@@ -280,8 +275,7 @@ export class PPTRProduct extends App.Product {
       time = `${Math.round(diff / 60 / 60 / 1000)} hours ago`;
     else if (24 * 60 * 60 * 1000 <= diff)
       time = `${Math.round(diff / 24 / 60 / 60 / 1000)} days ago`;
-    settingsFooter.textContent = 'Data fetched ' + time;
-    return settingsFooter;
+    return html`<pptr-settings-footer>Data fetched ${time}</pptr-settings-footer>`;
   }
 
   getVersion(name) {
@@ -335,26 +329,24 @@ class PPTRVersion extends App.ProductVersion {
 
   content(contentId) {
     if (!contentId) {
-      const element = document.createElement('pptr-api');
-      element.classList.add('pptr-readme');
-      const contentBox = document.createElement('content-box');
-      element.appendChild(contentBox);
       const rendered = APIDocumentation.markdownToDOM(this._readmeText);
-      var fragment = document.createDocumentFragment();
+      const fragment = document.createDocumentFragment();
       while (rendered.firstChild)
         fragment.appendChild(rendered.firstChild);
-      contentBox.appendChild(fragment);
       // Move logo to the very beginning - it will look better.
-      const logo = contentBox.querySelector('img[align=right]');
+      const logo = fragment.querySelector('img[align=right]');
       if (logo) {
         logo.remove();
-        contentBox.insertBefore(logo, contentBox.firstChild);
+        fragment.insertBefore(logo, fragment.firstChild);
       }
+      const element = html`
+        <pptr-api class=pptr-readme>
+          <content-box>${fragment}</content-box>
+        </pptr-api>`;
       return { element, title: '' };
     }
     if (contentId === 'outline') {
-      const element = document.createElement('pptr-api');
-      element.appendChild(this.api.createOutline());
+      const element = html`<pptr-api>${this.api.createOutline()}</pptr-api>`;
       return { element, title: '', selectedSidebarElement: this._outlineItem };
     }
     const entry = this.api.idToEntry(contentId);
@@ -368,7 +360,7 @@ class PPTRVersion extends App.ProductVersion {
     }
     if (entry instanceof APISection) {
       const element = document.createElement('pptr-api');
-      this._renderElements(element, null, [entry.element]);
+      element.appendChild(this._renderElements(null, [entry.element]));
       const title = '';
       const selectedSidebarElement = this._entryToSidebarElement.get(entry);
       return {element, title, selectedSidebarElement};
@@ -382,12 +374,9 @@ class PPTRVersion extends App.ProductVersion {
 
   _initializeSidebarElements() {
     this._sidebarElements = [];
-    const resourcesDivider = document.createElement('pptr-sidebar-divider');
-
-    const apiDivider = document.createElement('pptr-sidebar-divider');
-    apiDivider.textContent = `API`;
-    const outlineIcon = document.createElement('a');
-    this._sidebarElements.push(apiDivider);
+    this._sidebarElements.push(html`
+      <pptr-sidebar-divider>API</pptr-sidebar-divider>
+    `);
 
     this._outlineItem = createItem(null, 'Outline', app.linkURL('Puppeteer', this.api.version, 'outline'));
     this._sidebarElements.push(this._outlineItem);
@@ -399,28 +388,21 @@ class PPTRVersion extends App.ProductVersion {
     }
 
     function createItem(icon, text, route) {
-      const item = document.createElement('a');
-      item.classList.add('pptr-sidebar-item');
-      item.href = route;
-      if (icon)
-        item.appendChild(icon);
-      item.appendChild(document.createTextNode(text));
-      return item;
+      return html`<a href=${route} class=pptr-sidebar-item>${icon || ''}${text}</a>`;
     }
   }
 
   _showAPIClass(apiClass) {
     const element = document.createElement('pptr-api');
-
     this._insertBox(element).appendChild(apiClass.element);
-
-    this._renderElements(element, 'NameSpaces', apiClass.namespaces.map(ns => ns.element));
-    this._renderElements(element, 'Events', apiClass.events.map(e => e.element));
-    this._renderElements(element, 'Methods', apiClass.methods.map(method => method.element));
-
-    const padding = document.createElement('pptr-api-padding');
-    padding.innerHTML = '<img width=30 src="./images/pptr.png"></img>';
-    element.appendChild(padding);
+    element.appendChild(this._renderElements('NameSpaces', apiClass.namespaces.map(ns => ns.element)));
+    element.appendChild(this._renderElements('Events', apiClass.events.map(e => e.element)));
+    element.appendChild(this._renderElements('Methods', apiClass.methods.map(method => method.element)));
+    element.appendChild(html`
+      <pptr-api-padding>
+        <img width=30 src="./images/pptr.png"></img>
+      </pptr-api-padding>
+    `);
     return element;
   }
 
@@ -439,15 +421,13 @@ class PPTRVersion extends App.ProductVersion {
     return box;
   }
 
-  _renderElements(container, title, elements) {
+  _renderElements(title, elements) {
+    const fragment = document.createDocumentFragment();
     if (!elements.length)
-      return;
-    if (title) {
-      const header = document.createElement('h3');
-      header.textContent = title;
-      container.appendChild(header);
-    }
-    const box = this._insertBox(container);
+      return fragment;
+    if (title)
+      fragment.appendChild(html`<h3>${title}</h3>`);
+    const box = this._insertBox(fragment);
     let lastDelimeter = null;
     for (const element of elements) {
       box.appendChild(element);
@@ -455,6 +435,7 @@ class PPTRVersion extends App.ProductVersion {
       box.appendChild(lastDelimeter);
     }
     lastDelimeter.remove();
+    return fragment;
   }
 }
 

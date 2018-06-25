@@ -171,6 +171,7 @@ loading-screen .spinner > div {
   height: 100%;
   width: 6px;
   display: inline-block;
+  margin: 0 1.666px;
   -webkit-animation: sk-stretchdelay 1.2s infinite ease-in-out;
   animation: sk-stretchdelay 1.2s infinite ease-in-out;
 }

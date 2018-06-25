@@ -119,3 +119,7 @@ settings-component website-version {
   font-size: 90%;
   align-items: baseline;
 }
+
+settings-component website-version a {
+  margin-left: 6px;
+}

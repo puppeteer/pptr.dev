@@ -13,14 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import {html} from './html.js';
 import {EventEmitter} from './EventEmitter.js';
 
 export class SettingsComponent extends EventEmitter {
   constructor() {
     super();
-    this.element = document.createElement('settings-component');
-    this._contentElement = document.createElement('settings-content');
-    this.element.appendChild(this._contentElement);
+    this.element = html`
+      <settings-component>
+        <settings-content></settings-content>
+      </settings-component>
+    `;
+    this._contentElement = this.element.querySelector('settings-content');
 
     this._selectedItem = null;
     document.body.addEventListener('keydown', event => {
@@ -69,26 +73,24 @@ export class SettingsComponent extends EventEmitter {
 
   show(product, version) {
     this._contentElement.innerHTML = '';
-    const settingsHeader = document.createElement('settings-header');
-    settingsHeader.innerHTML = `<h3>Settings</h3>`;
-    const closeIcon = document.createElement('img');
-    closeIcon.classList.add('settings-close-icon');
-    closeIcon.src = './images/close.svg';
-    settingsHeader.appendChild(closeIcon);
+    const settingsHeader = html`
+      <settings-header>
+        <h3>Settings</h3>
+        <img src='./images/close.svg' class=settings-close-icon></img>
+      </settings-header>
+    `;
+
     this._contentElement.appendChild(settingsHeader);
     if (product) {
       const versionsContainer = document.createElement('product-versions');
       for (const description of product.versionDescriptions()) {
-        const item = document.createElement('product-version');
-        const name = document.createElement('version-name');
-        name.textContent = description.name;
-        item.appendChild(name);
-        const subtitle = document.createElement('version-description');
-        subtitle.textContent = description.description;
-        item.appendChild(subtitle);
-        const date = document.createElement('version-date');
-        date.textContent = formatDate(description.date);
-        item.appendChild(date);
+        const item = html`
+          <product-version>
+            <version-name>${description.name}</version-name>
+            <version-description>${description.description}</version-description>
+            <version-date>${formatDate(description.date)}</version-date>
+          </product-version>
+        `;
         item[SettingsComponent._Symbol] = {product, versionName: description.name};
         versionsContainer.appendChild(item);
         if (description.name === version.name())
@@ -97,10 +99,14 @@ export class SettingsComponent extends EventEmitter {
       this._contentElement.appendChild(versionsContainer);
       this._contentElement.appendChild(product.settingsFooterElement());
     }
-    const websiteVersionText = window.__WEBSITE_VERSION__ || 'tip-of-tree';
-    const websiteVersion = document.createElement('website-version');
-    websiteVersion.innerHTML = `<div>WebSite Version: <code>${websiteVersionText}</code> <a href="https://github.com/GoogleChromeLabs/pptr.dev/issues">File a bug!</a></div>`;
-    this._contentElement.appendChild(websiteVersion);
+    this._contentElement.appendChild(html`
+      <website-version>
+        <div>
+          WebSite Version: <code>${window.__WEBSITE_VERSION__ || 'tip-of-tree'}</code> <a href="https://github.com/GoogleChromeLabs/pptr.dev/issues">File a bug!</a>
+        </div>
+      </website-version>
+    `);
+
     document.body.appendChild(this.element);
     if (this._selectedItem)
       this._selectedItem.scrollIntoViewIfNeeded();
