@@ -27,8 +27,36 @@ export class APIDocumentation {
     const domParser = new DOMParser();
     const doc = document.importNode(domParser.parseFromString(result, 'text/html').body, true);
 
+    // Translate all links to api.md to local links.
+    for (const a of doc.querySelectorAll('a')) {
+      const match = a.href.match(/github.com\/GoogleChrome\/puppeteer\/blob\/([^/]+)\/docs\/api.md#(.*)/);
+      if (match)
+        a.href = app.linkURL('Puppeteer', match[1], APIDocumentation._idFromGHAnchor(match[2]));
+      // Mark link as external if necessary
+      const isImgLink = a.children.length === 1 && a.children[0].tagName === 'IMG';
+      if (a.hostname !== location.hostname && a.hostname.length && !isImgLink) {
+        const icon = document.createElement('external-link-icon')
+        if (a.children.length === 1 && a.children[0].tagName === 'CODE')
+          a.children[0].appendChild(icon);
+        else
+          a.appendChild(icon);
+      }
+    }
+    // Highlight all code blocks.
+    for (const node of doc.querySelectorAll('code.language-javascript')) {
+      node.classList.remove('language-javascript');
+      node.classList.add('language-js');
+    }
+    for (const code of doc.querySelectorAll('code.language-js'))
+      CodeMirror.runMode(code.textContent, 'text/javascript', code);
+
+    return doc;
+  }
+
+  static linkifyGithubIssuesAndSHAReferences(doc) {
     // Linkify Github Issue references
     const issueRegex = /#(\d+)\b/gm;
+    const document = doc.ownerDocument;
     let walker = document.createTreeWalker(doc, NodeFilter.SHOW_TEXT, {acceptNode: node => {
       if (node.parentElement.tagName === 'A')
         return false;
@@ -46,9 +74,10 @@ export class APIDocumentation {
       let match = null;
       while (match = issueRegex.exec(text)) {
         fragment.appendChild(document.createTextNode(text.substring(lastIndex, match.index)));
-        fragment.appendChild(html`
-          <a href='https://github.com/GoogleChrome/puppeteer/issues/${match[1]}'>#${match[1]}</a>
-        `);
+        const link = document.createElement('a');
+        link.href ='https://github.com/GoogleChrome/puppeteer/issues/' + match[1];
+        link.textContent = '#' + match[1];
+        fragment.appendChild(link);
         lastIndex = issueRegex.lastIndex;
       }
       if (lastIndex < text.length)
@@ -74,40 +103,18 @@ export class APIDocumentation {
       let match = null;
       while (match = shaRegex.exec(text)) {
         fragment.appendChild(document.createTextNode(text.substring(lastIndex, match.index)));
-        fragment.appendChild(html`
-          <a href='https://github.com/GoogleChrome/puppeteer/commit/${match[1]}'><code>${match[1]}</code></a>
-        `);
+        const link = document.createElement('a');
+        link.href ='https://github.com/GoogleChrome/puppeteer/commit/' + match[1];
+        const code = document.createElement('code');
+        code.textContent = match[1].substring(0, 7);
+        link.appendChild(code);
+        fragment.appendChild(link);
         lastIndex = shaRegex.lastIndex;
       }
       if (lastIndex < text.length)
         fragment.appendChild(document.createTextNode(text.substring(lastIndex)));
       shaNode.parentElement.replaceChild(fragment, shaNode);
     }
-
-    // Translate all links to api.md to local links.
-    for (const a of doc.querySelectorAll('a')) {
-      const match = a.href.match(/github.com\/GoogleChrome\/puppeteer\/blob\/([^/]+)\/docs\/api.md#(.*)/);
-      if (match)
-        a.href = app.linkURL('Puppeteer', match[1], APIDocumentation._idFromGHAnchor(match[2]));
-      // Mark link as external if necessary
-      const isImgLink = a.children.length === 1 && a.children[0].tagName === 'IMG';
-      if (a.hostname !== location.hostname && a.hostname.length && !isImgLink) {
-        const icon = document.createElement('external-link-icon')
-        if (a.children.length === 1 && a.children[0].tagName === 'CODE')
-          a.children[0].appendChild(icon);
-        else
-          a.appendChild(icon);
-      }
-    }
-    // Highlight all code blocks.
-    for (const node of doc.querySelectorAll('code.language-javascript')) {
-      node.classList.remove('language-javascript');
-      node.classList.add('language-js');
-    }
-    for (const code of doc.querySelectorAll('code.language-js'))
-      CodeMirror.runMode(code.textContent, 'text/javascript', code);
-
-    return doc;
   }
 
   /**
@@ -295,6 +302,7 @@ export class APISection extends APIEntry {
       </api-section>`;
     while (descFragment.firstChild)
       element.appendChild(descFragment.firstChild);
+    APIDocumentation.linkifyGithubIssuesAndSHAReferences(element);
     return new APISection(api, 'Release Notes', element);
   }
 
