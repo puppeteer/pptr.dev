@@ -92,13 +92,15 @@ export class App {
     const versionName = App.urlVersionName() || this._product.defaultVersionName();
 
     let newVersion = this._version;
+    let content = null;
     if (!this._version || this._version.name() !== versionName)
       newVersion = this._product.getVersion(versionName);
-    let content = newVersion ? newVersion.content(App.urlContentID()) : null;
 
-    if (!content) {
-      history.replaceState({}, '', this.linkURL(this._product.name(), newVersion.name()));
-      content = newVersion.content(null);
+    if (!newVersion) {
+      newVersion = this._product.getVersion(this._product.defaultVersionName());
+      content = this._product.create404('Version ' + versionName + ' is not found');
+    } else {
+      content = newVersion.content(App.urlContentID()) || this._product.create404();
     }
 
     this._version = newVersion;

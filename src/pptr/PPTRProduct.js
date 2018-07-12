@@ -20,6 +20,7 @@ import {App} from '../ui/App.js';
 import {SearchComponent} from '../ui/SearchComponent.js';
 
 const LOCAL_STORAGE_KEY = 'pptr-api-data';
+const PRODUCT_NAME = 'Puppeteer';
 
 export class PPTRProduct extends App.Product {
   static async fetchReleaseAndReadme(staleData) {
@@ -252,7 +253,7 @@ export class PPTRProduct extends App.Product {
   }
 
   name() {
-    return 'Puppeteer';
+    return PRODUCT_NAME;
   }
 
   defaultVersionName() {
@@ -293,6 +294,19 @@ export class PPTRProduct extends App.Product {
       time = `${Math.round(diff / 24 / 60 / 60 / 1000)} days ago`;
     settingsFooter.textContent = 'Data fetched ' + time;
     return settingsFooter;
+  }
+
+  create404(title = '') {
+    const element = document.createElement('pptr-api');
+    element.classList.add('pptr-not-found');
+    const contentBox = document.createElement('content-box');
+    element.appendChild(contentBox);
+    contentBox.innerHTML = `
+      <h1>Not Found</h1>
+      <p>${title}</p>
+      <p><a href='${app.linkURL(PRODUCT_NAME, this.defaultVersionName())}'>Home</a></p>
+    `;
+    return {element, title: 'Not Found'};
   }
 
   getVersion(name) {
@@ -400,7 +414,7 @@ class PPTRVersion extends App.ProductVersion {
     const outlineIcon = document.createElement('a');
     this._sidebarElements.push(apiDivider);
 
-    this._outlineItem = createItem(null, 'Outline', app.linkURL('Puppeteer', this.api.version, 'outline'));
+    this._outlineItem = createItem(null, 'Outline', app.linkURL(PRODUCT_NAME, this.api.version, 'outline'));
     this._sidebarElements.push(this._outlineItem);
     for (const apiEntry of [...this.api.sections, ...this.api.classes]) {
       const icon = apiEntry instanceof APIClass ?  document.createElement('pptr-class-icon') : null;
@@ -524,7 +538,7 @@ class PPTRSearchItem extends SearchComponent.Item {
 
   constructor(apiEntry, text, iconTagName, titleRenderer, description) {
     super();
-    this._url = apiEntry.linkURL();
+    this._url = apiEntry.linkURL(PRODUCT_NAME);
     this._text = text;
     this._iconTagName = iconTagName;
     this._titleRenderer = titleRenderer;
