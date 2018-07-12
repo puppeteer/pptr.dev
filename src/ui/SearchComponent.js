@@ -48,6 +48,7 @@ export class SearchComponent {
     this.input.addEventListener('keydown', event => {
       if (event.key === 'Escape' || event.keyCode === 27) {
         event.preventDefault();
+        event.stopPropagation();
         this.cancelSearch();
       } else if (event.key === 'ArrowDown') {
         this._selectNext(event);
@@ -55,6 +56,7 @@ export class SearchComponent {
         this._selectPrevious(event);
       } else if (event.key === 'Enter') {
         event.preventDefault();
+        event.stopPropagation();
         if (this._selectedElement);
           this._selectedElement.click();
       }
@@ -66,22 +68,18 @@ export class SearchComponent {
       this._defaultValue = this.input.value;
     }, false);
 
-    // Activate search on any keypress
-    document.addEventListener('keypress', event => {
+    document.addEventListener('keydown', event => {
       if (this.input === document.activeElement)
         return;
-      if (/\S/.test(event.key)) {
+      if (event.keyCode === 8 || event.keyCode === 46) {
+        // Activate search on backspace
+        this.input.focus();
+      } else if (/\S/.test(event.key) && !event.metaKey && !event.ctrlKey && !event.altKey) {
+        // Activate search on any keypress
         this.input.focus();
         if (event.key !== '.')
           this.input.value = '';
       }
-    }, false);
-    // Activate search on backspace
-    document.addEventListener('keydown', event => {
-      if (this.input === document.activeElement)
-        return;
-      if (event.keyCode === 8 || event.keyCode === 46)
-        this.input.focus();
     }, false);
     // Activate on paste
     document.addEventListener('paste', event => {
