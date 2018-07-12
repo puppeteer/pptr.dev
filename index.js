@@ -5,7 +5,7 @@ import {PPTRProduct} from './pptr/PPTRProduct.js';
 window.addEventListener('DOMContentLoaded', async () => {
   window.app = new App(document.body);
   const loadPromise = new Promise(x => window.addEventListener('load', x));
-  const product = await PPTRProduct.create();
+  const product = await PPTRProduct.create(App.urlVersionName());
   // await 'load' event: app navigation is based on 'popstate' event which doesn't fire
   // until 'load' is fired.
   await loadPromise;

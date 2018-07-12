@@ -28,9 +28,7 @@ export class App {
     this._search = new SearchComponent();
     this._settings = new SettingsComponent();
     this._settings.on(SettingsComponent.Events.VersionSelected, (product, versionName) => {
-      const params = new URLSearchParams(window.location.hash.substring(1));
-      const contentId = params.get('show') || undefined;
-      this.navigate(versionName, contentId);
+      this.navigate(versionName, App.urlContentID());
     });
 
     this._settingsButton = document.createElement('settings-button');
@@ -75,19 +73,28 @@ export class App {
     window.addEventListener('popstate', this._doNavigation.bind(this), false);
   }
 
+  static urlVersionName() {
+    const params = new URLSearchParams(window.location.hash.substring(1));
+    return params.get('version');
+  }
+
+  static urlContentID() {
+    const params = new URLSearchParams(window.location.hash.substring(1));
+    return params.get('show');
+  }
+
   _doNavigation() {
     gtag('config', 'UA-106086244-2', {'page_path': window.location.href.substring(window.location.origin.length)});
 
     if (!this._product)
       return;
     this._sidebar.hideOnMobile();
-    const params = new URLSearchParams(window.location.hash.substring(1));
-    const versionName = params.get('version') || this._product.defaultVersionName();
+    const versionName = App.urlVersionName() || this._product.defaultVersionName();
 
     let newVersion = this._version;
     if (!this._version || this._version.name() !== versionName)
       newVersion = this._product.getVersion(versionName);
-    let content = newVersion ? newVersion.content(params.get('show')) : null;
+    let content = newVersion ? newVersion.content(App.urlContentID()) : null;
 
     if (!content) {
       history.replaceState({}, '', this.linkURL(this._product.name(), newVersion.name()));

@@ -22,7 +22,7 @@ import {SearchComponent} from '../src/SearchComponent.js';
 const LOCAL_STORAGE_KEY = 'pptr-api-data';
 
 export class PPTRProduct extends App.Product {
-  static async fetchReleaseAndReadme() {
+  static async fetchReleaseAndReadme(staleData) {
     const fetchTimestamp = Date.now();
     const [releasesText, readmeText] = await Promise.all([
       fetch('https://api.github.com/repos/GoogleChrome/puppeteer/releases').then(r => r.text()),
@@ -50,6 +50,13 @@ export class PPTRProduct extends App.Product {
 
     releases.sort((a, b) => b.priority - a.priority);
 
+    // Fulfill api.md for every release using staleData, if any.
+    if (staleData) {
+      const staleAPITexts = new Map(staleData.releases.map(release => [release.name, release.apiText]));
+      for (const release of releases)
+        release.apiText = staleAPITexts.get(release.name);
+    }
+
     // Fill predefined chromium versions for past releases:
     for (const release of releases) {
       if (release.name === 'v0.9.0') {
@@ -73,7 +80,7 @@ export class PPTRProduct extends App.Product {
       apiText: ''
     });
 
-    // Parse chromium versionss from release notes, where possible.
+    // Parse chromium versions from release notes, where possible.
     for (const release of releases) {
       if (!release.releaseNotes || release.chromiumVersion)
         continue;
@@ -82,25 +89,29 @@ export class PPTRProduct extends App.Product {
         release.chromiumVersion = `Chromium ${match[1]} (${match[2]})`;
     }
 
-    const apiTexts = await Promise.all(releases.map(release => fetch(`https://raw.githubusercontent.com/GoogleChrome/puppeteer/${release.name}/docs/api.md`).then(r => r.text())));
-    for (let i = 0; i < apiTexts.length; ++i)
-      releases[i].apiText = apiTexts[i];
-
+    // Download api.md for every release.
+    // Forcefully re-download it for "master" release.
+    await Promise.all(releases.map(async release => {
+      if (release.name === 'master' || !release.apiText)
+        release.apiText = await fetch(`https://raw.githubusercontent.com/GoogleChrome/puppeteer/${release.name}/docs/api.md`).then(r => r.text())
+    }));
     return {fetchTimestamp, readmeText, releases};
   }
 
-  static async create() {
+  static async create(productVersion) {
     const store = new IDBStore('pptr-db', 'pptr-store');
     let data = await idbGet(LOCAL_STORAGE_KEY, store);
-    if (!data) {
-      app.setLoadingScreen(true, 'Please give us a few seconds to download Puppeteer releases for the first time.\n Next time we\'ll do it in background.');
-      data = await PPTRProduct.fetchReleaseAndReadme();
+    const hasRequiredProductVersion = productVersion ? data && !!data.releases.find(release => release.name === productVersion) : true;
+
+    if (!data || !hasRequiredProductVersion) {
+      const message = data ? 'Downloading Puppeteer release ' + productVersion : 'Please give us a few seconds to download Puppeteer releases for the first time.\n Next time we\'ll do it in background.';
+      app.setLoadingScreen(true, message);
+      data = await PPTRProduct.fetchReleaseAndReadme(data);
+      await idbSet(LOCAL_STORAGE_KEY, data, store);
       app.setLoadingScreen(false);
-      // Save in the background.
-      idbSet(LOCAL_STORAGE_KEY, data, store);
-    } else if (Date.now() - data.fetchTimestamp > 60 * 60 * 1000 /* 1 hour */) {
+    } else if (Date.now() - data.fetchTimestamp > 5 * 60 * 1000 /* 5 minutes */) {
       // Kick off update process in the background.
-      PPTRProduct.fetchReleaseAndReadme().then(data => idbSet(LOCAL_STORAGE_KEY, data, store));
+      PPTRProduct.fetchReleaseAndReadme(data).then(data => idbSet(LOCAL_STORAGE_KEY, data, store));
     }
     return new PPTRProduct(data.readmeText, data.releases, data.fetchTimestamp);
   }
