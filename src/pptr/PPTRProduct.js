@@ -16,8 +16,8 @@
 import {Store as IDBStore, get as idbGet, set as idbSet} from '../third_party/idb-keyval.mjs';
 
 import {APIDocumentation, APISection, APIMethod, APIClass} from './APIDocumentation.js';
-import {App} from '../src/App.js';
-import {SearchComponent} from '../src/SearchComponent.js';
+import {App} from '../ui/App.js';
+import {SearchComponent} from '../ui/SearchComponent.js';
 
 const LOCAL_STORAGE_KEY = 'pptr-api-data';
 

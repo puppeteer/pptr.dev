@@ -1,5 +1,5 @@
-import {} from './src/polyfills.js';
-import {App} from './src/App.js';
+import {} from './ui/polyfills.js';
+import {App} from './ui/App.js';
 import {PPTRProduct} from './pptr/PPTRProduct.js';
 
 window.addEventListener('DOMContentLoaded', async () => {

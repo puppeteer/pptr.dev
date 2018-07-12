@@ -6,7 +6,7 @@
   "scripts": {
     "build": "node build.js",
     "prod": "static ./docs -p 8888",
-    "serve": "static . -p 8887"
+    "serve": "static ./src -p 8887"
   },
   "author": "The Chromium Authors",
   "license": "Apache-2.0",
