@@ -386,11 +386,13 @@ class PPTRVersion extends App.ProductVersion {
       return {element, title, selectedSidebarElement};
     }
     if (entry instanceof APISection) {
-      const element = document.createElement('pptr-api');
-      this._renderElements(element, null, [entry.element]);
-      const title = '';
+      const element = html`
+        <pptr-api>
+          <content-box>${entry.element}</content-box>
+        </pptr-api>
+      `;
       const selectedSidebarElement = this._entryToSidebarElement.get(entry);
-      return {element, title, selectedSidebarElement};
+      return {element, title: '', selectedSidebarElement};
     }
     const element = this._showAPIClass(entry.apiClass);
     const scrollAnchor = this._scrollAnchor(entry.element);
@@ -450,30 +452,6 @@ class PPTRVersion extends App.ProductVersion {
     while (parentBox && parentBox.tagName !== 'CONTENT-BOX')
       parentBox = parentBox.parentElement;
     return parentBox;
-  }
-
-  _insertBox(container) {
-    const box = document.createElement('content-box');
-    container.appendChild(box);
-    return box;
-  }
-
-  _renderElements(container, title, elements) {
-    if (!elements.length)
-      return;
-    if (title) {
-      const header = document.createElement('h3');
-      header.textContent = title;
-      container.appendChild(header);
-    }
-    const box = this._insertBox(container);
-    let lastDelimeter = null;
-    for (const element of elements) {
-      box.appendChild(element);
-      lastDelimeter = document.createElement('content-delimeter');
-      box.appendChild(lastDelimeter);
-    }
-    lastDelimeter.remove();
   }
 }
 
