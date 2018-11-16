@@ -1,5 +1,7 @@
 const templateCache = new Map();
 
+export const HTML_VOID = Symbol('HTML_VOID');
+
 export function html(strings, ...values) {
   let template = templateCache.get(strings);
   if (!template) {
@@ -191,6 +193,10 @@ class ZTemplate {
   }
 
   _replaceNode(node, value) {
+    if (value === HTML_VOID) {
+      node.remove();
+      return;
+    }
     if (Array.isArray(value)) {
       let count = node.childNodes.length;
       while (count < value.length) {

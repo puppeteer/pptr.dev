@@ -17,7 +17,7 @@ import {Store as IDBStore, get as idbGet, set as idbSet} from '../third_party/id
 
 import {APIDocumentation, APISection, APIMethod, APIClass} from './APIDocumentation.js';
 import {App} from '../ui/App.js';
-import {html} from '../ui/html.js';
+import {html, HTML_VOID} from '../ui/html.js';
 import {SearchComponent} from '../ui/SearchComponent.js';
 
 const LOCAL_STORAGE_KEY = 'pptr-api-data';
@@ -418,18 +418,29 @@ class PPTRVersion extends App.ProductVersion {
   }
 
   _showAPIClass(apiClass) {
-    const element = document.createElement('pptr-api');
-
-    this._insertBox(element).appendChild(apiClass.element);
-
-    this._renderElements(element, 'NameSpaces', apiClass.namespaces.map(ns => ns.element));
-    this._renderElements(element, 'Events', apiClass.events.map(e => e.element));
-    this._renderElements(element, 'Methods', apiClass.methods.map(method => method.element));
-
-    const padding = document.createElement('pptr-api-padding');
-    padding.innerHTML = '<img width=30 src="./images/pptr.png"></img>';
-    element.appendChild(padding);
-    return element;
+    function render(title, entries) {
+      if (!entries.length)
+        return HTML_VOID;
+      return html`
+        <h3>${title}</h3>
+        <content-box>${entries.map(entry => html`
+          ${entry.element}
+          <content-delimeter></content-delimeter>
+        `)}
+        </content-box>
+      `;
+    }
+    return html`
+      <pptr-api>
+        <content-box>${apiClass.element}</content-box>
+        ${render('NameSpaces', apiClass.namespaces)}
+        ${render('Events', apiClass.events)}
+        ${render('Methods', apiClass.methods)}
+        <pptr-api-padding>
+          <img width=30 src="./images/pptr.png"></img>
+        </pptr-api-padding>
+      </pptr-api>
+    `;
   }
 
   _scrollAnchor(entryElement) {
