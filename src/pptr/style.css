@@ -57,6 +57,10 @@ pptr-api content-delimeter {
   left: -25%;
 }
 
+pptr-api content-delimeter:last-child {
+  display: none;
+}
+
 pptr-api api-class h3,
 pptr-api api-method h4,
 pptr-api api-event h4,

@@ -494,8 +494,7 @@ export class APIEvent extends APIEntry {
     return new APIEvent(apiClass, name, html`
       <api-event class=api-entry>
         <h4>
-          <pptr-event-icon></pptr-event-icon>
-          ${apiClass.loweredName}.on(<api-event-name>'${name}'</api-event-name>)
+          <pptr-event-icon></pptr-event-icon>${apiClass.loweredName}.on(<api-event-name>'${name}'</api-event-name>)
           <pptr-api-since></pptr-api-since>
           <pptr-api-until></pptr-api-until>
         </h4>
