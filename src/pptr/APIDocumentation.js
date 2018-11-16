@@ -465,20 +465,19 @@ export class APIMethod extends APIEntry {
   static create(apiClass, title, descFragment) {
     const name = title.match(/\.([^(]*)/)[1];
     const args = title.match(/\((.*)\)/)[1];
-    const element = document.createElement('api-method');
-    element.classList.add('api-entry');
-    element.innerHTML = [
-      `<h4>
-        <pptr-method-icon></pptr-method-icon>
-        <api-method-classname>${apiClass.loweredName}</api-method-classname>`,
-        `<api-method-name>.${name}</api-method-name>`,
-        `<api-method-args>(${args})</api-method-args>`,
-        `<pptr-api-since></pptr-api-since>`,
-        `<pptr-api-until></pptr-api-until>`,
-      `</h4>`
-    ].join('');
-    element.appendChild(descFragment);
-    return new APIMethod(apiClass, name, args, element);
+    return new APIMethod(apiClass, name, args, html`
+      <api-method class=api-entry>
+        <h4>
+          <pptr-method-icon></pptr-method-icon>
+          <api-method-classname>${apiClass.loweredName}</api-method-classname>
+          <api-method-name>.${name}</api-method-name>
+          <api-method-args>(${args})</api-method-args>
+          <pptr-api-since></pptr-api-since>
+          <pptr-api-until></pptr-api-until>
+        </h4>
+        ${descFragment}
+      </api-method>
+    `);
   }
 
   constructor(apiClass, name, args, element) {
@@ -492,11 +491,17 @@ export class APIMethod extends APIEntry {
 export class APIEvent extends APIEntry {
   static create(apiClass, title, descFragment) {
     const name = title.match(/'(.*)'/)[1];
-    const element = document.createElement('api-event');
-    element.classList.add('api-entry');
-    element.innerHTML = `<h4><pptr-event-icon></pptr-event-icon> ${apiClass.loweredName}.on(<api-event-name>'${name}'</api-event-name>) <pptr-api-since></pptr-api-since> <pptr-api-until></pptr-api-until></h4>`;
-    element.appendChild(descFragment);
-    return new APIEvent(apiClass, name, element);
+    return new APIEvent(apiClass, name, html`
+      <api-event class=api-entry>
+        <h4>
+          <pptr-event-icon></pptr-event-icon>
+          ${apiClass.loweredName}.on(<api-event-name>'${name}'</api-event-name>)
+          <pptr-api-since></pptr-api-since>
+          <pptr-api-until></pptr-api-until>
+        </h4>
+        ${descFragment}
+      </api-event>
+    `);
   }
 
   constructor(apiClass, name, element) {
