@@ -12,7 +12,10 @@ window.addEventListener('DOMContentLoaded', async () => {
   app.initialize(product);
 });
 
-window.addEventListener('load', () => {
-  if ('serviceWorker' in navigator)
-    navigator.serviceWorker.register('./sw.js');
-});
+// Register service worker only for prod build.
+if (window.__WEBSITE_VERSION__) {
+  window.addEventListener('load', () => {
+    if ('serviceWorker' in navigator)
+      navigator.serviceWorker.register('./sw.js');
+  });
+}
