@@ -16,6 +16,7 @@
 import {} from '../third_party/commonmark.min.js';
 import {} from '../third_party/runmode-standalone.js';
 import {} from '../third_party/javascript.js';
+import {html} from '../ui/html.js';
 
 export class APIDocumentation {
   static markdownToDOM(markdownText, safe = false, softbreak) {
@@ -45,10 +46,9 @@ export class APIDocumentation {
       let match = null;
       while (match = issueRegex.exec(text)) {
         fragment.appendChild(document.createTextNode(text.substring(lastIndex, match.index)));
-        const link = document.createElement('a');
-        link.href = 'https://github.com/GoogleChrome/puppeteer/issues/' + match[1];
-        link.textContent = '#' + match[1];
-        fragment.appendChild(link);
+        fragment.appendChild(html`
+          <a href='https://github.com/GoogleChrome/puppeteer/issues/${match[1]}'>#${match[1]}</a>
+        `);
         lastIndex = issueRegex.lastIndex;
       }
       if (lastIndex < text.length)
@@ -74,10 +74,9 @@ export class APIDocumentation {
       let match = null;
       while (match = shaRegex.exec(text)) {
         fragment.appendChild(document.createTextNode(text.substring(lastIndex, match.index)));
-        const link = document.createElement('a');
-        link.href = 'https://github.com/GoogleChrome/puppeteer/commit/' + match[1];
-        link.innerHTML = `<code>${match[1]}</code>`;
-        fragment.appendChild(link);
+        fragment.appendChild(html`
+          <a href='https://github.com/GoogleChrome/puppeteer/commit/${match[1]}'><code>${match[1]}</code></a>
+        `);
         lastIndex = shaRegex.lastIndex;
       }
       if (lastIndex < text.length)
@@ -181,33 +180,22 @@ export class APIDocumentation {
   }
 
   createOutline() {
-    const outline = document.createElement('content-box');
-    const header = document.createElement('h2');
-    header.textContent = 'Puppeteer ' + this.version;
-    outline.appendChild(header);
-    const ul = document.createElement('ul');
-    for (const apiSection of this.sections) {
-      const li = document.createElement('li');
-      li.classList.add('table-of-contents-entry');
-      li.appendChild(apiSection.createTableOfContentsElement());
-      ul.appendChild(li);
-    }
-    for (const apiClass of this.classes) {
-      const li = document.createElement('li');
-      li.classList.add('table-of-contents-entry');
-      li.appendChild(apiClass.createTableOfContentsElement());
-      ul.appendChild(li);
-      const childUL = document.createElement('ul');
-      for (const entry of [...apiClass.events, ...apiClass.namespaces, ...apiClass.methods]) {
-        const li = document.createElement('li');
-        li.classList.add('table-of-contents-entry');
-        li.appendChild(entry.createTableOfContentsElement());
-        childUL.appendChild(li);
-      }
-      li.appendChild(childUL);
-    }
-    outline.appendChild(ul);
-    return outline;
+    return html`
+      <content-box>
+        <h2>Puppeteer ${this.version}</h2>
+        <ul>${this.sections.map(apiSection => html`
+          <li class=table-of-contents-entry>${apiSection.createTableOfContentsElement()}</li>
+        `)}${this.classes.map(apiClass => html`
+          <li class=table-of-contents-entry>
+            ${apiClass.createTableOfContentsElement()}
+            <ul>${[...apiClass.events, ...apiClass.namespaces, ...apiClass.methods ].map(entry => html`
+              <li class=table-of-contents-entry>${entry.createTableOfContentsElement()}</li>`)}
+            </ul>
+          </li>
+        `)}
+        </ul>
+      </content-box>
+    `;
   }
 
   _initializeContentIds() {
@@ -267,42 +255,39 @@ export class APIEntry {
 
   createTableOfContentsElement() {
     const fragment = document.createDocumentFragment();
-    const a = document.createElement('a');
-    a.href = this.linkURL();
-    a.textContent = this.tableOfContentsText;
-    fragment.appendChild(a);
+    fragment.appendChild(html`
+      <a href="${this.linkURL()}">${this.tableOfContentsText}</a>
+    `);
     if (this.sinceVersion) {
-      const since = document.createElement('pptr-api-since');
-      since.textContent = this.sinceVersion;
-      if (this.api.version === this.sinceVersion)
-        since.classList.add('pptr-new-api');
-      fragment.appendChild(since);
+      fragment.appendChild(html`
+        <pptr-api-since class=${this.api.version === this.sinceVersion ? 'pptr-new-api' : ''}>
+          ${this.sinceVersion}
+        </pptr-api-since>
+      `);
     }
-    if (this.untilVersion) {
-      const until = document.createElement('pptr-api-until');
-      until.textContent = this.untilVersion;
-      fragment.appendChild(until);
-    }
+    if (this.untilVersion)
+      fragment.appendChild(html`<pptr-api-until>${this.untilVersion}</pptr-api-until>`);
     return fragment;
   }
 }
 
 export class APISection extends APIEntry {
   static create(api, title, descFragment) {
-    const element = document.createElement('api-section');
-    element.classList.add('api-entry');
-    element.innerHTML = `<h1>${title}</h1>`;
-    element.appendChild(descFragment);
-    return new APISection(api, title, element);
+    return new APISection(api, title, html`
+      <api-section class=api-entry>
+        <h1>${title}</h1>
+        ${descFragment}
+      </api-section>
+    `);
   }
 
   static createReleaseNotes(api, descFragment) {
-    const element = document.createElement('api-section');
-    element.classList.add('api-entry');
-    element.innerHTML = `<h2>Puppeteer ${api.version} Release Notes</h2>`;
-    while (descFragment.firstChild)
-      element.appendChild(descFragment.firstChild);
-    return new APISection(api, 'Release Notes', element);
+    return new APISection(api, 'Release Notes', html`
+      <api-section class=api-entry>
+        <h2>Puppeteer ${api.version} Release Notes</h2>
+        ${Array.from(descFragment.childNodes)}
+      </api-section>
+    `);
   }
 
   constructor(api, name, element) {
@@ -315,10 +300,17 @@ export class APIClass extends APIEntry {
     const name = title.replace(/^class:/i, '').trim();
     const headers = fragment.querySelectorAll('h4');
 
-    const element = document.createElement('api-class');
-    element.classList.add('api-entry');
-    element.innerHTML = `<h3><pptr-class-icon></pptr-class-icon> <api-class-name>class: ${name}</api-class-name> <pptr-api-since></pptr-api-since> <pptr-api-until></pptr-api-until></h3>`;
-    element.appendChild(extractSiblingsIntoFragment(fragment.firstChild, headers[0]));
+    const element = html`
+      <api-class class=api-entry>
+        <h3>
+          <pptr-class-icon></pptr-class-icon>
+          <api-class-name>class: ${name}</api-class-name>
+          <pptr-api-since></pptr-api-since>
+          <pptr-api-until></pptr-api-until>
+        </h3>
+        ${extractSiblingsIntoFragment(fragment.firstChild, headers[0])}
+      </api-class>
+    `;
     const apiClass = new APIClass(api, name, element);
 
     for (let i = 0; i < headers.length; ++i) {
@@ -427,18 +419,13 @@ export class APIClass extends APIEntry {
 
   _appendTableOfContents() {
     const addSection = (title, entities) => {
-      const header = document.createElement('h4');
-      header.textContent = title;
-      this.element.appendChild(header);
-      const ul = document.createElement('ul');
-      ul.classList.add('pptr-table-of-contents');
-      for (const entity of entities) {
-        const li = document.createElement('li');
-        li.classList.add('table-of-contents-entry');
-        li.appendChild(entity.createTableOfContentsElement());
-        ul.appendChild(li);
-      }
-      this.element.appendChild(ul);
+      this.element.appendChild(html`
+        <h4>${title}</h4>
+        <ul class=pptr-table-of-contents>${entities.map(entity => html`
+          <li class=table-of-contents-entry>${entity.createTableOfContentsElement()}</li>
+        `)}
+        </ul>
+      `);
     };
 
     if (this.events.length)
@@ -453,19 +440,18 @@ export class APIClass extends APIEntry {
 export class APINamespace extends APIEntry {
   static create(apiClass, title, fragment) {
     const name = title.split('.').pop();
-    const element = document.createElement('api-ns');
-    element.classList.add('api-entry');
-    element.innerHTML = [
-      `<h4>`,
-        '<pptr-ns-icon></pptr-ns-icon> ',
-        `<api-ns-classname>${apiClass.loweredName}</api-ns-classname>`,
-        `<api-ns-name>.${name}</api-ns-name>`,
-        `<pptr-api-since></pptr-api-since>`,
-        `<pptr-api-until></pptr-api-until>`,
-      `</h4>`
-    ].join('');
-    element.appendChild(fragment);
-    return new APINamespace(apiClass, name, element);
+    return new APINamespace(apiClass, name, html`
+      <api-ns class=api-entry>
+        <h4>
+          <pptr-ns-icon></pptr-ns-icon>
+          <api-ns-classname>${apiClass.loweredName}</api-ns-classname>
+          <api-ns-name>.${name}</api-ns-name>
+          <pptr-api-since></pptr-api-since>
+          <pptr-api-until></pptr-api-until>
+        </h4>
+        ${fragment}
+      </api-ns>
+    `);
   }
 
   constructor(apiClass, name, element) {
