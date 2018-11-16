@@ -203,10 +203,11 @@ class ZTemplate {
       }
       let child = node.lastChild;
       for (let i = value.length - 1; i >= 0; i--) {
-        child = this._replaceNode(child, value[i]);
-        child = child.previousSibling;
+        const prev = child.previousSibling;
+        this._replaceNode(child, value[i]);
+        child = prev;
       }
-      return node;
+      return;
     }
 
     let replacement = null;
@@ -217,14 +218,14 @@ class ZTemplate {
     } else {
       const s = '' + value;
       if (node.nodeType === Node.TEXT_NODE && node.data === s) {
-        return node;
+        return;
       }
       replacement = document.createTextNode('' + value);
     }
 
     if (node !== replacement && node.parentNode)
       node.parentNode.replaceChild(replacement, node);
-    return replacement;
+    return;
   }
 }
 
