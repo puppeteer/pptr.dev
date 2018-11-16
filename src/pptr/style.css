@@ -64,8 +64,10 @@ pptr-api content-delimeter:last-child {
 pptr-api api-class h3,
 pptr-api api-method h4,
 pptr-api api-event h4,
-pptr-api api-namespace h4 {
+pptr-api api-ns h4 {
   white-space: nowrap;
+  display: flex;
+  align-items: center;
 }
 
 pptr-api .api-entry {
@@ -112,7 +114,7 @@ pptr-api-since {
   vertical-align: super;
   font-family: var(--monospace);
   user-select: none;
-
+  align-self: self-start;
 }
 
 pptr-api-since::before {
@@ -140,6 +142,7 @@ pptr-api-until {
   vertical-align: super;
   user-select: none;
   margin-left: 4px;
+  align-self: self-start;
 }
 
 pptr-api-until::before {
@@ -269,6 +272,7 @@ pptr-method-icon {
   align-items: center;
   justify-content: center;
   font-weight: bold;
+  flex-shrink: 0;
 }
 
 /* Icons inside API documentation */
@@ -276,6 +280,7 @@ pptr-api pptr-event-icon,
 pptr-api pptr-method-icon,
 pptr-api pptr-ns-icon,
 pptr-api pptr-class-icon {
+  margin-right: 1ex;
 }
 /* Icons inside search items */
 search-item pptr-event-icon,
