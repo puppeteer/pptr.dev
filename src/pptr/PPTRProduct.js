@@ -17,6 +17,7 @@ import {Store as IDBStore, get as idbGet, set as idbSet} from '../third_party/id
 
 import {APIDocumentation, APISection, APIMethod, APIClass} from './APIDocumentation.js';
 import {App} from '../ui/App.js';
+import {html} from '../ui/html.js';
 import {SearchComponent} from '../ui/SearchComponent.js';
 
 const LOCAL_STORAGE_KEY = 'pptr-api-data';
@@ -126,20 +127,17 @@ export class PPTRProduct extends App.Product {
   }
 
   toolbarElements() {
-    const toolbarElements = [];
-    toolbarElements.push(iconButton('https://stackoverflow.com/questions/tagged/puppeteer', './images/stackoverflow.svg', 'pptr-stackoverflow'));
-    toolbarElements.push(iconButton('https://join.slack.com/t/puppeteer/shared_invite/enQtMzU4MjIyMDA5NTM4LTM1OTdkNDhlM2Y4ZGUzZDdjYjM5ZWZlZGFiZjc4MTkyYTVlYzIzYjU5NDIyNzgyMmFiNDFjN2UzNWU0N2ZhZDc', './images/slack.svg', 'pptr-slack'));
-    toolbarElements.push(iconButton('https://github.com/GoogleChrome/puppeteer/blob/master/docs/troubleshooting.md', './images/wrench.svg', 'pptr-troubleshooting'));
-    toolbarElements.push(iconButton('https://github.com/GoogleChrome/puppeteer', './images/github.png', 'pptr-github'));
-    return toolbarElements;
-
     function iconButton(linkURL, iconURL, iconClass) {
-      const a = document.createElement('a');
-      a.innerHTML = `<img src="${iconURL}"></img>`;
-      a.classList.add(iconClass);
-      a.href = linkURL;
-      return a;
+      return html`<a class=${iconClass} href="${linkURL}"><img src="${iconURL}"></img></a>`;
     }
+
+    return [
+      iconButton('https://stackoverflow.com/questions/tagged/puppeteer', './images/stackoverflow.svg', 'pptr-stackoverflow'),
+      iconButton('https://join.slack.com/t/puppeteer/shared_invite/enQtMzU4MjIyMDA5NTM4LTM1OTdkNDhlM2Y4ZGUzZDdjYjM5ZWZlZGFiZjc4MTkyYTVlYzIzYjU5NDIyNzgyMmFiNDFjN2UzNWU0N2ZhZDc', './images/slack.svg', 'pptr-slack'),
+      iconButton('https://github.com/GoogleChrome/puppeteer/blob/master/docs/troubleshooting.md', './images/wrench.svg', 'pptr-troubleshooting'),
+      iconButton('https://github.com/GoogleChrome/puppeteer', './images/github.png', 'pptr-github'),
+    ];
+
   }
 
   _initializeAPILifespan() {
@@ -279,7 +277,6 @@ export class PPTRProduct extends App.Product {
   }
 
   settingsFooterElement() {
-    const settingsFooter = document.createElement('pptr-settings-footer');
     const diff = Date.now() - this._fetchTimestamp;
     let time = '';
     if (diff < 1000)
@@ -292,19 +289,18 @@ export class PPTRProduct extends App.Product {
       time = `${Math.round(diff / 60 / 60 / 1000)} hours ago`;
     else if (24 * 60 * 60 * 1000 <= diff)
       time = `${Math.round(diff / 24 / 60 / 60 / 1000)} days ago`;
-    settingsFooter.textContent = 'Data fetched ' + time;
-    return settingsFooter;
+    return html`<pptr-settings-footer>Data fetched ${time}</pptr-settings-footer>`;
   }
 
   create404(title = '') {
-    const element = document.createElement('pptr-api');
-    element.classList.add('pptr-not-found');
-    const contentBox = document.createElement('content-box');
-    element.appendChild(contentBox);
-    contentBox.innerHTML = `
-      <h1>Not Found</h1>
-      <p>${title}</p>
-      <p><a href='${app.linkURL(PRODUCT_NAME, this.defaultVersionName())}'>Home</a></p>
+    const element = html`
+      <pptr-api class=pptr-not-found>
+        <content-box>
+          <h1>Not Found</h1>
+          <p>${title}</p>
+          <p><a href='${app.linkURL(PRODUCT_NAME, this.defaultVersionName())}'>Home</a></p>
+        </content-box>
+      </pptr-api>
     `;
     return {element, title: 'Not Found'};
   }
@@ -360,26 +356,24 @@ class PPTRVersion extends App.ProductVersion {
 
   content(contentId) {
     if (!contentId) {
-      const element = document.createElement('pptr-api');
-      element.classList.add('pptr-readme');
-      const contentBox = document.createElement('content-box');
-      element.appendChild(contentBox);
-      const rendered = APIDocumentation.markdownToDOM(this._readmeText);
-      var fragment = document.createDocumentFragment();
-      while (rendered.firstChild)
-        fragment.appendChild(rendered.firstChild);
-      contentBox.appendChild(fragment);
+      const element = html`
+        <pptr-api class=pptr-readme>
+          <content-box>
+            ${Array.from(APIDocumentation.markdownToDOM(this._readmeText).childNodes)}
+          </content-box>
+        </pptr-api>
+      `;
       // Move logo to the very beginning - it will look better.
-      const logo = contentBox.querySelector('img[align=right]');
+      const logo = element.querySelector('img[align=right]');
       if (logo) {
         logo.remove();
+        const contentBox = element.querySelector('content-box');
         contentBox.insertBefore(logo, contentBox.firstChild);
       }
       return { element, title: '' };
     }
     if (contentId === 'outline') {
-      const element = document.createElement('pptr-api');
-      element.appendChild(this.api.createOutline());
+      const element = html`<pptr-api>${this.api.createOutline()}</pptr-api>`;
       return { element, title: '', selectedSidebarElement: this._outlineItem };
     }
     const entry = this.api.idToEntry(contentId);
@@ -406,32 +400,21 @@ class PPTRVersion extends App.ProductVersion {
   }
 
   _initializeSidebarElements() {
-    this._sidebarElements = [];
-    const resourcesDivider = document.createElement('pptr-sidebar-divider');
-
-    const apiDivider = document.createElement('pptr-sidebar-divider');
-    apiDivider.textContent = `API`;
-    const outlineIcon = document.createElement('a');
-    this._sidebarElements.push(apiDivider);
-
-    this._outlineItem = createItem(null, 'Outline', app.linkURL(PRODUCT_NAME, this.api.version, 'outline'));
-    this._sidebarElements.push(this._outlineItem);
-    for (const apiEntry of [...this.api.sections, ...this.api.classes]) {
-      const icon = apiEntry instanceof APIClass ?  document.createElement('pptr-class-icon') : null;
-      const item = createItem(icon, apiEntry.name, apiEntry.linkURL());
-      this._sidebarElements.push(item);
-      this._entryToSidebarElement.set(apiEntry, item);
-    }
-
-    function createItem(icon, text, route) {
-      const item = document.createElement('a');
-      item.classList.add('pptr-sidebar-item');
-      item.href = route;
-      if (icon)
-        item.appendChild(icon);
-      item.appendChild(document.createTextNode(text));
-      return item;
-    }
+    this._outlineItem = html`<a class=pptr-sidebar-item href=${app.linkURL(PRODUCT_NAME, this.api.version, 'outline')}>Outline</a>`;
+    this._sidebarElements = [
+      html`<pptr-sidebar-divider>API</pptr-sidebar-divider>`,
+      this._outlineItem,
+      ...this.api.sections.map(section => {
+        const item = html`<a class=pptr-sidebar-item href=${section.linkURL()}>${section.name}</a>`;
+        this._entryToSidebarElement.set(section, item);
+        return item;
+      }),
+      ...this.api.classes.map(apiClass => {
+        const item = html`<a class=pptr-sidebar-item href=${apiClass.linkURL()}><pptr-class-icon></pptr-class-icon>${apiClass.name}</a>`;
+        this._entryToSidebarElement.set(apiClass, item);
+        return item;
+      }),
+    ];
   }
 
   _showAPIClass(apiClass) {
