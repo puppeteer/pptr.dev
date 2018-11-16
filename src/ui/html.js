@@ -102,9 +102,10 @@ class ZTemplate {
 
     if (!node) {
       const content = this._template.ownerDocument.importNode(this._template.content, true);
-      if (content.firstChild !== content.lastChild)
-        throw new Error('Template must have a single root element');
-      node = content.firstChild;
+      if (content.firstChild === content.lastChild)
+        node = content.firstChild;
+      else
+        node = content;
 
       by$ = {};
       const boundElements = [];
