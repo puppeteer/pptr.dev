@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 import {EventEmitter} from './EventEmitter.js';
+import {html, HTML_VOID} from './html.js';
 
 export class SettingsComponent extends EventEmitter {
   constructor() {
     super();
     this.element = document.createElement('settings-component');
-    this._contentElement = document.createElement('settings-content');
-    this.element.appendChild(this._contentElement);
 
     this._selectedItem = null;
     document.body.addEventListener('keydown', event => {
@@ -68,35 +67,31 @@ export class SettingsComponent extends EventEmitter {
   }
 
   show(product, version) {
-    this._contentElement.innerHTML = '';
-    const settingsHeader = document.createElement('settings-header');
-    settingsHeader.innerHTML = `<h3>Settings</h3>`;
-    const closeIcon = document.createElement('img');
-    closeIcon.classList.add('settings-close-icon');
-    closeIcon.src = './images/close.svg';
-    settingsHeader.appendChild(closeIcon);
-    this._contentElement.appendChild(settingsHeader);
-    if (product) {
-      const versionsContainer = document.createElement('product-versions');
-      for (const description of product.versionDescriptions()) {
-        const item = document.createElement('product-version');
-        const name = document.createElement('version-name');
-        name.textContent = description.name;
-        item.appendChild(name);
-        const subtitle = document.createElement('version-description');
-        subtitle.textContent = description.description;
-        item.appendChild(subtitle);
-        const date = document.createElement('version-date');
-        date.textContent = formatDate(description.date);
-        item.appendChild(date);
-        item[SettingsComponent._Symbol] = {product, versionName: description.name};
-        versionsContainer.appendChild(item);
-        if (description.name === version.name())
-          this._selectItem(item);
-      }
-      this._contentElement.appendChild(versionsContainer);
-      this._contentElement.appendChild(product.settingsFooterElement());
-    }
+    const renderVersion = (description) => {
+      const selected = description.name === version.name();
+      const item = html`
+        <product-version class=${selected ? 'selected' : ''}>
+          <version-name>${description.name}</version-name>
+          <version-description>${description.description}</version-description>
+          <version-date>${formatDate(description.date)}</version-date>
+        </product-version>
+      `;
+      item[SettingsComponent._Symbol] = {product, versionName: description.name};
+      return item;
+    };
+
+    this.element.appendChild(html`
+      <settings-content>
+        <settings-header>
+          <h3>Settings</h3>
+          <img class=settings-close-icon src='./images/close.svg'></img>
+        </settings-header>
+        <product-versions>${product.versionDescriptions().map(renderVersion)}
+        </product-versions>
+        ${product.settingsFooterElement()}
+      </settings-content>
+    `);
+
     const websiteVersionText = window.__WEBSITE_VERSION__ || 'tip-of-tree';
     const websiteVersion = document.createElement('website-version');
     websiteVersion.innerHTML = `<div>WebSite Version: <code>${websiteVersionText}</code> <a href="https://github.com/GoogleChromeLabs/pptr.dev/issues">File a bug!</a></div>`;
