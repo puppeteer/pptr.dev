@@ -17,7 +17,7 @@ import {Store as IDBStore, get as idbGet, set as idbSet} from '../third_party/id
 
 import {APIDocumentation, APISection, APIMethod, APIClass} from './APIDocumentation.js';
 import {App} from '../ui/App.js';
-import {html, HTML_VOID} from '../ui/html.js';
+import {html} from '../ui/html.js';
 import {SearchComponent} from '../ui/SearchComponent.js';
 
 const LOCAL_STORAGE_KEY = 'pptr-api-data';
@@ -422,7 +422,7 @@ class PPTRVersion extends App.ProductVersion {
   _showAPIClass(apiClass) {
     function render(title, entries) {
       if (!entries.length)
-        return HTML_VOID;
+        return '';
       return html`
         <h3>${title}</h3>
         <content-box>${entries.map(entry => html`

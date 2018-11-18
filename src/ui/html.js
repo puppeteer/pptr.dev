@@ -1,14 +1,23 @@
 const templateCache = new Map();
 
-export const HTML_VOID = Symbol('HTML_VOID');
-
-export function html(strings, ...values) {
+export function template(strings, ...values) {
   let template = templateCache.get(strings);
   if (!template) {
     template = ZTemplate.process(strings);
     templateCache.set(strings, template);
   }
-  return (new ZTemplate(template, values)).render();
+  return new ZTemplate(template, values);
+}
+
+/*
+const tmp = template`<h1 $=yo></h1>`;
+const $ = {};
+const html = tmp.render($);
+const h1 = $.yo[0];
+*/
+
+export function html(strings, ...values) {
+  return template(strings, ...values).render();
 }
 
 class ZTemplate {
@@ -99,15 +108,15 @@ class ZTemplate {
     this._values = values;
   }
 
-  render(node) {
-    let by$;
-
+  render(by$ = {}) {
+    let node;
     if (!node) {
       const content = this._template.ownerDocument.importNode(this._template.content, true);
       if (content.firstChild === content.lastChild)
         node = content.firstChild;
       else
         node = content;
+//        throw new Error('Root node in template must be one!');
 
       by$ = {};
       const boundElements = [];
@@ -128,7 +137,8 @@ class ZTemplate {
         const bind = this._binds[bindIndex];
         let element = boundElements[bindIndex];
         if ('elementId' in bind) {
-          by$[bind.elementId] = element;
+          by$[bind.elementId] = by$[bind.elementId] || [];
+          by$[bind.elementId].push(element);
         } else if ('replaceNodeIndex' in bind) {
           if (Array.isArray(this._values[bind.replaceNodeIndex])) {
             const span = document.createElement('span');
@@ -170,7 +180,7 @@ class ZTemplate {
       }
       while (offset-- > 0)
         anchor = anchor.nextSibling;
-      this._replaceNode(anchor, this._values[bind.index]);
+      this._replaceNode(anchor, this._values[bind.index], by$);
     }
 
     for (const bind of node._attrBinds) {
@@ -192,11 +202,7 @@ class ZTemplate {
     return node;
   }
 
-  _replaceNode(node, value) {
-    if (value === HTML_VOID) {
-      node.remove();
-      return;
-    }
+  _replaceNode(node, value, by$) {
     if (Array.isArray(value)) {
       let count = node.childNodes.length;
       while (count < value.length) {
@@ -210,7 +216,7 @@ class ZTemplate {
       let child = node.lastChild;
       for (let i = value.length - 1; i >= 0; i--) {
         const prev = child.previousSibling;
-        this._replaceNode(child, value[i]);
+        this._replaceNode(child, value[i], by$);
         child = prev;
       }
       return;
@@ -220,7 +226,7 @@ class ZTemplate {
     if (value instanceof Node) {
       replacement = value;
     } else if (value && typeof value === 'object') {
-      replacement = value.render(node);
+      replacement = value.render(by$);
     } else {
       const s = '' + value;
       if (node.nodeType === Node.TEXT_NODE && node.data === s) {
