@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
+import {html} from './html.js';
+
 export class ContentComponent {
   constructor() {
-    this.element = document.createElement('content-component');
+    this.element = html`<content-component/>`;
     this.element.tabIndex = 0;
   }
 

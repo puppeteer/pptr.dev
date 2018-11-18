@@ -15,36 +15,33 @@
  */
 
 import {FuzzySearch} from './FuzzySearch.js';
+import {html} from './html.js';
 
 // Number of search results to render immediately.
 const SEARCH_RENDER_COUNT = 50;
 
 export class SearchComponent {
   constructor() {
-    this.element = document.createElement('search-component');
+    this.element = html`
+      <search-component>
+        <input type=search autocomplete=off autocapitalize=off spellcheck=false size=1 placeholder='start typing to search...'></input>
+        <search-results>
+        </search-results>
+      </search-component>
+    `;
+    this._contentElement = this.element.$('search-results');
 
-    this.input = document.createElement('input');
-    this.input.setAttribute('type', 'search');
-    this.input.setAttribute('autocomplete', 'off');
-    this.input.setAttribute('autocapitalize', 'off');
-    this.input.setAttribute('spellcheck', 'false');
-    this.input.setAttribute('size', '1');
-    this.input.setAttribute('placeholder', 'start typing to search...');
-
-    this._contentElement = document.createElement('search-results');
-    this.element.appendChild(this._contentElement);
     this._items = [];
     this._visible = false;
 
     this._defaultValue = '';
 
-    this._gotoHomeItem = document.createElement('search-item-custom');
-    this._gotoHomeItem.textContent = 'Navigate Home';
-
-    this._showOtherItem = document.createElement('search-item-custom');
+    this._gotoHomeItem = html`<search-item-custom>Navigate Home</search-item-custom>`;
+    this._showOtherItem = html`<search-item-custom/>`;
 
     this._selectedElement = null;
 
+    this.input = this.element.$('input');
     this.input.addEventListener('keydown', event => {
       if (event.key === 'Escape' || event.keyCode === 27) {
         event.preventDefault();
@@ -232,27 +229,17 @@ export class SearchComponent {
   }
 
   _renderResult(result) {
-    const item = document.createElement('search-item');
-
-    const iconElement = result.item.iconElement();
-    if (iconElement) {
-      const itemIcon = document.createElement('search-item-icon');
-      itemIcon.appendChild(result.item.iconElement());
-      item.appendChild(itemIcon);
-    }
-    const itemTitle = document.createElement('search-item-title');
-    itemTitle.appendChild(result.item.titleElement(result.matches));
+    const icon = result.item.iconElement();
+    const title = result.item.titleElement(result.matches);
+    const subtitle= result.item.subtitleElement();
+    const item = html`
+      <search-item class=${subtitle ? '' : 'no-subtitle'}>
+        ${icon ? html`<search-item-icon>${icon}</search-item-icon>` : ''}
+        <search-item-title>${title}</search-item-title>
+        ${subtitle ? html`<search-item-subtitle>${subtitle}</search-item-subtitle>` : ''}
+      </search-item>
+    `;
     item[SearchComponent._symbol] = result.item;
-    item.appendChild(itemTitle);
-
-    const subtitleElement = result.item.subtitleElement();
-    if (subtitleElement) {
-      const itemSubtitle = document.createElement('search-item-subtitle');
-      itemSubtitle.appendChild(result.item.subtitleElement());
-      item.appendChild(itemSubtitle);
-    } else {
-      item.classList.add('no-subtitle');
-    }
     return item;
   }
 

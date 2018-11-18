@@ -92,7 +92,7 @@ export class APIDocumentation {
       // Mark link as external if necessary
       const isImgLink = a.children.length === 1 && a.children[0].tagName === 'IMG';
       if (a.hostname !== location.hostname && a.hostname.length && !isImgLink) {
-        const icon = document.createElement('external-link-icon')
+        const icon = html`<external-link-icon/>`;
         if (a.children.length === 1 && a.children[0].tagName === 'CODE')
           a.children[0].appendChild(icon);
         else
