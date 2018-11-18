@@ -17,7 +17,12 @@ const h1 = $.yo[0];
 */
 
 export function html(strings, ...values) {
-  return template(strings, ...values).render();
+  const node = template(strings, ...values).render();
+  if (node.querySelector) {
+    node.$ = node.querySelector.bind(node);
+    node.$$ = node.querySelectorAll.bind(node);
+  }
+  return node;
 }
 
 class ZTemplate {

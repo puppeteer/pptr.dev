@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 import {EventEmitter} from './EventEmitter.js';
-import {html, HTML_VOID} from './html.js';
+import {html} from './html.js';
 
 export class SettingsComponent extends EventEmitter {
   constructor() {
     super();
-    this.element = document.createElement('settings-component');
+    this.element = html`<settings-component/>`;
 
     this._selectedItem = null;
     document.body.addEventListener('keydown', event => {
@@ -30,30 +30,6 @@ export class SettingsComponent extends EventEmitter {
         event.preventDefault();
         event.stopPropagation();
       }
-    }, false);
-    this._contentElement.addEventListener('click', event => {
-      // Support clicks on links, e.g. "file a bug".
-      if (event.target.tagName === 'A') {
-        event.stopPropagation();
-        return;
-      }
-      event.preventDefault();
-      // Allow selecting versions.
-      if (!window.getSelection().isCollapsed)
-        return;
-      if (event.target.classList.contains('settings-close-icon')) {
-        this.hide();
-        return;
-      }
-      let item = event.target;
-      while (item && item.tagName !== 'PRODUCT-VERSION')
-        item = item.parentElement;
-      if (!item)
-        return;
-      this._selectItem(item);
-      const {product, versionName} = item[SettingsComponent._Symbol];
-      this.hide();
-      this.emit(SettingsComponent.Events.VersionSelected, product, versionName);
     }, false);
     this.element.addEventListener('click', () => this.hide(), false);
   }
@@ -80,6 +56,7 @@ export class SettingsComponent extends EventEmitter {
       return item;
     };
 
+    this.element.innerHTML = '';
     this.element.appendChild(html`
       <settings-content>
         <settings-header>
@@ -89,14 +66,39 @@ export class SettingsComponent extends EventEmitter {
         <product-versions>${product.versionDescriptions().map(renderVersion)}
         </product-versions>
         ${product.settingsFooterElement()}
+        <website-version>
+          <div>WebSite Version: <code>${window.__WEBSITE_VERSION__ || 'tip-of-tree'}</code> <a target=_blank href="https://github.com/GoogleChromeLabs/pptr.dev/issues">File a bug!</a></div>
+        </website-version>
       </settings-content>
     `);
+    this.element.$('settings-content').addEventListener('click', event => {
+      event.stopPropagation();
+      // Support clicks on links, e.g. "file a bug".
+      if (event.target.tagName === 'A') {
+        event.stopPropagation();
+        return;
+      }
+      event.preventDefault();
+      // Allow selecting versions.
+      if (!window.getSelection().isCollapsed)
+        return;
+      if (event.target.classList.contains('settings-close-icon')) {
+        this.hide();
+        return;
+      }
+      let item = event.target;
+      while (item && item.tagName !== 'PRODUCT-VERSION')
+        item = item.parentElement;
+      if (!item)
+        return;
+      this._selectItem(item);
+      const {product, versionName} = item[SettingsComponent._Symbol];
+      this.hide();
+      this.emit(SettingsComponent.Events.VersionSelected, product, versionName);
+    }, false);
 
-    const websiteVersionText = window.__WEBSITE_VERSION__ || 'tip-of-tree';
-    const websiteVersion = document.createElement('website-version');
-    websiteVersion.innerHTML = `<div>WebSite Version: <code>${websiteVersionText}</code> <a href="https://github.com/GoogleChromeLabs/pptr.dev/issues">File a bug!</a></div>`;
-    this._contentElement.appendChild(websiteVersion);
     document.body.appendChild(this.element);
+    this._selectedItem = this.element.$('product-version.selected');
     if (this._selectedItem)
       this._selectedItem.scrollIntoViewIfNeeded();
 
@@ -114,7 +116,7 @@ export class SettingsComponent extends EventEmitter {
   hide() {
     this.element.remove();
     // Cleanup content to free some memory.
-    this._contentElement.innerHTML = '';
+    this.element.innerHTML = '';
     this._selectedItem = null;
   }
 }
