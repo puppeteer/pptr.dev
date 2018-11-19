@@ -1,6 +1,6 @@
 const templateCache = new Map();
 
-export function template(strings, ...values) {
+function template(strings, ...values) {
   let template = templateCache.get(strings);
   if (!template) {
     template = ZTemplate.process(strings);
@@ -8,13 +8,6 @@ export function template(strings, ...values) {
   }
   return new ZTemplate(template, values);
 }
-
-/*
-const tmp = template`<h1 $=yo></h1>`;
-const $ = {};
-const html = tmp.render($);
-const h1 = $.yo[0];
-*/
 
 export function html(strings, ...values) {
   const node = template(strings, ...values).render();
