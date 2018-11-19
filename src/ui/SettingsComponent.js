@@ -67,7 +67,7 @@ export class SettingsComponent extends EventEmitter {
         </product-versions>
         ${product.settingsFooterElement()}
         <website-version>
-          <div>WebSite Version: <code>${window.__WEBSITE_VERSION__ || 'tip-of-tree'}</code> <a target=_blank href="https://github.com/GoogleChromeLabs/pptr.dev/issues">File a bug!</a></div>
+          <div>WebSite Version:<code>${window.__WEBSITE_VERSION__ || 'tip-of-tree'}</code> <a target=_blank href="https://github.com/GoogleChromeLabs/pptr.dev/issues">File a bug!</a></div>
         </website-version>
       </settings-content>
     `);
