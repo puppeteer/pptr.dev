@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import {html} from './html.js';
 import {ContentComponent} from './ContentComponent.js';
 import {SidebarComponent} from './SidebarComponent.js';
 import {ToolbarComponent} from './ToolbarComponent.js';
@@ -31,21 +32,30 @@ export class App {
       this.navigate(versionName, App.urlContentID());
     });
 
-    this._settingsButton = document.createElement('settings-button');
-    this._settingsButton.innerHTML = '<img src="./images/cog.svg"></img>';
+    this._settingsButton = html`
+      <settings-button>
+        <img src='./images/cog.svg'></img>
+      </settings-button>
+    `;
     this._settingsButton.addEventListener('click', () => {
       this._sidebar.hideOnMobile();
       this._settings.show(this._product, this._version);
     }, false);
 
-    this._menuButton = document.createElement('menu-button');
-    this._menuButton.innerHTML = '<img src="./images/menu.svg"></img>';
+    this._menuButton = html`
+      <menu-button>
+        <img src='./images/menu.svg'></img>
+      </menu-button>
+    `;
     this._menuButton.addEventListener('click', () => {
       this._sidebar.toggleOnMobile();
     }, false);
 
-    this._searchButton = document.createElement('search-button');
-    this._searchButton.innerHTML = '<img src="./images/search.svg"></img>';
+    this._searchButton = html`
+      <search-button>
+        <img src='./images/search.svg'></img>
+      </search-button>
+    `;
     this._searchButton.addEventListener('click', event => {
       this._search.toggleSearch();
       this._sidebar.hideOnMobile();
@@ -53,19 +63,17 @@ export class App {
       event.preventDefault();
     }, false);
 
-    this._homeButton = document.createElement('home-button');
-    this._homeButton.innerHTML = '<img src="./images/home.svg"></img>';
+    this._homeButton = html`
+      <home-button>
+        <img src='./images/home.svg'></img>
+      </home-button>
+    `;
     this._homeButton.addEventListener('click', () => {
       this._sidebar.hideOnMobile();
       this.navigateURL('');
     }, false);
 
-    this._titleElement = document.createElement('app-title');
-    this._titleVersionName = document.createElement('app-title-version-name');
-    this._titleVersionName.addEventListener('click', () => {
-      this._sidebar.hideOnMobile();
-      this._settings.show(this._product, this._version);
-    }, false);
+    this._titleElement = html`<app-title>`;
 
     this._product = null;
     this._version = null;
@@ -107,10 +115,14 @@ export class App {
     this._sidebar.setElements(this._version.sidebarElements());
     this._search.setItems(this._version.searchItems());
     this._titleElement.textContent = '';
-    this._titleElement.appendChild(document.createTextNode(this._product.name() + ' '));
-    this._titleVersionName.textContent = this._version.name();
-    this._titleElement.appendChild(this._titleVersionName);
-    this._titleElement.appendChild(document.createTextNode(' Search: '));
+    this._titleElement.appendChild(html`
+      ${this._product.name()}
+      <app-title-version-name>${this._version.name()}</app-title-version-name>Search:
+    `);
+    this._titleElement.$('app-title-version-name').addEventListener('click', () => {
+      this._sidebar.hideOnMobile();
+      this._settings.show(this._product, this._version);
+    }, false);
     this._sidebar.setSelected(content.selectedSidebarElement);
     this._search.setInputValue(content.title);
     this._content.show(content.element, content.scrollAnchor);
@@ -175,19 +187,20 @@ export class App {
     }
     if (!visible)
       return;
-    this._loadingScreen = document.createElement('loading-screen');
-    this._loadingScreen.innerHTML = `
-      <loading-content>
-        <div class='text'>${text}</div>
-        <img src='/images/pptr.png'></img>
-        <div class='spinner'>
-          <div class='rect1'></div>
-          <div class='rect2'></div>
-          <div class='rect3'></div>
-          <div class='rect4'></div>
-          <div class='rect5'></div>
-        </div>
-      </loading-content>
+    this._loadingScreen = html`
+      <loading-screen>
+        <loading-content>
+          <div class='text'>${text}</div>
+          <img src='/images/pptr.png'></img>
+          <div class='spinner'>
+            <div class='rect1'></div>
+            <div class='rect2'></div>
+            <div class='rect3'></div>
+            <div class='rect4'></div>
+            <div class='rect5'></div>
+          </div>
+        </loading-content>
+      </loading-screen>
     `;
     document.body.appendChild(this._loadingScreen);
   }

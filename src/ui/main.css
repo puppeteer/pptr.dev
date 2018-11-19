@@ -99,6 +99,7 @@ app-title {
 app-title-version-name {
   border-bottom: 1px dashed white;
   cursor: pointer;
+  margin: 0 1ex;
 }
 
 app-title-version-name:hover {
@@ -173,6 +174,7 @@ loading-screen .spinner > div {
   display: inline-block;
   -webkit-animation: sk-stretchdelay 1.2s infinite ease-in-out;
   animation: sk-stretchdelay 1.2s infinite ease-in-out;
+  margin-left: 3px;
 }
 
 loading-screen .spinner .rect2 {

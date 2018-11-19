@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
+import {html} from './html.js';
+
 export class SidebarComponent {
   constructor() {
-    this.element = document.createElement('sidebar-component');
+    this.element = html`<sidebar-component>`;
     this.element.addEventListener('click', this._onClick.bind(this), false);
-    this.glasspane = document.createElement('sidebar-glasspane');
+    this.glasspane = html`<sidebar-glasspane>`;
     this.glasspane.addEventListener('click', event => {
       this.hideOnMobile();
       event.stopPropagation();
@@ -44,9 +46,9 @@ export class SidebarComponent {
   setElements(elements) {
     this.element.innerHTML = '';
     for (const element of elements) {
-      const item = document.createElement('sidebar-item');
-      item.appendChild(element);
-      this.element.appendChild(item);
+      this.element.appendChild(html`
+        <sidebar-item>${element}</sidebar-item>
+      `);
     }
   }
 
