@@ -18,6 +18,8 @@ export function html(strings, ...values) {
   return node;
 }
 
+const SPACE_REGEX = /^\s+$/;
+
 class ZTemplate {
   static process(strings) {
     const marker = 'z-t-e-m-p-l-a-t-e';
@@ -76,7 +78,7 @@ class ZTemplate {
         const texts = node.data.split(markerRegex);
         node.data = texts[texts.length - 1];
         for (let i = 0; i < texts.length - 1; i++) {
-          if (texts[i])
+          if (texts[i] && !SPACE_REGEX.test(texts[i]))
             node.parentNode.insertBefore(document.createTextNode(texts[i]), node);
           const nodeToReplace = document.createElement('span');
           nodesToMark.push(nodeToReplace);
@@ -86,8 +88,8 @@ class ZTemplate {
       }
 
       if (node.nodeType === Node.TEXT_NODE &&
-          (!node.previousSibling || node.previousSibling.nodeType === Node.ELEMENT_NODE) &&
-          (!node.nextSibling || node.nextSibling.nodeType === Node.ELEMENT_NODE) && /^\s*$/.test(node.data)) {
+          (!node.previousSibling || node.previousSibling.nodeType === Node.ELEMENT_NODE || isMarkerNode(node.previousSibling)) &&
+          (!node.nextSibling || node.nextSibling.nodeType === Node.ELEMENT_NODE || isMarkerNode(node.nextSibling)) && SPACE_REGEX.test(node.data)) {
         emptyTextNodes.push(node);
       }
     }
@@ -98,6 +100,10 @@ class ZTemplate {
     for (const emptyTextNode of emptyTextNodes)
       emptyTextNode.remove();
     return {template, binds};
+
+    function isMarkerNode(node) {
+      return node.nodeType === Node.TEXT_NODE && node.data.indexOf(marker) !== -1;
+    }
   }
 
   constructor({template, binds}, values) {
