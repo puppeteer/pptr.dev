@@ -3,6 +3,7 @@
 /test/test-user-data-dir*
 /.local-chromium/
 /.dev_profile*
+/.idea
 .DS_Store
 *.swp
 *.pyc
