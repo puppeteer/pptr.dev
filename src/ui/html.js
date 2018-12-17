@@ -137,7 +137,7 @@ class ZTemplate {
       node._nodeBinds = [];
       node._attrBinds = [];
 
-      for (let bindIndex = 0; bindIndex < this._binds.length; bindIndex++) {
+      for (let bindIndex = this._binds.length - 1; bindIndex >= 0; bindIndex--) {
         const bind = this._binds[bindIndex];
         let element = boundElements[bindIndex];
         if ('elementId' in bind) {
