@@ -71,7 +71,7 @@ export class SearchComponent {
       if (event.keyCode === 8 || event.keyCode === 46) {
         // Activate search on backspace
         this.input.focus();
-      } else if (/\S/.test(event.key) && !event.metaKey && !event.ctrlKey && !event.altKey) {
+      } else if (/^\S$/.test(event.key) && !event.metaKey && !event.ctrlKey && !event.altKey) {
         // Activate search on any keypress
         this.input.focus();
         if (event.key !== '.')
