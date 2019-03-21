@@ -21,6 +21,6 @@
     "rimraf": "^2.6.2",
     "rollup": "^0.59.4",
     "uglify-es": "^3.3.9",
-    "workbox-cli": "^3.2.0"
+    "workbox-cli": "^4.1.0"
   }
 }

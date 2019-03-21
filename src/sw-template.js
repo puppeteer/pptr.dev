@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.2.0/workbox-sw.js");
+importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.1.0/workbox-sw.js");
 
-workbox.skipWaiting();
-workbox.clientsClaim();
+workbox.core.skipWaiting();
+workbox.core.clientsClaim();
 
 // Enable offline GoogleAnalytics.
 workbox.googleAnalytics.initialize();
 
-workbox.precaching.suppressWarnings();
 workbox.precaching.precacheAndRoute([], {});
 
 // This is needed to make SPA to work offline.
 workbox.routing.registerNavigationRoute("index.html");
 
 // Cache common github images (e.g. pptr logo).
-workbox.routing.registerRoute(/^https:\/\/user-images\.githubusercontent\.com\/.*/, workbox.strategies.staleWhileRevalidate(), 'GET');
+workbox.routing.registerRoute(/^https:\/\/user-images\.githubusercontent\.com\/.*/, new workbox.strategies.StaleWhileRevalidate(), 'GET');
