@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.2.0/workbox-sw.js");
+importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.1.0/workbox-sw.js");
 
-workbox.skipWaiting();
-workbox.clientsClaim();
+workbox.core.skipWaiting();
+workbox.core.clientsClaim();
 
 // Enable offline GoogleAnalytics.
 workbox.googleAnalytics.initialize();
 
-workbox.precaching.suppressWarnings();
 workbox.precaching.precacheAndRoute([
   {
     "url": "favicons/android-chrome-192x192.png",
@@ -62,7 +61,7 @@ workbox.precaching.precacheAndRoute([
   },
   {
     "url": "favicons/site.webmanifest",
-    "revision": "a9c9fb6c3df71946b07c72a3ee687918"
+    "revision": "12f48e2d6dcf0f66bf08ff7be81175f7"
   },
   {
     "url": "images/checkmark.svg",
@@ -114,7 +113,7 @@ workbox.precaching.precacheAndRoute([
   },
   {
     "url": "index.js",
-    "revision": "b3752c935913f1eb889c6ab45ca0d4ed"
+    "revision": "81eb942f86551922447fef8afa6f47ed"
   },
   {
     "url": "style.css",
@@ -126,4 +125,4 @@ workbox.precaching.precacheAndRoute([
 workbox.routing.registerNavigationRoute("index.html");
 
 // Cache common github images (e.g. pptr logo).
-workbox.routing.registerRoute(/^https:\/\/user-images\.githubusercontent\.com\/.*/, workbox.strategies.staleWhileRevalidate(), 'GET');
+workbox.routing.registerRoute(/^https:\/\/user-images\.githubusercontent\.com\/.*/, new workbox.strategies.StaleWhileRevalidate(), 'GET');
