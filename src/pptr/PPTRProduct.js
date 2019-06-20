@@ -23,6 +23,19 @@ import {SearchComponent} from '../ui/SearchComponent.js';
 const LOCAL_STORAGE_KEY = 'pptr-api-data';
 const PRODUCT_NAME = 'Puppeteer';
 
+// See Firefox bug: https://bugzilla.mozilla.org/show_bug.cgi?id=781982
+// And pptr.dev bug: https://github.com/GoogleChromeLabs/pptr.dev/issues/3
+function isFirefoxPrivateBrowsingMode() {
+  if (!('MozAppearance' in document.documentElement.style))
+    return Promise.resolve(false);
+
+  const db = indexedDB.open('test');
+  return new Promise(resolve => {
+    db.onerror = resolve.bind(null, true);
+    db.onsuccess = resolve.bind(null, false);
+  });
+}
+
 export class PPTRProduct extends App.Product {
   static async fetchReleaseAndReadme(staleData) {
     const fetchTimestamp = Date.now();
@@ -101,21 +114,34 @@ export class PPTRProduct extends App.Product {
   }
 
   static async create(productVersion) {
-    const store = new IDBStore('pptr-db', 'pptr-store');
-    let data = await idbGet(LOCAL_STORAGE_KEY, store);
+    const store = new IDBStore('pptr-db', 'pptr-store')
+    const isFFPB = await isFirefoxPrivateBrowsingMode();
+    let data = await storageGet(LOCAL_STORAGE_KEY);
     const hasRequiredProductVersion = productVersion ? data && !!data.releases.find(release => release.name === productVersion) : true;
 
     if (!data || !hasRequiredProductVersion) {
       const message = data ? 'Downloading Puppeteer release ' + productVersion : 'Please give us a few seconds to download Puppeteer releases for the first time.\n Next time we\'ll do it in background.';
       app.setLoadingScreen(true, message);
       data = await PPTRProduct.fetchReleaseAndReadme(data);
-      await idbSet(LOCAL_STORAGE_KEY, data, store);
+      await storageSet(LOCAL_STORAGE_KEY, data);
       app.setLoadingScreen(false);
     } else if (Date.now() - data.fetchTimestamp > 5 * 60 * 1000 /* 5 minutes */) {
       // Kick off update process in the background.
-      PPTRProduct.fetchReleaseAndReadme(data).then(data => idbSet(LOCAL_STORAGE_KEY, data, store));
+      PPTRProduct.fetchReleaseAndReadme(data).then(data => storageSet(LOCAL_STORAGE_KEY, data));
     }
     return new PPTRProduct(data.readmeText, data.releases, data.fetchTimestamp);
+
+    async function storageGet(key, data) {
+      if (isFFPB)
+        return JSON.parse(localStorage.getItem(key));
+      return idbGet(LOCAL_STORAGE_KEY, store);
+    }
+
+    async function storageSet(key, value) {
+      if (isFFPB)
+        return localStorage.setItem(key, JSON.stringify(value));
+      return idbSet(LOCAL_STORAGE_KEY, value, store);
+    }
   }
 
   constructor(readmeText, releases, fetchTimestamp) {
