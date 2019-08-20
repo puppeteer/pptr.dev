@@ -1,0 +1,65 @@
+/**
+ * @license Copyright 2018 Google Inc. All Rights Reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+ */
+
+switch-component {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.label-switch {
+  position: relative;
+  display: block;
+  height: 20px;
+  width: 44px;
+  margin-left: 10px;
+  background: rgb(152, 152, 152);
+  border-radius: 100px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 3px;
+}
+
+.label-switch:after {
+  position: absolute;
+  left: -2px;
+  top: -3px;
+  display: block;
+  width: 26px;
+  height: 26px;
+  border-radius: 100px;
+  background: rgba(50, 54, 57, 1);
+  ;
+  box-shadow: 0px 3px 3px rgba(0, 0, 0, 0.05);
+  content: '';
+  transition: all 0.3s ease;
+}
+
+.label-switch:active:after {
+  transform: scale(1.15, 0.85);
+}
+
+.checkbox-switch:checked~label {
+  background: #fafafa;
+}
+
+.checkbox-switch:checked~label:after {
+  left: 20px;
+  background: rgb(152, 152, 152);
+}
+
+.checkbox-switch:disabled~label {
+  background: #d5d5d5;
+  pointer-events: none;
+}
+
+.checkbox-switch:disabled~label:after {
+  background: #bcbdbc;
+}
+
+.hidden {
+  display: none;
+}

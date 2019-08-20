@@ -1,0 +1,66 @@
+/**
+ * @license Copyright 2019 Google Inc. All Rights Reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+ */
+
+
+.is-dark {
+  background-color: rgba(50, 54, 57, 1);
+  color: rgb(206, 205, 205);
+}
+
+.is-dark content-component,
+.is-dark content-box,
+.is-dark sidebar-component,
+.is-dark search-results,
+.is-dark pptr-sidebar-divider,
+.is-dark settings-content,
+.is-dark code {
+  background-color: rgba(50, 54, 57, 1);
+}
+
+.is-dark sidebar-item:hover,
+.is-dark sidebar-item.selected,
+.is-dark search-item:hover,
+.is-dark search-item-custom.selected,
+.is-dark search-item.selected,
+.is-dark settings-component product-version.selected,
+.is-dark settings-component product-version:hover {
+  background-color: #4d4e4e;
+}
+
+.is-dark settings-component product-version {
+  border-bottom: 1px solid rgba(206, 206, 206, .12);
+}
+
+.is-dark search-highlight {
+  background-color: #58581f;
+}
+
+.is-dark img.settings-close-icon,
+.is-dark external-link-icon,
+.is-dark content-box > p > a > img {
+  filter: invert(1);
+}
+
+.is-dark h1,
+.is-dark h2,
+.is-dark h3 {
+  color: rgb(206, 205, 205);
+}
+
+.is-dark a {
+  color: #70b3ff;
+}
+
+.is-dark blockquote {
+  color: rgb(206, 205, 205);
+  background-color: #444444;
+  border-left: 0.25em solid rgb(112, 104, 29);
+}
+
+.is-dark pptr-api code.language-js {
+  color: black;
+  background-color: rgb(191, 192, 192);
+}

@@ -15,6 +15,7 @@
  */
 import {EventEmitter} from './EventEmitter.js';
 import {html} from './html.js';
+import {SwitchComponent} from './SwitchComponent.js';
 
 export class SettingsComponent extends EventEmitter {
   constructor() {
@@ -32,6 +33,8 @@ export class SettingsComponent extends EventEmitter {
       }
     }, false);
     this.element.addEventListener('click', () => this.hide(), false);
+
+    this._switch = new SwitchComponent();
   }
 
   _selectItem(item) {
@@ -69,6 +72,7 @@ export class SettingsComponent extends EventEmitter {
         <website-version>
           <div>WebSite Version:<code>${window.__WEBSITE_VERSION__ || 'tip-of-tree'}</code> <a target=_blank href="https://github.com/GoogleChromeLabs/pptr.dev/issues">File a bug!</a></div>
         </website-version>
+        ${this._switch.element}
       </settings-content>
     `);
     this.element.$('settings-content').addEventListener('click', event => {
@@ -111,6 +115,8 @@ export class SettingsComponent extends EventEmitter {
       const year = date.getFullYear();
       return monthNames[month] + ' ' + day + ', ' + year;
     }
+
+    this._switch.checkboxDarkModeActive();
   }
 
   hide() {
