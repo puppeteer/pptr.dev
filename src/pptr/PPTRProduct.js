@@ -41,7 +41,7 @@ export class PPTRProduct extends App.Product {
     const fetchTimestamp = Date.now();
     const [releasesText, readmeText] = await Promise.all([
       fetch('https://api.github.com/repos/GoogleChrome/puppeteer/releases').then(r => r.text()),
-      fetch('https://raw.githubusercontent.com/GoogleChrome/puppeteer/master/README.md').then(r => r.text()),
+      fetch('https://raw.githubusercontent.com/GoogleChrome/puppeteer/main/README.md').then(r => r.text()),
     ]);
     const releases = JSON.parse(releasesText).map(release => ({
       name: release.tag_name,
@@ -89,7 +89,7 @@ export class PPTRProduct extends App.Product {
 
     // Add tip-of-tree version.
     releases.unshift({
-      name: 'master',
+      name: 'main',
       chromiumVersion: 'N/A',
       releaseNotes: '',
       apiText: ''
@@ -105,9 +105,9 @@ export class PPTRProduct extends App.Product {
     }
 
     // Download api.md for every release.
-    // Forcefully re-download it for "master" release.
+    // Forcefully re-download it for "main" release.
     await Promise.all(releases.map(async release => {
-      if (release.name === 'master' || !release.apiText)
+      if (release.name === 'main' || !release.apiText)
         release.apiText = await fetch(`https://raw.githubusercontent.com/GoogleChrome/puppeteer/${release.name}/docs/api.md`).then(r => r.text())
     }));
     return {fetchTimestamp, readmeText, releases};
@@ -160,7 +160,7 @@ export class PPTRProduct extends App.Product {
     return [
       iconButton('https://stackoverflow.com/questions/tagged/puppeteer', './images/stackoverflow.svg', 'pptr-stackoverflow'),
       iconButton('https://join.slack.com/t/puppeteer/shared_invite/enQtMzU4MjIyMDA5NTM4LTM1OTdkNDhlM2Y4ZGUzZDdjYjM5ZWZlZGFiZjc4MTkyYTVlYzIzYjU5NDIyNzgyMmFiNDFjN2UzNWU0N2ZhZDc', './images/slack.svg', 'pptr-slack'),
-      iconButton('https://github.com/GoogleChrome/puppeteer/blob/master/docs/troubleshooting.md', './images/wrench.svg', 'pptr-troubleshooting'),
+      iconButton('https://github.com/GoogleChrome/puppeteer/blob/main/docs/troubleshooting.md', './images/wrench.svg', 'pptr-troubleshooting'),
       iconButton('https://github.com/GoogleChrome/puppeteer', './images/github.png', 'pptr-github'),
     ];
 

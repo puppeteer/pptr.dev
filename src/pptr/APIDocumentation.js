@@ -132,7 +132,7 @@ export class APIDocumentation {
       } else if (href.startsWith('/') || href.startsWith('../') || href.startsWith('./')) {
         // Link pointing somewhere to PPTR repository.
         const isRelease = /^\d+\.\d+\.\d+$/.test(version);
-        const branch = isRelease ? 'v' + version : 'master';
+        const branch = isRelease ? 'v' + version : 'main';
         anchor.setAttribute('href', `https://github.com/GoogleChrome/puppeteer/blob/${branch}/docs/${href}`);
       }
     }
