@@ -160,8 +160,8 @@ export class PPTRProduct extends App.Product {
     return [
       iconButton('https://stackoverflow.com/questions/tagged/puppeteer', './images/stackoverflow.svg', 'pptr-stackoverflow'),
       iconButton('https://join.slack.com/t/puppeteer/shared_invite/enQtMzU4MjIyMDA5NTM4LTM1OTdkNDhlM2Y4ZGUzZDdjYjM5ZWZlZGFiZjc4MTkyYTVlYzIzYjU5NDIyNzgyMmFiNDFjN2UzNWU0N2ZhZDc', './images/slack.svg', 'pptr-slack'),
-      iconButton('https://github.com/GoogleChrome/puppeteer/blob/main/docs/troubleshooting.md', './images/wrench.svg', 'pptr-troubleshooting'),
-      iconButton('https://github.com/GoogleChrome/puppeteer', './images/github.png', 'pptr-github'),
+      iconButton('https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md', './images/wrench.svg', 'pptr-troubleshooting'),
+      iconButton('https://github.com/puppeteer/puppeteer', './images/github.png', 'pptr-github'),
     ];
 
   }
