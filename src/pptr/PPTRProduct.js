@@ -97,7 +97,6 @@ export class PPTRProduct extends App.Product {
       } else if (release.name === 'v8.0.0') {
         release.chromiumVersion = 'Chromium 90.0.4427.0 (r856583)';
       }
-
     }
 
     // Add tip-of-tree version.
