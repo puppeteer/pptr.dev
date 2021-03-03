@@ -74,6 +74,7 @@ export class PPTRProduct extends App.Product {
 
     // Fill predefined chromium versions for past releases:
     // If the regex parse would fail version pairs can be retrieved from: https://github.com/puppeteer/puppeteer/blob/main/versions.js
+    // or https://github.com/puppeteer/puppeteer/blob/main/docs/api.md#puppeteer-api-tip-of-tree
     for (const release of releases) {
       if (release.name === 'v0.9.0') {
         release.chromiumVersion = 'Chromium 62.0.3188.0 (r494755)';
@@ -93,7 +94,10 @@ export class PPTRProduct extends App.Product {
         release.chromiumVersion = 'Chromium 89.0.4389.0 (r843427)';
       } else if (release.name === 'v7.0.0') {
         release.chromiumVersion = 'Chromium 90.0.4403.0 (r848005)';
+      } else if (release.name === 'v8.0.0') {
+        release.chromiumVersion = 'Chromium 90.0.4427.0 (r856583)';
       }
+
     }
 
     // Add tip-of-tree version.
