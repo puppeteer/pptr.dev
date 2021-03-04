@@ -73,6 +73,8 @@ export class PPTRProduct extends App.Product {
     }
 
     // Fill predefined chromium versions for past releases:
+    // If the regex parse would fail version pairs can be retrieved from: https://github.com/puppeteer/puppeteer/blob/main/versions.js
+    // or https://github.com/puppeteer/puppeteer/blob/main/docs/api.md#puppeteer-api-tip-of-tree
     for (const release of releases) {
       if (release.name === 'v0.9.0') {
         release.chromiumVersion = 'Chromium 62.0.3188.0 (r494755)';
@@ -84,6 +86,16 @@ export class PPTRProduct extends App.Product {
         release.chromiumVersion = 'Chromium 66.0.3347.0 (r536395)';
       } else if (release.name === 'v1.3.0') {
         release.chromiumVersion = 'Chromium 67.0.3392.0 (r536395)';
+      } else if (release.name === 'v5.1.0') {
+        release.chromiumVersion = 'Chromium 84.0.4147.0 (r768783)';
+      } else if (release.name === 'v5.5.0') {
+        release.chromiumVersion = 'Chromium 88.0.4298.0 (r818858)';
+      } else if (release.name === 'v6.0.0') {
+        release.chromiumVersion = 'Chromium 89.0.4389.0 (r843427)';
+      } else if (release.name === 'v7.0.0') {
+        release.chromiumVersion = 'Chromium 90.0.4403.0 (r848005)';
+      } else if (release.name === 'v8.0.0') {
+        release.chromiumVersion = 'Chromium 90.0.4427.0 (r856583)';
       }
     }
 
@@ -102,6 +114,8 @@ export class PPTRProduct extends App.Product {
       const match = release.releaseNotes.match(/Chromium\s+(\d+\.\d+.\d+.\d+)\s*\((r\d{6})\)/i);
       if (match)
         release.chromiumVersion = `Chromium ${match[1]} (${match[2]})`;
+      else
+        release.chromiumVersion = 'N/A'
     }
 
     // Download api.md for every release.
