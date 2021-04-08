@@ -166,21 +166,6 @@ pptr-api-until::before {
   text-decoration: none !important;
 }
 
-.pptr-slack {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.pptr-slack img {
-  width: 44px;
-  opacity: 0.5;
-}
-
-.pptr-slack img:hover {
-  opacity: 1;
-}
-
 .pptr-stackoverflow {
 }
 
