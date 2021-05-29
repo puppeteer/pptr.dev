@@ -1,10 +1,10 @@
 {
-  "name": "puppeteer",
+  "name": "new-pptr.dev",
   "version": "9.1.1-post",
   "description": "A high-level API to control headless Chrome over the DevTools Protocol",
   "main": "./cjs-entry.js",
   "types": "lib/types.d.ts",
-  "repository": "github:puppeteer/puppeteer",
+  "repository": "https://github.com/tasneemkoushar/pptr.dev",
   "engines": {
     "node": ">=10.18.1"
   },
