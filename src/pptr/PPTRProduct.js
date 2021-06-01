@@ -13,12 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {Store as IDBStore, get as idbGet, set as idbSet} from '../third_party/idb-keyval.mjs';
+import {
+  Store as IDBStore,
+  get as idbGet,
+  set as idbSet,
+} from '../third_party/idb-keyval.mjs';
 
-import {APIDocumentation, APISection, APIMethod, APIClass} from './APIDocumentation.js';
-import {App} from '../ui/App.js';
-import {html} from '../ui/html.js';
-import {SearchComponent} from '../ui/SearchComponent.js';
+import {
+  APIDocumentation,
+  APISection,
+  APIMethod,
+  APIClass,
+} from './APIDocumentation.js';
+import { App } from '../ui/App.js';
+import { html } from '../ui/html.js';
+import { SearchComponent } from '../ui/SearchComponent.js';
 
 const LOCAL_STORAGE_KEY = 'pptr-api-data';
 const PRODUCT_NAME = 'Puppeteer';
@@ -40,26 +49,33 @@ export class PPTRProduct extends App.Product {
   static async fetchReleaseAndReadme(staleData) {
     const fetchTimestamp = Date.now();
     const [releasesText, readmeText] = await Promise.all([
-      fetch('https://api.github.com/repos/GoogleChrome/puppeteer/releases').then(r => r.text()),
-      fetch('https://raw.githubusercontent.com/GoogleChrome/puppeteer/main/README.md').then(r => r.text()),
+      fetch(
+        'https://api.github.com/repos/GoogleChrome/puppeteer/releases'
+      ).then(r => r.text()),
+      fetch(
+        'https://raw.githubusercontent.com/GoogleChrome/puppeteer/main/README.md'
+      ).then(r => r.text()),
     ]);
     const releases = JSON.parse(releasesText).map(release => ({
       name: release.tag_name,
       releaseNotes: release.body,
-      timestamp: (new Date(release.published_at)).getTime(),
-      apiText: ''
+      timestamp: new Date(release.published_at).getTime(),
+      apiText: '',
     }));
     // Add initial release - was published as a tag.
     releases.push({
       name: 'v0.9.0',
-      timestamp: (new Date('August 16, 2017')).getTime(),
+      timestamp: new Date('August 16, 2017').getTime(),
       releaseNotes: '',
       apiText: '',
     });
 
     // Initialize release priorities that define their sorting order.
     for (const release of releases) {
-      const [major, minor, patch] = release.name.substring(1).split('.').map(e => parseInt(e, 10));
+      const [major, minor, patch] = release.name
+        .substring(1)
+        .split('.')
+        .map(e => parseInt(e, 10));
       release.priority = major * 100 * 100 + minor * 100 + patch;
     }
 
@@ -67,7 +83,9 @@ export class PPTRProduct extends App.Product {
 
     // Fulfill api.md for every release using staleData, if any.
     if (staleData) {
-      const staleAPITexts = new Map(staleData.releases.map(release => [release.name, release.apiText]));
+      const staleAPITexts = new Map(
+        staleData.releases.map(release => [release.name, release.apiText])
+      );
       for (const release of releases)
         release.apiText = staleAPITexts.get(release.name);
     }
@@ -104,56 +122,66 @@ export class PPTRProduct extends App.Product {
       name: 'main',
       chromiumVersion: 'N/A',
       releaseNotes: '',
-      apiText: ''
+      apiText: '',
     });
 
     // Parse chromium versions from release notes, where possible.
     for (const release of releases) {
-      if (!release.releaseNotes || release.chromiumVersion)
-        continue;
-      const match = release.releaseNotes.match(/Chromium\s+(\d+\.\d+.\d+.\d+)\s*\((r\d{6})\)/i);
-      if (match)
-        release.chromiumVersion = `Chromium ${match[1]} (${match[2]})`;
-      else
-        release.chromiumVersion = 'N/A'
+      if (!release.releaseNotes || release.chromiumVersion) continue;
+      const match = release.releaseNotes.match(
+        /Chromium\s+(\d+\.\d+.\d+.\d+)\s*\((r\d{6})\)/i
+      );
+      if (match) release.chromiumVersion = `Chromium ${match[1]} (${match[2]})`;
+      else release.chromiumVersion = 'N/A';
     }
 
     // Download api.md for every release.
     // Forcefully re-download it for "main" release.
-    await Promise.all(releases.map(async release => {
-      if (release.name === 'main' || !release.apiText)
-        release.apiText = await fetch(`https://raw.githubusercontent.com/GoogleChrome/puppeteer/${release.name}/docs/api.md`).then(r => r.text())
-    }));
-    return {fetchTimestamp, readmeText, releases};
+    await Promise.all(
+      releases.map(async release => {
+        if (release.name === 'main' || !release.apiText)
+          release.apiText = await fetch(
+            `https://raw.githubusercontent.com/GoogleChrome/puppeteer/${release.name}/docs/api.md`
+          ).then(r => r.text());
+      })
+    );
+    return { fetchTimestamp, readmeText, releases };
   }
 
   static async create(productVersion) {
-    const store = new IDBStore('pptr-db', 'pptr-store')
+    const store = new IDBStore('pptr-db', 'pptr-store');
     const isFFPB = await isFirefoxPrivateBrowsingMode();
     let data = await storageGet(LOCAL_STORAGE_KEY);
-    const hasRequiredProductVersion = productVersion ? data && !!data.releases.find(release => release.name === productVersion) : true;
+    const hasRequiredProductVersion = productVersion
+      ? data && !!data.releases.find(release => release.name === productVersion)
+      : true;
 
     if (!data || !hasRequiredProductVersion) {
-      const message = data ? 'Downloading Puppeteer release ' + productVersion : 'Please give us a few seconds to download Puppeteer releases for the first time.\n Next time we\'ll do it in background.';
+      const message = data
+        ? 'Downloading Puppeteer release ' + productVersion
+        : "Please give us a few seconds to download Puppeteer releases for the first time.\n Next time we'll do it in background.";
       app.setLoadingScreen(true, message);
       data = await PPTRProduct.fetchReleaseAndReadme(data);
       await storageSet(LOCAL_STORAGE_KEY, data);
       app.setLoadingScreen(false);
-    } else if (Date.now() - data.fetchTimestamp > 5 * 60 * 1000 /* 5 minutes */) {
+    } else if (
+      Date.now() - data.fetchTimestamp >
+      5 * 60 * 1000 /* 5 minutes */
+    ) {
       // Kick off update process in the background.
-      PPTRProduct.fetchReleaseAndReadme(data).then(data => storageSet(LOCAL_STORAGE_KEY, data));
+      PPTRProduct.fetchReleaseAndReadme(data).then(data =>
+        storageSet(LOCAL_STORAGE_KEY, data)
+      );
     }
     return new PPTRProduct(data.readmeText, data.releases, data.fetchTimestamp);
 
     async function storageGet(key, data) {
-      if (isFFPB)
-        return JSON.parse(localStorage.getItem(key));
+      if (isFFPB) return JSON.parse(localStorage.getItem(key));
       return idbGet(LOCAL_STORAGE_KEY, store);
     }
 
     async function storageSet(key, value) {
-      if (isFFPB)
-        return localStorage.setItem(key, JSON.stringify(value));
+      if (isFFPB) return localStorage.setItem(key, JSON.stringify(value));
       return idbSet(LOCAL_STORAGE_KEY, value, store);
     }
   }
@@ -172,11 +200,22 @@ export class PPTRProduct extends App.Product {
     }
 
     return [
-      iconButton('https://stackoverflow.com/questions/tagged/puppeteer', './images/stackoverflow.svg', 'pptr-stackoverflow'),
-      iconButton('https://github.com/GoogleChrome/puppeteer/blob/main/docs/troubleshooting.md', './images/wrench.svg', 'pptr-troubleshooting'),
-      iconButton('https://github.com/GoogleChrome/puppeteer', './images/github.png', 'pptr-github'),
+      iconButton(
+        'https://stackoverflow.com/questions/tagged/puppeteer',
+        './images/stackoverflow.svg',
+        'pptr-stackoverflow'
+      ),
+      iconButton(
+        'https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md',
+        './images/wrench.svg',
+        'pptr-troubleshooting'
+      ),
+      iconButton(
+        'https://github.com/puppeteer/puppeteer',
+        './images/github.png',
+        'pptr-github'
+      ),
     ];
-
   }
 
   _initializeAPILifespan() {
@@ -189,7 +228,9 @@ export class PPTRProduct extends App.Product {
     for (const release of this._releases) {
       release.classesLifespan = new Map();
       let classOutline = null;
-      const titles = release.apiText.split('\n').filter(line => line.startsWith('###'));
+      const titles = release.apiText
+        .split('\n')
+        .filter(line => line.startsWith('###'));
       for (const title of titles) {
         // Handle classes
         if (classRegex.test(title)) {
@@ -232,9 +273,9 @@ export class PPTRProduct extends App.Product {
       const previousRelease = this._releases[i + 1];
       const release = this._releases[i];
       for (const [className, classOutline] of release.classesLifespan) {
-        const previousClassOutline = previousRelease.classesLifespan.get(className);
-        if (!previousClassOutline)
-          continue;
+        const previousClassOutline =
+          previousRelease.classesLifespan.get(className);
+        if (!previousClassOutline) continue;
         classOutline.since = previousClassOutline.since;
         for (const [eventName, since] of previousClassOutline.eventsSince) {
           if (classOutline.eventsSince.has(eventName))
@@ -244,7 +285,10 @@ export class PPTRProduct extends App.Product {
           if (classOutline.methodsSince.has(methodName))
             classOutline.methodsSince.set(methodName, since);
         }
-        for (const [namespaceName, since] of previousClassOutline.namespacesSince) {
+        for (const [
+          namespaceName,
+          since,
+        ] of previousClassOutline.namespacesSince) {
           if (classOutline.namespacesSince.has(namespaceName))
             classOutline.namespacesSince.set(namespaceName, since);
         }
@@ -269,19 +313,28 @@ export class PPTRProduct extends App.Product {
         classOutline.until = nextReleaseOutline.until;
         for (const eventName of classOutline.eventsSince.keys()) {
           if (nextReleaseOutline.eventsUntil.has(eventName))
-            classOutline.eventsUntil.set(eventName, nextReleaseOutline.eventsUntil.get(eventName));
+            classOutline.eventsUntil.set(
+              eventName,
+              nextReleaseOutline.eventsUntil.get(eventName)
+            );
           else if (!nextReleaseOutline.eventsSince.has(eventName))
             classOutline.eventsUntil.set(eventName, nextRelease.name);
         }
         for (const methodName of classOutline.methodsSince.keys()) {
           if (nextReleaseOutline.methodsUntil.has(methodName))
-            classOutline.methodsUntil.set(methodName, nextReleaseOutline.methodsUntil.get(methodName));
+            classOutline.methodsUntil.set(
+              methodName,
+              nextReleaseOutline.methodsUntil.get(methodName)
+            );
           else if (!nextReleaseOutline.methodsSince.has(methodName))
             classOutline.methodsUntil.set(methodName, nextRelease.name);
         }
         for (const namespaceName of classOutline.namespacesSince.keys()) {
           if (nextReleaseOutline.namespacesUntil.has(namespaceName))
-            classOutline.namespacesUntil.set(namespaceName, nextReleaseOutline.namespacesUntil.get(namespaceName));
+            classOutline.namespacesUntil.set(
+              namespaceName,
+              nextReleaseOutline.namespacesUntil.get(namespaceName)
+            );
           else if (!nextReleaseOutline.namespacesSince.has(namespaceName))
             classOutline.namespacesUntil.set(namespaceName, nextRelease.name);
         }
@@ -318,8 +371,7 @@ export class PPTRProduct extends App.Product {
   settingsFooterElement() {
     const diff = Date.now() - this._fetchTimestamp;
     let time = '';
-    if (diff < 1000)
-      time = 'Just Now';
+    if (diff < 1000) time = 'Just Now';
     else if (1000 <= diff && diff <= 60 * 1000)
       time = `${Math.round(diff / 1000)} seconds ago`;
     else if (60 * 1000 <= diff && diff <= 60 * 60 * 1000)
@@ -328,37 +380,47 @@ export class PPTRProduct extends App.Product {
       time = `${Math.round(diff / 60 / 60 / 1000)} hours ago`;
     else if (24 * 60 * 60 * 1000 <= diff)
       time = `${Math.round(diff / 24 / 60 / 60 / 1000)} days ago`;
-    return html`<pptr-settings-footer>Data fetched ${time}</pptr-settings-footer>`;
+    return html`<pptr-settings-footer
+      >Data fetched ${time}</pptr-settings-footer
+    >`;
   }
 
   create404(title = '') {
     const element = html`
-      <pptr-api class=pptr-not-found>
+      <pptr-api class="pptr-not-found">
         <content-box>
           <h1>Not Found</h1>
           <p>${title}</p>
-          <p><a href='${app.linkURL(PRODUCT_NAME, this.defaultVersionName())}'>Home</a></p>
+          <p>
+            <a href="${app.linkURL(PRODUCT_NAME, this.defaultVersionName())}"
+              >Home</a
+            >
+          </p>
         </content-box>
       </pptr-api>
     `;
-    return {element, title: 'Not Found'};
+    return { element, title: 'Not Found' };
   }
 
   getVersion(name) {
     const release = this._releases.find(release => release.name === name);
-    if (!release)
-      return null;
+    if (!release) return null;
     return new PPTRVersion(this._readmeText, release);
   }
 }
 
 class PPTRVersion extends App.ProductVersion {
-  constructor(readmeText, {name, releaseNotes, apiText, classesLifespan}) {
+  constructor(readmeText, { name, releaseNotes, apiText, classesLifespan }) {
     super();
     this._name = name;
     this._readmeText = readmeText;
 
-    this.api = APIDocumentation.create(name, releaseNotes, apiText, classesLifespan);
+    this.api = APIDocumentation.create(
+      name,
+      releaseNotes,
+      apiText,
+      classesLifespan
+    );
 
     this._sidebarElements = [];
     this._entryToSidebarElement = new Map();
@@ -374,7 +436,6 @@ class PPTRVersion extends App.ProductVersion {
       for (const apiMethod of apiClass.methods)
         this._searchItems.push(PPTRSearchItem.createForMethod(apiMethod));
     }
-
   }
 
   name() {
@@ -396,9 +457,11 @@ class PPTRVersion extends App.ProductVersion {
   content(contentId) {
     if (!contentId) {
       const element = html`
-        <pptr-api class=pptr-readme>
+        <pptr-api class="pptr-readme">
           <content-box>
-            ${Array.from(APIDocumentation.markdownToDOM(this._readmeText).childNodes)}
+            ${Array.from(
+              APIDocumentation.markdownToDOM(this._readmeText).childNodes
+            )}
           </content-box>
         </pptr-api>
       `;
@@ -416,13 +479,12 @@ class PPTRVersion extends App.ProductVersion {
       return { element, title: '', selectedSidebarElement: this._outlineItem };
     }
     const entry = this.api.idToEntry(contentId);
-    if (!entry)
-      return null;
+    if (!entry) return null;
     if (entry instanceof APIClass) {
       const element = this._showAPIClass(entry);
       const title = entry.name;
       const selectedSidebarElement = this._entryToSidebarElement.get(entry);
-      return {element, title, selectedSidebarElement};
+      return { element, title, selectedSidebarElement };
     }
     if (entry instanceof APISection) {
       const element = html`
@@ -431,27 +493,39 @@ class PPTRVersion extends App.ProductVersion {
         </pptr-api>
       `;
       const selectedSidebarElement = this._entryToSidebarElement.get(entry);
-      return {element, title: '', selectedSidebarElement};
+      return { element, title: '', selectedSidebarElement };
     }
     const element = this._showAPIClass(entry.apiClass);
     const scrollAnchor = this._scrollAnchor(entry.element);
     const title = entry.apiClass.loweredName + '.' + entry.name;
-    const selectedSidebarElement = this._entryToSidebarElement.get(entry.apiClass);
-    return {element, title, selectedSidebarElement, scrollAnchor};
+    const selectedSidebarElement = this._entryToSidebarElement.get(
+      entry.apiClass
+    );
+    return { element, title, selectedSidebarElement, scrollAnchor };
   }
 
   _initializeSidebarElements() {
-    this._outlineItem = html`<a class=pptr-sidebar-item href=${app.linkURL(PRODUCT_NAME, this.api.version, 'outline')}>Outline</a>`;
+    this._outlineItem = html`<a
+      class="pptr-sidebar-item"
+      href=${app.linkURL(PRODUCT_NAME, this.api.version, 'outline')}
+      >Outline</a
+    >`;
     this._sidebarElements = [
       html`<pptr-sidebar-divider>API</pptr-sidebar-divider>`,
       this._outlineItem,
       ...this.api.sections.map(section => {
-        const item = html`<a class=pptr-sidebar-item href=${section.linkURL()}>${section.name}</a>`;
+        const item = html`<a class="pptr-sidebar-item" href=${section.linkURL()}
+          >${section.name}</a
+        >`;
         this._entryToSidebarElement.set(section, item);
         return item;
       }),
       ...this.api.classes.map(apiClass => {
-        const item = html`<a class=pptr-sidebar-item href=${apiClass.linkURL()}><pptr-class-icon></pptr-class-icon>${apiClass.name}</a>`;
+        const item = html`<a
+          class="pptr-sidebar-item"
+          href=${apiClass.linkURL()}
+          ><pptr-class-icon></pptr-class-icon>${apiClass.name}</a
+        >`;
         this._entryToSidebarElement.set(apiClass, item);
         return item;
       }),
@@ -460,14 +534,16 @@ class PPTRVersion extends App.ProductVersion {
 
   _showAPIClass(apiClass) {
     function render(title, entries) {
-      if (!entries.length)
-        return '';
+      if (!entries.length) return '';
       return html`
         <h3>${title}</h3>
-        <content-box>${entries.map(entry => html`
-          ${entry.element}
-          <content-delimeter></content-delimeter>
-        `)}
+        <content-box
+          >${entries.map(
+            entry => html`
+              ${entry.element}
+              <content-delimeter></content-delimeter>
+            `
+          )}
         </content-box>
       `;
     }
@@ -485,7 +561,10 @@ class PPTRVersion extends App.ProductVersion {
   }
 
   _scrollAnchor(entryElement) {
-    if (entryElement.previousSibling && entryElement.previousSibling.tagName === 'CONTENT-DELIMETER')
+    if (
+      entryElement.previousSibling &&
+      entryElement.previousSibling.tagName === 'CONTENT-DELIMETER'
+    )
       return entryElement.previousSibling;
     let parentBox = entryElement;
     while (parentBox && parentBox.tagName !== 'CONTENT-BOX')
@@ -502,11 +581,18 @@ class PPTRSearchItem extends SearchComponent.Item {
 
     const desc = apiMethod.element.querySelector('p');
     const text = `${className}.${name}(${args})`;
-    const titleRenderer = matches => renderTokensWithMatches(matches, [
-      {text: className + '.', tagName: 'search-item-api-method-class'},
-      {text: `${name}(${args})`, tagName: 'search-item-api-method-name'},
-    ]);
-    return new PPTRSearchItem(apiMethod, text, 'pptr-method-icon', titleRenderer, desc ? desc.textContent : '');
+    const titleRenderer = matches =>
+      renderTokensWithMatches(matches, [
+        { text: className + '.', tagName: 'search-item-api-method-class' },
+        { text: `${name}(${args})`, tagName: 'search-item-api-method-name' },
+      ]);
+    return new PPTRSearchItem(
+      apiMethod,
+      text,
+      'pptr-method-icon',
+      titleRenderer,
+      desc ? desc.textContent : ''
+    );
   }
 
   static createForEvent(apiEvent) {
@@ -515,12 +601,19 @@ class PPTRSearchItem extends SearchComponent.Item {
 
     const desc = apiEvent.element.querySelector('p');
     const text = `${className}.on('${name}')`;
-    const titleRenderer = matches => renderTokensWithMatches(matches, [
-      {text: className + '.on(', tagName: 'search-item-api-method-class'},
-      {text: `'${name}'`, tagName: 'search-item-api-method-name'},
-      {text: ')', tagName: 'search-item-api-method-class'},
-    ]);
-    return new PPTRSearchItem(apiEvent, text, 'pptr-event-icon', titleRenderer, desc ? desc.textContent : '');
+    const titleRenderer = matches =>
+      renderTokensWithMatches(matches, [
+        { text: className + '.on(', tagName: 'search-item-api-method-class' },
+        { text: `'${name}'`, tagName: 'search-item-api-method-name' },
+        { text: ')', tagName: 'search-item-api-method-class' },
+      ]);
+    return new PPTRSearchItem(
+      apiEvent,
+      text,
+      'pptr-event-icon',
+      titleRenderer,
+      desc ? desc.textContent : ''
+    );
   }
 
   static createForNamespace(apiNamespace) {
@@ -529,11 +622,18 @@ class PPTRSearchItem extends SearchComponent.Item {
 
     const desc = apiNamespace.element.querySelector('p');
     const text = `${className}.${name}`;
-    const titleRenderer = matches => renderTokensWithMatches(matches, [
-      {text: className + '.', tagName: 'search-item-api-method-class'},
-      {text: name, tagName: 'search-item-api-method-name'},
-    ]);
-    return new PPTRSearchItem(apiNamespace, text, 'pptr-ns-icon', titleRenderer, desc ? desc.textContent : '');
+    const titleRenderer = matches =>
+      renderTokensWithMatches(matches, [
+        { text: className + '.', tagName: 'search-item-api-method-class' },
+        { text: name, tagName: 'search-item-api-method-name' },
+      ]);
+    return new PPTRSearchItem(
+      apiNamespace,
+      text,
+      'pptr-ns-icon',
+      titleRenderer,
+      desc ? desc.textContent : ''
+    );
   }
 
   static createForClass(apiClass) {
@@ -541,10 +641,17 @@ class PPTRSearchItem extends SearchComponent.Item {
 
     const desc = apiClass.element.querySelector('p');
     const text = className;
-    const titleRenderer = matches => renderTokensWithMatches(matches, [
-      {text: className, tagName: 'search-item-api-method-name'},
-    ]);
-    return new PPTRSearchItem(apiClass, text, 'pptr-class-icon', titleRenderer, desc ? desc.textContent : '');
+    const titleRenderer = matches =>
+      renderTokensWithMatches(matches, [
+        { text: className, tagName: 'search-item-api-method-name' },
+      ]);
+    return new PPTRSearchItem(
+      apiClass,
+      text,
+      'pptr-class-icon',
+      titleRenderer,
+      desc ? desc.textContent : ''
+    );
   }
 
   constructor(apiEntry, text, iconTagName, titleRenderer, description) {
@@ -578,8 +685,7 @@ class PPTRSearchItem extends SearchComponent.Item {
   }
 
   subtitleElement() {
-    if (!this._description)
-      return null;
+    if (!this._description) return null;
     if (!this._subtitleElement)
       this._subtitleElement = document.createTextNode(this._description);
     return this._subtitleElement;
@@ -612,7 +718,9 @@ function renderTokensWithMatches(matches, tokens) {
   let offset = 0;
   let matchesSet = new Set(matches);
   for (let token of tokens) {
-    const result = token.tagName ? document.createElement(token.tagName) : document.createDocumentFragment();
+    const result = token.tagName
+      ? document.createElement(token.tagName)
+      : document.createDocumentFragment();
     let from = 0;
     let lastInsideHighlight = false;
     for (let to = 0; to <= token.text.length; ++to) {
@@ -637,4 +745,3 @@ function renderTokensWithMatches(matches, tokens) {
   }
   return fragment;
 }
-
