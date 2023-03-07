@@ -67,6 +67,11 @@ settings-component settings-header h3 {
   margin-bottom: 1ex;
 }
 
+settings-component small {
+  display: block;
+  padding: 1em;
+}
+
 settings-component .settings-close-icon {
   opacity: 0.5;
   cursor: pointer;

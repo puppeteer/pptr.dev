@@ -113,11 +113,11 @@ workbox.precaching.precacheAndRoute([
   },
   {
     "url": "index.js",
-    "revision": "17a1a6867e92959fae6a83ca1f43d07e"
+    "revision": "d562fd4bd7214cfa08cf85d6c16c1fdd"
   },
   {
     "url": "style.css",
-    "revision": "5634f6d684b9b32efdf002f63a4e133d"
+    "revision": "5e3be66f0ae9ebef72a85022bf484c49"
   }
 ], {});
 
