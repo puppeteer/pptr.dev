@@ -63,7 +63,9 @@ export class SettingsComponent extends EventEmitter {
           <h3>Settings</h3>
           <img class=settings-close-icon src='./images/close.svg'></img>
         </settings-header>
-        <product-versions>${product.versionDescriptions().map(renderVersion)}
+        <product-versions>
+          <small>Versions later than 15.2.0 are not compatible with this site.</small>
+          ${product.versionDescriptions().map(renderVersion)}
         </product-versions>
         ${product.settingsFooterElement()}
         <website-version>

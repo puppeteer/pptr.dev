@@ -39,16 +39,27 @@ function isFirefoxPrivateBrowsingMode() {
 export class PPTRProduct extends App.Product {
   static async fetchReleaseAndReadme(staleData) {
     const fetchTimestamp = Date.now();
-    const [releasesText, readmeText] = await Promise.all([
-      fetch('https://api.github.com/repos/GoogleChrome/puppeteer/releases').then(r => r.text()),
+    const [readmeText, releasesText, releasesText2] = await Promise.all([
       fetch('https://raw.githubusercontent.com/GoogleChrome/puppeteer/main/README.md').then(r => r.text()),
+      // TODO: At some point this non-paginating approach won't work 
+      fetch('https://api.github.com/repos/GoogleChrome/puppeteer/releases?per_page=100').then(r => r.text()),
+      fetch('https://api.github.com/repos/GoogleChrome/puppeteer/releases?per_page=100&page=2').then(r => r.text()),
     ]);
-    const releases = JSON.parse(releasesText).map(release => ({
+    const releases = [...JSON.parse(releasesText), ...JSON.parse(releasesText2)].map(release => ({
       name: release.tag_name,
       releaseNotes: release.body,
       timestamp: (new Date(release.published_at)).getTime(),
       apiText: ''
-    }));
+    }))
+      .filter(release => release.name.startsWith('v'))
+      .filter(release => {
+        const [major, minor, patch] = release.name.substring(1).split('.').map(e => parseInt(e, 10));
+        // api.md was deleted before 15.3.0 breaking this docs viewer.
+        if (major > 15) return false;
+        if (major === 15 && minor > 2) return false; 
+        return true;
+      });
+
     // Add initial release - was published as a tag.
     releases.push({
       name: 'v0.9.0',
@@ -56,6 +67,7 @@ export class PPTRProduct extends App.Product {
       releaseNotes: '',
       apiText: '',
     });
+
 
     // Initialize release priorities that define their sorting order.
     for (const release of releases) {
@@ -99,14 +111,6 @@ export class PPTRProduct extends App.Product {
       }
     }
 
-    // Add tip-of-tree version.
-    releases.unshift({
-      name: 'main',
-      chromiumVersion: 'N/A',
-      releaseNotes: '',
-      apiText: ''
-    });
-
     // Parse chromium versions from release notes, where possible.
     for (const release of releases) {
       if (!release.releaseNotes || release.chromiumVersion)
@@ -119,9 +123,8 @@ export class PPTRProduct extends App.Product {
     }
 
     // Download api.md for every release.
-    // Forcefully re-download it for "main" release.
     await Promise.all(releases.map(async release => {
-      if (release.name === 'main' || !release.apiText)
+      if (!release.apiText)
         release.apiText = await fetch(`https://raw.githubusercontent.com/GoogleChrome/puppeteer/${release.name}/docs/api.md`).then(r => r.text())
     }));
     return {fetchTimestamp, readmeText, releases};
@@ -294,7 +297,7 @@ export class PPTRProduct extends App.Product {
   }
 
   defaultVersionName() {
-    return this._releases[1].name;
+    return this._releases[0].name;
   }
 
   versionNames() {
